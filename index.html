@@ -63,10 +63,10 @@
             border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
             color: white; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); position: relative; z-index: 2;
         }
-        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        .header-top { display: flex; flex-direction: column; justify-content:center ; align-items: flex-start; }
         .header-title h1 { margin: 0; font-size: 1.3rem; font-weight: 700; color: white; }
         .header-subtitle { font-size: 0.8rem; opacity: 0.9; margin-top: 2px; color: rgba(255,255,255,0.9); }
-        .header-actions { display: flex; gap: 8px; }
+        .header-actions { display: flex; gap: 12px; margin-top: 10px ; align-self: flex-end; }
 
         .icon-btn {
             background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
@@ -286,9 +286,14 @@
         <header class="app-header">
             <div class="header-top">
                 <div class="header-title">
-                    <h1>BankPrep</h1>
-                    <div class="header-subtitle">100% Syllabus Coverage</div>
-                </div>
+					<h1 style="margin: 0; font-size: 1.25rem; font-weight: 700; line-height: 1.3;">
+						BankPrep "Syllabus Tracker"
+					</h1>
+					
+					<div style="font-size: 0.75rem; font-weight: 500; opacity: 0.9; margin-top: 2px;">
+						(By Durga Prasad)
+					</div>
+				</div>
                 <div class="header-actions">
                     <button class="icon-btn ai-btn" onclick="openChat()" aria-label="AI Tutor">
 						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
