@@ -581,21 +581,26 @@
         function renderContent(subjectKey) {
             const container = document.getElementById('contentArea');
             container.innerHTML = '';
+
             if (subjectKey === 'schedule') { renderDailySchedule(container); return; }
             if (subjectKey === 'backup') { renderBackupPage(container); return; }
             
             const subject = syllabusData[subjectKey];
+
             subject.sections.forEach(section => {
                 const secHeader = document.createElement('div');
                 secHeader.className = 'section-header';
                 secHeader.textContent = section.title;
                 container.appendChild(secHeader);
+
                 section.topics.forEach(topic => {
                     const id = `${subjectKey}-${topic.replace(/[^a-zA-Z0-9]/g, '')}`;
                     const tData = state[id] || { done: false, date: null, r1: false, r4: false, r7: false };
+                    
                     let statusText = "Not Started";
                     let d1 = "Locked", d4 = "Locked", d7 = "Locked";
                     let isLocked = true;
+
                     if (tData.done && tData.date) {
                         statusText = `Started: ${getFormattedDate(tData.date)}`;
                         d1 = getFormattedDate(addDays(tData.date, 1));
@@ -603,24 +608,35 @@
                         d7 = getFormattedDate(addDays(tData.date, 7));
                         isLocked = false;
                     }
+
                     const card = document.createElement('div');
-                    card.className = `topic-wrapper ${tData.done ? 'open' : ''}`; card.id = `card-${id}`;
+                    // --- FIX IS HERE: Removed ${tData.done ? 'open' : ''} ---
+                    // Now it creates the card CLOSED by default, even if it is done.
+                    card.className = `topic-wrapper`; 
+                    card.id = `card-${id}`;
+
                     card.innerHTML = `
                         <div class="topic-main" onclick="toggleDrawer('${id}')">
                             <div class="topic-left">
                                 <span class="chevron">▼</span>
-                                <div class="topic-info"><h3>${topic}</h3><div class="topic-status ${tData.done ? 'active' : ''}">${statusText}</div></div>
+                                <div class="topic-info">
+                                    <h3>${topic}</h3>
+                                    <div class="topic-status ${tData.done ? 'active' : ''}">${statusText}</div>
+                                </div>
                             </div>
                             <label class="switch master-switch" onclick="event.stopPropagation()">
-                                <input type="checkbox" onchange="handleMasterToggle('${id}')" ${tData.done ? 'checked' : ''}><span class="slider"></span>
+                                <input type="checkbox" onchange="handleMasterToggle('${id}')" ${tData.done ? 'checked' : ''}>
+                                <span class="slider"></span>
                             </label>
                         </div>
-                        <div class="revision-drawer"><div class="drawer-content">
-                            <div class="schedule-title">1-4-7 Revision Schedule</div>
-                            ${renderRevRow(id, 'r1', '1st Revision (Day 1)', d1, tData.r1, isLocked)}
-                            ${renderRevRow(id, 'r4', '4th Day Revision', d4, tData.r4, isLocked)}
-                            ${renderRevRow(id, 'r7', '7th Day Revision', d7, tData.r7, isLocked)}
-                        </div></div>
+                        <div class="revision-drawer">
+                            <div class="drawer-content">
+                                <div class="schedule-title">1-4-7 Revision Schedule</div>
+                                ${renderRevRow(id, 'r1', '1st Revision (Day 1)', d1, tData.r1, isLocked)}
+                                ${renderRevRow(id, 'r4', '4th Day Revision', d4, tData.r4, isLocked)}
+                                ${renderRevRow(id, 'r7', '7th Day Revision', d7, tData.r7, isLocked)}
+                            </div>
+                        </div>
                     `;
                     container.appendChild(card);
                 });
