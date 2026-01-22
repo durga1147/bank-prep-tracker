@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BankPrep</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS VARIABLES --- */
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #ec4899;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border-color: rgba(0,0,0,0.05);
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --radius: 16px;
+            --drawer-bg: #f8fafc;
+            --task-tag-bg: #f1f5f9;
+            --modal-overlay: rgba(15, 23, 42, 0.6);
+            --chat-user-bg: #4f46e5;
+            --chat-ai-bg: #f1f5f9;
+            --chat-text-ai: #0f172a;
+        }
+
+        [data-theme="dark"] {
+            --primary: #6366f1;
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255,255,255,0.05);
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --drawer-bg: #0f172a;
+            --task-tag-bg: #334155;
+            --modal-overlay: rgba(0, 0, 0, 0.85);
+            --chat-user-bg: #6366f1;
+            --chat-ai-bg: #334155;
+            --chat-text-ai: #f1f5f9;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; transition: background-color 0.3s ease, color 0.3s ease; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding-bottom: 90px;
+        }
+
+        /* --- FIXED HEADER --- */
+        .fixed-top-container { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background-color: var(--bg-body); }
+        .app-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 20px 20px 50px 20px;
+            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+            color: white; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); position: relative; z-index: 2;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        .header-title h1 { margin: 0; font-size: 1.3rem; font-weight: 700; color: white; }
+        .header-subtitle { font-size: 0.8rem; opacity: 0.9; margin-top: 2px; color: rgba(255,255,255,0.9); }
+        .header-actions { display: flex; gap: 8px; }
+
+        .icon-btn {
+            background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
+            color: white; width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; backdrop-filter: blur(4px); font-size: 1.1rem;
+        }
+        .icon-btn.ai-btn { background: linear-gradient(135deg, #FFD700, #FFA500); border: none; color: #78350f; font-weight: bold; }
+
+        .global-progress-container {
+            margin-top: 20px; background: rgba(0,0,0,0.25); height: 8px;
+            border-radius: 10px; overflow: hidden; position: relative;
+        }
+        .global-progress-fill {
+            height: 100%; background: #fff; width: 0%;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .progress-label { font-size: 0.8rem; text-align: right; margin-top: 6px; font-weight: 600; color: white; }
+
+        /* --- TABS --- */
+        .category-nav {
+            display: flex; gap: 12px; overflow-x: auto; padding: 0 20px 15px 20px;
+            margin-top: -35px; scrollbar-width: none; position: relative; z-index: 3;
+        }
+        .category-nav::-webkit-scrollbar { display: none; }
+        .nav-item {
+            background: var(--bg-card); min-width: 95px; padding: 12px 8px; border-radius: 14px;
+            text-align: center; box-shadow: var(--shadow-card); cursor: pointer;
+            transition: all 0.25s; opacity: 0.95; transform: scale(0.98);
+            border: 2px solid transparent; flex-shrink: 0;
+        }
+        .nav-item.active { border-color: var(--primary); transform: scale(1); opacity: 1; }
+        .nav-icon { font-size: 1.6rem; display: block; margin-bottom: 2px; }
+        .nav-label { font-size: 0.75rem; font-weight: 700; color: var(--text-main); }
+
+        /* --- CONTENT --- */
+        .content-area { padding: 10px 20px 25px 20px; animation: fadeIn 0.4s ease-out; }
+        .section-header {
+            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.2px;
+            color: var(--text-muted); font-weight: 800; margin: 30px 0 12px 5px;
+            display: flex; align-items: center;
+        }
+        .section-header::before {
+            content: ''; width: 6px; height: 6px; background: var(--secondary); border-radius: 50%; margin-right: 10px;
+        }
+
+        /* --- CARDS & TOGGLES --- */
+        .topic-wrapper { background: var(--bg-card); border-radius: var(--radius); margin-bottom: 14px; box-shadow: var(--shadow-card); overflow: hidden; border: 1px solid var(--border-color); }
+        .topic-main { padding: 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: var(--bg-card); position: relative; z-index: 2; }
+        .topic-left { display: flex; align-items: center; gap: 14px; flex: 1; }
+        .topic-info h3 { margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        .topic-status { font-size: 0.7rem; margin-top: 4px; color: var(--text-muted); }
+        .topic-status.active { color: var(--success); font-weight: 600; }
+        .revision-drawer { background: var(--drawer-bg); max-height: 0; overflow: hidden; transition: max-height 0.3s; }
+        .topic-wrapper.open .revision-drawer { max-height: 400px; border-top: 1px dashed var(--text-muted); }
+        .topic-wrapper.open .chevron { transform: rotate(180deg); color: var(--primary); }
+        .drawer-content { padding: 16px 18px; }
+        .rev-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .rev-meta { display: flex; flex-direction: column; }
+        .rev-label { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
+        .rev-date { font-size: 0.75rem; color: var(--text-muted); }
+        .rev-date.due { color: var(--danger); font-weight: 700; }
+        .switch { position: relative; display: inline-block; width: 48px; height: 28px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 34px; }
+        [data-theme="dark"] .slider { background-color: #334155; }
+        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .master-switch input:checked + .slider { background-color: var(--success); } .master-switch input:checked + .slider:before { transform: translateX(20px); }
+        .rev-switch input:checked + .slider { background-color: var(--primary); } .rev-switch input:checked + .slider:before { transform: translateX(20px); }
+        .rev-row.locked { opacity: 0.4; pointer-events: none; }
+        .task-card { background: var(--bg-card); border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: var(--shadow-card); display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--warning); }
+        .task-card.r4 { border-left-color: var(--primary); } .task-card.r7 { border-left-color: var(--secondary); } .task-card.completed { opacity: 0.5; filter: grayscale(1); }
+        .task-meta h4 { margin: 0 0 5px 0; font-size: 1rem; color: var(--text-main); }
+        .task-tag { font-size: 0.75rem; background: var(--task-tag-bg); padding: 3px 8px; border-radius: 6px; color: var(--text-muted); font-weight: 600; }
+        .backup-card { background: var(--bg-card); border-radius: 16px; padding: 25px; margin-bottom: 20px; box-shadow: var(--shadow-card); text-align: center; border: 1px solid var(--border-color); }
+        .backup-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+        .backup-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 5px; color: var(--text-main); }
+        .backup-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
+        .action-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 50px; font-weight: 600; cursor: pointer; font-size: 0.9rem; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.2s; }
+        .action-btn:active { transform: scale(0.98); } .action-btn.secondary { background: var(--bg-body); color: var(--text-main); border: 2px solid var(--border-color); }
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+
+        /* --- CHAT MODAL --- */
+        .chat-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--modal-overlay); z-index: 2500;
+            display: flex; align-items: flex-end; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        .chat-overlay.show { opacity: 1; pointer-events: auto; }
+        .chat-container {
+            width: 100%; max-width: 600px; height: 85vh;
+            background: var(--bg-card); border-top-left-radius: 24px; border-top-right-radius: 24px;
+            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
+            transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .chat-overlay.show .chat-container { transform: translateY(0); }
+        
+        .chat-header {
+            padding: 15px 20px; border-bottom: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--bg-card);
+        }
+        .chat-title { font-weight: 700; font-size: 1.1rem; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+        .chat-close { font-size: 1.5rem; color: var(--text-muted); cursor: pointer; background: none; border: none; }
+        
+        .chat-messages {
+            flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;
+            background: var(--bg-body);
+        }
+        .message { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 0.95rem; line-height: 1.5; word-wrap: break-word; }
+        .message.user { align-self: flex-end; background: var(--chat-user-bg); color: white; border-bottom-right-radius: 4px; }
+        .message.ai { align-self: flex-start; background: var(--chat-ai-bg); color: var(--chat-text-ai); border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
+        .message.system { align-self: center; font-size: 0.8rem; color: var(--text-muted); background: transparent; padding: 0; }
+        
+        .chat-input-area {
+            padding: 15px; border-top: 1px solid var(--border-color); background: var(--bg-card);
+            display: flex; gap: 10px; align-items: flex-end;
+        }
+        .chat-input {
+            flex: 1; padding: 12px 15px; border-radius: 24px; border: 1px solid var(--border-color);
+            background: var(--bg-body); color: var(--text-main); font-family: inherit; font-size: 0.95rem;
+            resize: none; max-height: 100px; outline: none;
+        }
+        .chat-send {
+            width: 45px; height: 45px; border-radius: 50%; background: var(--primary);
+            color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; flex-shrink: 0; transition: transform 0.2s;
+        }
+        .chat-send:active { transform: scale(0.9); }
+        .api-key-box { padding: 15px; background: #fff3cd; color: #856404; border-radius: 8px; font-size: 0.85rem; margin-bottom: 10px; border: 1px solid #ffeeba; }
+
+        /* --- MODAL & TOAST --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--modal-overlay); z-index: 3000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .modal-card {
+            background: var(--bg-card); padding: 25px; border-radius: 20px;
+            width: 90%; max-width: 320px; text-align: center;
+            transform: scale(0.9); transition: transform 0.3s;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border-color);
+        }
+        .modal-overlay.show .modal-card { transform: scale(1); }
+        .modal-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+        .modal-title { font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+        .modal-msg { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
+        .modal-actions { display: flex; gap: 10px; justify-content: center; }
+        .modal-btn { border: none; padding: 10px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; flex: 1; }
+        .modal-btn.cancel { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); }
+        .modal-btn.confirm { background: var(--primary); color: white; }
+        .modal-btn.danger { background: var(--danger); color: white; }
+
+        .toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px;
+            font-size: 0.9rem; font-weight: 500; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            z-index: 4000; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; gap: 10px; white-space: nowrap;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.error { background: #991b1b; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Markdown Styles for AI */
+        .message.ai strong { font-weight: 700; color: var(--primary); }
+        .message.ai ul { padding-left: 20px; margin: 5px 0; }
+        .message.ai p { margin: 0 0 8px 0; }
+        .message.ai p:last-child { margin: 0; }
+    </style>
+</head>
+<body>
+
+    <div class="modal-overlay" id="customModal">
+        <div class="modal-card">
+            <span class="modal-icon" id="modalIcon">⚠️</span>
+            <div class="modal-title" id="modalTitle">Confirm</div>
+            <div class="modal-msg" id="modalMsg">Are you sure?</div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn confirm" id="modalConfirmBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-overlay" id="aiChat">
+        <div class="chat-container">
+            <div class="chat-header">
+				<div class="chat-title">✨ BankPrep Tutor</div>
+				<div style="display:flex; gap:15px; align-items:center;">
+					<button onclick="resetApiKey()" style="background:none; border:none; color:var(--text-muted); font-size:0.75rem; cursor:pointer; text-decoration:underline;">Change Key</button>
+					<button class="chat-close" onclick="closeChat()">×</button>
+				</div>
+			</div>
+            <div class="chat-messages" id="chatHistory">
+                </div>
+            <div class="chat-input-area">
+                <textarea class="chat-input" id="chatInput" placeholder="Ask for help, examples, or tips..." rows="1"></textarea>
+                <button class="chat-send" onclick="sendToGemini()">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">
+        <span id="toastIcon">✅</span>
+        <span id="toastMsg">Success</span>
+    </div>
+
+    <div class="fixed-top-container" id="fixedHeader">
+        <header class="app-header">
+            <div class="header-top">
+                <div class="header-title">
+                    <h1>BankPrep</h1>
+                    <div class="header-subtitle">100% Syllabus Coverage</div>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn ai-btn" onclick="openChat()" aria-label="AI Tutor">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/>
+							<path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/>
+						</svg>
+					</button>
+                    <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" aria-label="Toggle Theme">
+					</button>
+                    <button class="icon-btn" onclick="triggerReset()" style="font-size: 0.9rem;">↺</button>
+                </div>
+            </div>
+            <div class="global-progress-container">
+                <div class="global-progress-fill" id="globalBar"></div>
+            </div>
+            <div class="progress-label" id="globalText">0% Complete</div>
+        </header>
+
+        <nav class="category-nav" id="categoryNav">
+            </nav>
+    </div>
+
+    <main class="content-area" id="contentArea">
+        </main>
+
+    <input type="file" id="importFile" style="display: none;" accept=".json" onchange="processImport(this)">
+
+    <script>
+        // --- 1. DATA SYLLABUS ---
+        const syllabusData = {
+            "quant": { label: "Quant", icon: "📊", sections: [
+                { title: "Number System", topics: ["Natural, Whole, Integers", "Prime & Composite", "Factors & Multiples", "LCM & HCF", "Divisibility Rules", "Unit Digit", "Cyclicity"] },
+                { title: "Arithmetic Core", topics: ["Simplification", "Approximation", "BODMAS", "Fractions & Decimals", "Percentages", "Ratio & Proportion", "Average"] },
+                { title: "Commercial Maths", topics: ["Profit & Loss", "Simple Interest", "Compound Interest", "Time & Work", "Pipes & Cisterns", "Time Speed Distance", "Boats & Streams", "Mixtures & Alligation", "Partnership", "Ages"] },
+                { title: "Advanced & Mains", topics: ["Permutation & Combination", "Probability (Mains)", "Mensuration 2D", "Mensuration 3D", "Number Series", "Quadratic Equations"] },
+                { title: "Data Interpretation", topics: ["Table DI", "Bar Graph", "Line Graph", "Pie Chart", "Caselet DI", "Missing DI", "Radar / Web DI"] }
+            ]},
+            "reasoning": { label: "Logic", icon: "🧠", sections: [
+                { title: "Speed Reasoning", topics: ["Alphabet Series", "Number Series", "Alphanumeric Series", "Analogy", "Classification", "Inequality", "Syllogism (New Pattern)"] },
+                { title: "Spatial & Logic", topics: ["Direction & Distance", "Coding-Decoding", "Order & Ranking", "Blood Relations"] },
+                { title: "Seating Arrangement", topics: ["Linear Row", "Circular Seating", "Square/Rectangular", "Triangular Seating", "Uncertain Number"] },
+                { title: "Puzzles", topics: ["Floor Based", "Box Based", "Month/Day/Year", "Scheduling", "Designation Based", "Flat & Floor"] },
+                { title: "Mains Logic", topics: ["Input-Output", "Data Sufficiency", "Statement & Assumption", "Statement & Conclusion", "Cause & Effect", "Course of Action"] }
+            ]},
+            "english": { label: "English", icon: "📖", sections: [
+                { title: "Grammar Rules", topics: ["Parts of Speech", "Subject-Verb Agreement", "Tenses", "Articles", "Prepositions", "Conjunctions", "Active & Passive Voice", "Direct & Indirect Speech"] },
+                { title: "Vocabulary", topics: ["Synonyms & Antonyms", "Idioms & Phrases", "Phrasal Verbs", "Root Words", "One-word Substitution", "Word Usage/Swap"] },
+                { title: "Reading Skills", topics: ["Reading Comprehension", "RC Inference & Tone", "Cloze Test", "Para Jumbles", "Para Completion", "Sentence Rearrangement"] },
+                { title: "Mains Descriptive", topics: ["Essay Writing", "Letter Writing"] }
+            ]},
+            "ga": { label: "G.A.", icon: "🏦", sections: [
+                { title: "Banking Awareness", topics: ["RBI Functions & Structure", "Monetary Policy", "Repo, Reverse Repo, CRR, SLR", "Types of Accounts", "Basel Norms", "Financial Inclusion", "NPCI (UPI, IMPS)"] },
+                { title: "Static GK", topics: ["National Parks & Sanctuaries", "Dams & Rivers", "Country Capitals & Currencies", "HQ of Int. Organizations", "Airports & Stadiums", "Power Plants"] },
+                { title: "Current Affairs", topics: ["Last 6 Months News", "Union Budget", "Government Schemes", "Appointments", "Awards & Honours", "Books & Authors", "Sports News"] }
+            ]},
+            "computer": { label: "Computer", icon: "💻", sections: [
+                { title: "Hardware & OS", topics: ["Generations of Computers", "Input/Output Devices", "Memory (RAM, ROM)", "Operating Systems"] },
+                { title: "Networking & Security", topics: ["Internet & Browsers", "OSI Model", "IP Addresses & Protocols", "Cyber Security", "Virus & Malware", "MS Office Shortcuts"] }
+            ]},
+            "schedule": { label: "Today", icon: "📅", sections: [] },
+            "backup": { label: "Backup", icon: "💾", sections: [] }
+        };
+
+        const STORAGE_KEY = 'bank_diamond_ai_v7';
+        const API_KEY_STORAGE = 'gemini_api_key';
+        const THEME_KEY = 'bank_theme_pref';
+        let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        let currentTab = 'quant';
+        let modalCallback = null;
+
+        // --- UTILS ---
+        function getFormattedDate(dateStr) {
+            if(!dateStr) return "-";
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+        function addDays(dateStr, days) {
+            const date = new Date(dateStr);
+            date.setDate(date.getDate() + days);
+            return date;
+        }
+        function isSameDate(d1, d2) {
+            return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
+        }
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            updateGlobalStats();
+        }
+        function adjustPadding() {
+            const headerHeight = document.getElementById('fixedHeader').offsetHeight;
+            document.body.style.paddingTop = (headerHeight + 20) + 'px';
+        }
+        window.addEventListener('resize', adjustPadding);
+
+        // --- UI (TOAST & MODAL) ---
+        function showToast(msg, type='success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            const txt = document.getElementById('toastMsg');
+            icon.innerText = type === 'success' ? '✅' : '❌';
+            txt.innerText = msg;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        function showModal(title, msg, icon, isDanger, callback) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMsg').innerText = msg;
+            document.getElementById('modalIcon').innerText = icon;
+            const btn = document.getElementById('modalConfirmBtn');
+            btn.className = isDanger ? 'modal-btn danger' : 'modal-btn confirm';
+            document.getElementById('customModal').classList.add('show');
+            modalCallback = callback;
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').classList.remove('show');
+            modalCallback = null;
+            document.getElementById('importFile').value = '';
+        }
+
+        document.getElementById('modalConfirmBtn').addEventListener('click', () => {
+            if (modalCallback) modalCallback();
+            closeModal();
+        });
+
+        // --- THEME ---
+		const SUN_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`;
+
+		const MOON_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>`;
+        function initTheme() {
+			const pref = localStorage.getItem(THEME_KEY);
+			const btn = document.getElementById('themeBtn');
+			if (pref === 'dark') {
+				document.documentElement.setAttribute('data-theme', 'dark');
+				btn.innerHTML = SUN_ICON; // Show Sun when in Dark Mode
+			} else {
+				document.documentElement.setAttribute('data-theme', 'light');
+				btn.innerHTML = MOON_ICON; // Show Moon when in Light Mode
+			}
+		}
+        window.toggleTheme = function() {
+			const current = document.documentElement.getAttribute('data-theme');
+			const btn = document.getElementById('themeBtn');
+			
+			if (current === 'light') {
+				document.documentElement.setAttribute('data-theme', 'dark');
+				localStorage.setItem(THEME_KEY, 'dark');
+				btn.innerHTML = SUN_ICON;
+			} else {
+				document.documentElement.setAttribute('data-theme', 'light');
+				localStorage.setItem(THEME_KEY, 'light');
+				btn.innerHTML = MOON_ICON;
+			}
+		}
+
+        // --- AI CHAT LOGIC ---
+        function openChat() {
+            document.getElementById('aiChat').classList.add('show');
+            const history = document.getElementById('chatHistory');
+            
+            // First time logic: check for API Key
+            const existingKey = localStorage.getItem(API_KEY_STORAGE);
+            if (!existingKey && history.children.length === 0) {
+                appendMessage('system', 'Welcome! To use the AI Tutor, please enter your Gemini API Key below. It will be saved locally on your device.');
+                // Show Input for API Key inside chat (hacky but simple)
+                history.innerHTML += `
+                    <div class="message system" id="apiKeyContainer">
+                        <div style="background:var(--bg-card); padding:10px; border-radius:12px; border:1px solid var(--primary); text-align:center;">
+                            <input type="password" id="apiKeyInput" placeholder="Paste Gemini API Key" style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--border-color); margin-bottom:8px;">
+                            <button onclick="saveApiKey()" style="background:var(--primary); color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">Save Key</button>
+                            <div style="font-size:0.7rem; margin-top:5px; color:var(--text-muted);">Get key from aistudio.google.com</div>
+                        </div>
+                    </div>
+                `;
+            } else if (history.children.length === 0) {
+                appendMessage('ai', 'Hello! I am your Banking Exam Tutor. Ask me about Quant, Reasoning, English, or for practice questions!');
+            }
+        }
+
+        function closeChat() {
+            document.getElementById('aiChat').classList.remove('show');
+        }
+
+        window.saveApiKey = function() {
+            const input = document.getElementById('apiKeyInput');
+            if (input.value.trim().length > 10) {
+                localStorage.setItem(API_KEY_STORAGE, input.value.trim());
+                document.getElementById('apiKeyContainer').remove();
+                appendMessage('system', 'API Key saved! You can now ask questions.');
+                appendMessage('ai', 'Hello! I am ready to help. What topic are you studying today?');
+            } else {
+                alert("Please enter a valid API key.");
+            }
+        }
+
+        function appendMessage(sender, text) {
+            const history = document.getElementById('chatHistory');
+            const div = document.createElement('div');
+            div.className = `message ${sender}`;
+            
+            // Simple markdown parsing for AI
+            if (sender === 'ai') {
+                let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Bold
+                formatted = formatted.replace(/\n/g, '<br>'); // Newlines
+                formatted = formatted.replace(/\* (.*?)(<br>|$)/g, '<ul><li>$1</li></ul>'); // Lists (Basic)
+                div.innerHTML = formatted;
+            } else {
+                div.textContent = text;
+            }
+            
+            history.appendChild(div);
+            history.scrollTop = history.scrollHeight;
+        }
+
+        window.sendToGemini = async function() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            const apiKey = localStorage.getItem(API_KEY_STORAGE);
+
+            if (!text) return;
+            if (!apiKey) {
+                appendMessage('system', 'Please enter your API Key first.');
+                return;
+            }
+
+            // UI Updates
+            appendMessage('user', text);
+            input.value = '';
+            const loadingId = 'loading-' + Date.now();
+            const history = document.getElementById('chatHistory');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message ai';
+            loadingDiv.id = loadingId;
+            loadingDiv.innerHTML = '<i>Thinking...</i>';
+            history.appendChild(loadingDiv);
+            history.scrollTop = history.scrollHeight;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: `You are an expert tutor for Indian Banking Exams (IBPS, SBI, RRB). The user asks: ${text}. Keep answers concise, helpful, and formatted clearly.` }]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                document.getElementById(loadingId).remove();
+
+                if (data.error) {
+                    appendMessage('system', 'Error: ' + data.error.message);
+                } else {
+                    const reply = data.candidates[0].content.parts[0].text;
+                    appendMessage('ai', reply);
+                }
+            } catch (err) {
+                document.getElementById(loadingId).remove();
+                appendMessage('system', 'Network Error. Please check connection.');
+            }
+        }
+
+        // --- CORE RENDER ---
+        function init() {
+            initTheme(); renderTabs(); renderContent(currentTab); updateGlobalStats(); adjustPadding();
+        }
+
+        function renderTabs() {
+            const nav = document.getElementById('categoryNav');
+            nav.innerHTML = '';
+            Object.keys(syllabusData).forEach(key => {
+                const item = document.createElement('div');
+                item.className = `nav-item ${key === currentTab ? 'active' : ''}`;
+                item.setAttribute('data-key', key);
+                item.innerHTML = `<span class="nav-icon">${syllabusData[key].icon}</span><span class="nav-label">${syllabusData[key].label}</span>`;
+                item.onclick = () => {
+                    currentTab = key; renderTabs(); renderContent(key); window.scrollTo({ top: 0, behavior: 'instant' });
+                };
+                nav.appendChild(item);
+            });
+        }
+
+        function renderContent(subjectKey) {
+            const container = document.getElementById('contentArea');
+            container.innerHTML = '';
+            if (subjectKey === 'schedule') { renderDailySchedule(container); return; }
+            if (subjectKey === 'backup') { renderBackupPage(container); return; }
+            
+            const subject = syllabusData[subjectKey];
+            subject.sections.forEach(section => {
+                const secHeader = document.createElement('div');
+                secHeader.className = 'section-header';
+                secHeader.textContent = section.title;
+                container.appendChild(secHeader);
+                section.topics.forEach(topic => {
+                    const id = `${subjectKey}-${topic.replace(/[^a-zA-Z0-9]/g, '')}`;
+                    const tData = state[id] || { done: false, date: null, r1: false, r4: false, r7: false };
+                    let statusText = "Not Started";
+                    let d1 = "Locked", d4 = "Locked", d7 = "Locked";
+                    let isLocked = true;
+                    if (tData.done && tData.date) {
+                        statusText = `Started: ${getFormattedDate(tData.date)}`;
+                        d1 = getFormattedDate(addDays(tData.date, 1));
+                        d4 = getFormattedDate(addDays(tData.date, 4));
+                        d7 = getFormattedDate(addDays(tData.date, 7));
+                        isLocked = false;
+                    }
+                    const card = document.createElement('div');
+                    card.className = `topic-wrapper ${tData.done ? 'open' : ''}`; card.id = `card-${id}`;
+                    card.innerHTML = `
+                        <div class="topic-main" onclick="toggleDrawer('${id}')">
+                            <div class="topic-left">
+                                <span class="chevron">▼</span>
+                                <div class="topic-info"><h3>${topic}</h3><div class="topic-status ${tData.done ? 'active' : ''}">${statusText}</div></div>
+                            </div>
+                            <label class="switch master-switch" onclick="event.stopPropagation()">
+                                <input type="checkbox" onchange="handleMasterToggle('${id}')" ${tData.done ? 'checked' : ''}><span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="revision-drawer"><div class="drawer-content">
+                            <div class="schedule-title">1-4-7 Revision Schedule</div>
+                            ${renderRevRow(id, 'r1', '1st Revision (Day 1)', d1, tData.r1, isLocked)}
+                            ${renderRevRow(id, 'r4', '4th Day Revision', d4, tData.r4, isLocked)}
+                            ${renderRevRow(id, 'r7', '7th Day Revision', d7, tData.r7, isLocked)}
+                        </div></div>
+                    `;
+                    container.appendChild(card);
+                });
+            });
+        }
+
+        function renderRevRow(id, revKey, label, dateStr, isChecked, isLocked) {
+            return `<div class="rev-row ${isLocked ? 'locked' : ''}">
+                <div class="rev-meta"><span class="rev-label">${label}</span><span class="rev-date ${!isLocked && !isChecked ? 'due' : ''}">${isLocked ? 'Topic Locked' : (isChecked ? 'Done' : 'Due: ' + dateStr)}</span></div>
+                <label class="switch rev-switch"><input type="checkbox" onchange="handleRevToggle('${id}', '${revKey}')" ${isChecked ? 'checked' : ''} ${isLocked ? 'disabled' : ''}><span class="slider"></span></label>
+            </div>`;
+        }
+
+        // --- BACKUP ---
+        function renderBackupPage(container) {
+            container.innerHTML = `
+                <div class="section-header">DATA MANAGEMENT</div>
+                <div class="backup-card"><span class="backup-icon">📤</span><div class="backup-title">Backup Data</div><div class="backup-desc">Save a copy of your progress file.</div><button class="action-btn" onclick="exportData()">Download Backup</button></div>
+                <div class="backup-card"><span class="backup-icon">📥</span><div class="backup-title">Restore Data</div><div class="backup-desc">Upload a file to restore progress.</div><button class="action-btn secondary" onclick="document.getElementById('importFile').click()">Restore File</button></div>
+            `;
+        }
+        window.exportData = function() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
+            const dl = document.createElement('a'); dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", `bankprep_backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(dl); dl.click(); dl.remove();
+            showToast("Backup Saved!");
+        }
+        window.processImport = function(input) {
+            const file = input.files[0];
+            if (!file) return;
+            showModal("Restore Data?", "This will overwrite your current progress.", "⚠️", true, () => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const loadedState = JSON.parse(e.target.result);
+                        if (typeof loadedState === 'object') {
+                            state = loadedState; saveState(); showToast("Restore Successful!"); setTimeout(() => location.reload(), 1000);
+                        } else throw new Error();
+                    } catch(err) { showToast("Invalid File!", "error"); }
+                };
+                reader.readAsText(file);
+            });
+        }
+
+        // --- SCHEDULE ---
+        function renderDailySchedule(container) {
+            const today = new Date(); let taskFound = false;
+            const header = document.createElement('div'); header.className = 'section-header';
+            header.innerHTML = `Tasks due: ${getFormattedDate(today)}`; container.appendChild(header);
+            
+            Object.keys(syllabusData).filter(k => k !== 'schedule' && k !== 'backup').forEach(subKey => {
+                syllabusData[subKey].sections.forEach(sec => {
+                    sec.topics.forEach(topic => {
+                        const id = `${subKey}-${topic.replace(/[^a-zA-Z0-9]/g, '')}`;
+                        const tData = state[id];
+                        if (tData && tData.done && tData.date) {
+                            const start = new Date(tData.date);
+                            if (isSameDate(addDays(start, 1), today)) { renderTaskCard(container, id, topic, '1st Revision', 'r1', tData.r1); taskFound = true; }
+                            if (isSameDate(addDays(start, 4), today)) { renderTaskCard(container, id, topic, '4th Day Revision', 'r4', tData.r4); taskFound = true; }
+                            if (isSameDate(addDays(start, 7), today)) { renderTaskCard(container, id, topic, '7th Day Revision', 'r7', tData.r7); taskFound = true; }
+                        }
+                    });
+                });
+            });
+            if (!taskFound) container.innerHTML += `<div class="empty-state"><div style="font-size: 3rem; margin-bottom: 10px;">🎉</div><h3>All caught up!</h3><p>No revisions due today.</p></div>`;
+        }
+        function renderTaskCard(container, id, topicName, label, revKey, isCompleted) {
+            const card = document.createElement('div'); card.className = `task-card ${revKey} ${isCompleted ? 'completed' : ''}`;
+            card.innerHTML = `<div class="task-meta"><span class="task-tag">${label}</span><h4>${topicName}</h4></div><label class="switch rev-switch"><input type="checkbox" onchange="handleRevToggle('${id}', '${revKey}')" ${isCompleted ? 'checked' : ''}><span class="slider"></span></label>`;
+            container.appendChild(card);
+        }
+
+        // --- INTERACTION ---
+        window.toggleDrawer = function(id) { document.getElementById(`card-${id}`).classList.toggle('open'); };
+        window.handleMasterToggle = function(id) {
+            const isChecked = event.target.checked;
+            if (!state[id]) state[id] = {};
+            if (isChecked) {
+                state[id].done = true; state[id].date = new Date().toISOString();
+                if(state[id].r1 === undefined) state[id].r1 = false;
+                if(state[id].r4 === undefined) state[id].r4 = false;
+                if(state[id].r7 === undefined) state[id].r7 = false;
+                setTimeout(() => document.getElementById(`card-${id}`).classList.add('open'), 100);
+            } else {
+                state[id].done = false; state[id].date = null; state[id].r1 = false; state[id].r4 = false; state[id].r7 = false;
+                document.getElementById(`card-${id}`).classList.remove('open');
+            }
+            saveState(); renderContent(currentTab);
+        };
+        window.handleRevToggle = function(id, revKey) {
+            const isChecked = event.target.checked;
+            if (state[id]) {
+                state[id][revKey] = isChecked; saveState();
+                if(currentTab === 'schedule') renderContent('schedule'); else renderContent(currentTab);
+            }
+        };
+        function updateGlobalStats() {
+            let total = 0, completed = 0;
+            Object.keys(syllabusData).filter(k => k !== 'schedule' && k !== 'backup').forEach(subKey => {
+                syllabusData[subKey].sections.forEach(sec => {
+                    sec.topics.forEach(t => {
+                        total++; const id = `${subKey}-${t.replace(/[^a-zA-Z0-9]/g, '')}`;
+                        if (state[id] && state[id].done) completed++;
+                    });
+                });
+            });
+            const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+            document.getElementById('globalBar').style.width = `${percent}%`;
+            document.getElementById('globalText').textContent = `${percent}% Syllabus Covered`;
+        }
+        window.triggerReset = function() {
+            showModal("Reset All?", "This will delete all progress permanently.", "🗑️", true, () => {
+                state = {}; saveState(); renderTabs(); renderContent(currentTab);
+                showToast("App Reset Successfully");
+            });
+        };
+		window.resetApiKey = function() {
+			if(confirm("Remove current API Key and enter a new one?")) {
+				// 1. Remove key from storage
+				localStorage.removeItem(API_KEY_STORAGE);
+				
+				// 2. Clear current chat history visual
+				document.getElementById('chatHistory').innerHTML = '';
+				
+				// 3. Re-run openChat logic (which triggers the Input field to appear)
+				openChat();
+			}
+		}
+
+        init();
+    </script>
+</body>
+</html>
