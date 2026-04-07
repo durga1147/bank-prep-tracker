@@ -38,62 +38,30 @@
         body { font-family: 'Poppins', sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding-bottom: 90px; }
 
         /* --- AUTH SCREEN --- */
-        #authScreen {
-            position: fixed; inset: 0;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex; align-items: center; justify-content: center; z-index: 5000;
-        }
-
-        .auth-card {
-            background: var(--bg-card); width: 100%; max-width: 360px;
-            padding: 32px 28px; border-radius: 28px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.25); text-align: center;
-            animation: fadeIn 0.4s ease;
-        }
-
+        #authScreen { position: fixed; inset: 0; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; z-index: 5000; }
+        .auth-card { background: var(--bg-card); width: 100%; max-width: 360px; padding: 32px 28px; border-radius: 28px; box-shadow: 0 25px 60px rgba(0,0,0,0.25); text-align: center; animation: fadeIn 0.4s ease; }
         .auth-logo { font-size: 3.2rem; margin-bottom: 8px; }
         .auth-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 4px; }
         .auth-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; }
-        .auth-input {
-            width: 100%; padding: 14px 16px; border-radius: 14px;
-            border: 1px solid var(--border-color); background: var(--bg-body);
-            font-size: 0.95rem; margin-bottom: 14px; color: var(--text-main);
-        }
+        .auth-input { width: 100%; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border-color); background: var(--bg-body); font-size: 0.95rem; margin-bottom: 14px; color: var(--text-main); }
         .auth-input:focus { outline: none; border-color: var(--primary); }
-        .auth-btn {
-            width: 100%; padding: 14px; border-radius: 14px; border: none;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 5px;
-        }
+        .auth-btn { width: 100%; padding: 14px; border-radius: 14px; border: none; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 5px; }
         .auth-link { margin-top: 18px; font-size: 0.85rem; color: var(--primary); cursor: pointer; font-weight: 600; }
 
         #appContainer { display: none; }
 
-        /* --- HEADER LAYOUT --- */
+        /* --- HEADER --- */
         .fixed-top-container { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background-color: var(--bg-body); }
-        .app-header { 
-            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
-            padding: 20px 20px 50px 20px; 
-            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; 
-            color: white; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); 
-            position: relative; z-index: 2; 
-        }
-        
+        .app-header { background: linear-gradient(135deg, var(--primary), var(--secondary)); padding: 20px 20px 50px 20px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; color: white; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); position: relative; z-index: 2; }
         .header-top { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
         .header-actions { align-self: flex-end; margin-top: 10px; display: flex; gap: 12px; }
-
-        .icon-btn { 
-            background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); 
-            color: white; width: 36px; height: 36px; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
-            cursor: pointer; backdrop-filter: blur(4px); 
-        }
+        .icon-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(4px); }
         .icon-btn.ai-btn { background: linear-gradient(135deg, #FFD700, #FFA500); border: none; color: #78350f; }
-
         .global-progress-container { margin-top: 20px; background: rgba(0,0,0,0.25); height: 8px; border-radius: 10px; overflow: hidden; position: relative; }
         .global-progress-fill { height: 100%; background: #fff; width: 0%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         .progress-label { font-size: 0.8rem; text-align: right; margin-top: 6px; font-weight: 600; color: white; }
 
+        /* --- NAVIGATION --- */
         .category-nav { display: flex; gap: 12px; overflow-x: auto; padding: 0 20px 15px 20px; margin-top: -35px; scrollbar-width: none; position: relative; z-index: 3; }
         .category-nav::-webkit-scrollbar { display: none; }
         .nav-item { background: var(--bg-card); min-width: 95px; padding: 12px 8px; border-radius: 14px; text-align: center; box-shadow: var(--shadow-card); cursor: pointer; transition: all 0.25s; opacity: 0.95; transform: scale(0.98); border: 2px solid transparent; flex-shrink: 0; }
@@ -105,61 +73,7 @@
         .section-header { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-muted); font-weight: 800; margin: 15px 0 12px 5px; display: flex; align-items: center; }
         .section-header::before { content: ''; width: 6px; height: 6px; background: var(--secondary); border-radius: 50%; margin-right: 10px; }
 
-        /* --- TOPIC CARDS --- */
-        .topic-wrapper { background: var(--bg-card); border-radius: var(--radius); margin-bottom: 14px; box-shadow: var(--shadow-card); overflow: hidden; border: 1px solid var(--border-color); }
-        .topic-main { padding: 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: var(--bg-card); position: relative; z-index: 2; }
-        .topic-left { display: flex; align-items: center; gap: 14px; flex: 1; }
-        .topic-info h3 { margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
-        .topic-status { font-size: 0.7rem; margin-top: 4px; color: var(--text-muted); }
-        .topic-status.active { color: var(--success); font-weight: 600; }
-        .revision-drawer { background: var(--drawer-bg); max-height: 0; overflow: hidden; transition: max-height 0.3s; }
-        .topic-wrapper.open .revision-drawer { max-height: 400px; border-top: 1px dashed var(--text-muted); }
-        .topic-wrapper.open .chevron { transform: rotate(180deg); color: var(--primary); }
-        .drawer-content { padding: 16px 18px; }
-        .rev-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-        .rev-meta { display: flex; flex-direction: column; }
-        .rev-label { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
-        .rev-date { font-size: 0.75rem; color: var(--text-muted); }
-        .rev-date.due { color: var(--danger); font-weight: 700; }
-
-        .switch { position: relative; display: inline-block; width: 48px; height: 28px; flex-shrink: 0; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 34px; }
-        [data-theme="dark"] .slider { background-color: #334155; }
-        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .master-switch input:checked + .slider { background-color: var(--success); } .master-switch input:checked + .slider:before { transform: translateX(20px); }
-        .rev-switch input:checked + .slider { background-color: var(--primary); } .rev-switch input:checked + .slider:before { transform: translateX(20px); }
-        .rev-row.locked { opacity: 0.4; pointer-events: none; }
-
-        .task-card { background: var(--bg-card); border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: var(--shadow-card); display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--warning); }
-        .task-card.r4 { border-left-color: var(--primary); } .task-card.r7 { border-left-color: var(--secondary); } .task-card.completed { opacity: 0.5; filter: grayscale(1); }
-        .task-meta h4 { margin: 0 0 5px 0; font-size: 1rem; color: var(--text-main); }
-        .task-tag { font-size: 0.75rem; background: var(--task-tag-bg); padding: 3px 8px; border-radius: 6px; color: var(--text-muted); font-weight: 600; }
-        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
-
-        /* --- CHAT/MODAL OVERLAY --- */
-        .chat-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--modal-overlay); z-index: 2500; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(5px); }
-        .chat-overlay.show { opacity: 1; pointer-events: auto; }
-        .chat-container { width: 100%; max-width: 600px; height: 85vh; background: var(--bg-card); border-top-left-radius: 24px; border-top-right-radius: 24px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 -10px 40px rgba(0,0,0,0.2); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .chat-overlay.show .chat-container { transform: translateY(0); }
-        .chat-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); }
-        .chat-title { font-weight: 700; font-size: 1.1rem; color: var(--text-main); }
-        .chat-close { font-size: 1.5rem; color: var(--text-muted); cursor: pointer; background: none; border: none; }
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: var(--bg-body); }
-        .message { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 0.95rem; line-height: 1.5; word-wrap: break-word; }
-        .message.user { align-self: flex-end; background: var(--chat-user-bg); color: white; border-bottom-right-radius: 4px; }
-        .message.ai { align-self: flex-start; background: var(--chat-ai-bg); color: var(--chat-text-ai); border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
-        .message.system { align-self: center; font-size: 0.8rem; color: var(--text-muted); text-align: center; width: 100%; }
-        .message.ai strong { font-weight: 700; color: var(--primary); }
-        .chat-input-area { padding: 15px; border-top: 1px solid var(--border-color); background: var(--bg-card); display: flex; gap: 10px; align-items: flex-end; }
-        .chat-input { flex: 1; padding: 12px 15px; border-radius: 24px; border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); font-family: inherit; font-size: 0.95rem; resize: none; max-height: 100px; outline: none; }
-        .chat-send { width: 45px; height: 45px; border-radius: 50%; background: var(--primary); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
-
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px; font-size: 0.9rem; font-weight: 500; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); z-index: 4000; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 10px; white-space: nowrap; }
-        .toast.show { transform: translateX(-50%) translateY(0); }
-        .toast.error { background: #991b1b; }
-        
-        /* --- SEARCH BAR --- */
+        /* --- SEARCH --- */
         .search-container { padding: 15px 20px 10px 20px; background: var(--bg-body); transition: background 0.3s ease; }
         .search-box { position: relative; display: flex; align-items: center; }
         .search-input { width: 100%; padding: 12px 40px 12px 42px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); font-family: 'Poppins', sans-serif; font-size: 0.9rem; outline: none; box-shadow: var(--shadow-card); transition: all 0.3s ease; }
@@ -168,32 +82,31 @@
         .search-clear { position: absolute; right: 12px; background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; display: none; padding: 0; }
         .search-clear.show { display: block; }
 
-        /* --- NEW: DYNAMIC TASKS UI --- */
-        /* Floating Action Button - Refined Position */
-.fab { 
-    position: fixed; 
-    bottom: 30px; /* Moved closer to the bottom */
-    right: 20px;  /* Tucked to the right */
-    width: 56px;  /* Standard circular button size */
-    height: 56px; 
-    border-radius: 50%; 
-    background: linear-gradient(135deg, var(--primary), var(--secondary)); 
-    color: white; 
-    border: none; 
-    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); 
-    z-index: 2000; 
-    cursor: pointer; 
-    display: none; /* Controlled by JS */
-    align-items: center; 
-    justify-content: center;
-    padding: 0;
-}
+        /* --- CARDS --- */
+        .topic-wrapper { background: var(--bg-card); border-radius: var(--radius); margin-bottom: 14px; box-shadow: var(--shadow-card); overflow: hidden; border: 1px solid var(--border-color); }
+        .topic-main { padding: 18px; display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); }
+        .topic-info h3 { margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        .topic-status { font-size: 0.7rem; margin-top: 4px; color: var(--text-muted); }
+        .topic-status.active { color: var(--success); font-weight: 600; }
 
-/* Ensure the icon inside is centered and sized correctly */
-.fab svg {
-    width: 24px;
-    height: 24px;
-}
+        .switch { position: relative; display: inline-block; width: 48px; height: 28px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 34px; }
+        [data-theme="dark"] .slider { background-color: #334155; }
+        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+        .master-switch input:checked + .slider { background-color: var(--success); } .master-switch input:checked + .slider:before { transform: translateX(20px); }
+
+        .task-card { background: var(--bg-card); border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: var(--shadow-card); display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--warning); }
+        .task-card.r4 { border-left-color: var(--primary); } .task-card.r7 { border-left-color: var(--secondary); } .task-card.completed { opacity: 0.5; filter: grayscale(1); }
+        .task-meta h4 { margin: 0 0 5px 0; font-size: 1rem; color: var(--text-main); }
+        .task-tag { font-size: 0.75rem; background: var(--task-tag-bg); padding: 3px 8px; border-radius: 6px; color: var(--text-muted); font-weight: 600; }
+
+        /* --- MODALS & FAB --- */
+        .fab { position: fixed; bottom: 30px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); z-index: 2000; cursor: pointer; display: none; align-items: center; justify-content: center; }
+        .chat-overlay { position: fixed; inset: 0; background: var(--modal-overlay); z-index: 2500; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(5px); }
+        .chat-overlay.show { opacity: 1; pointer-events: auto; }
+        .chat-container { width: 100%; max-width: 600px; height: auto; background: var(--bg-card); border-top-left-radius: 24px; border-top-right-radius: 24px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 -10px 40px rgba(0,0,0,0.2); transform: translateY(100%); transition: transform 0.3s ease; padding: 25px; }
+        .chat-overlay.show .chat-container { transform: translateY(0); }
         .days-selector { display: flex; gap: 8px; justify-content: space-between; margin-top: 10px; }
         .day-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .day-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
@@ -207,82 +120,50 @@
         <div class="auth-card">
             <span class="auth-logo">🏦</span>
             <div class="auth-title">BankPrep Cloud</div>
-            <div class="auth-sub">Sign in to sync your progress</div>
             <input type="email" id="email" class="auth-input" placeholder="Email Address">
             <input type="password" id="password" class="auth-input" placeholder="Password">
-            <button class="auth-btn" id="mainAuthBtn" onclick="handleLogin()">Sign In</button>
-            <div class="auth-link" id="toggleAuthMode" onclick="toggleAuth()">New here? Create Account</div>
+            <button class="auth-btn" onclick="handleLogin()">Sign In</button>
+            <div class="auth-link" onclick="toggleAuth()">New here? Create Account</div>
             <div id="authError" style="color:var(--danger); font-size:0.8rem; margin-top:10px;"></div>
         </div>
     </div>
 
     <div id="appContainer">
         <div class="chat-overlay" id="aiChat">
-            <div class="chat-container">
-                <div class="chat-header">
+            <div class="chat-container" style="height:80vh; padding:0;">
+                <div class="chat-header" style="padding:15px 20px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
                     <div class="chat-title">✨ BankPrep Tutor</div>
-                    <div style="display:flex; gap:10px; align-items:center;">
-                        <button onclick="resetApiKey()" style="background:none; border:none; color:var(--text-muted); font-size:0.7rem; cursor:pointer; text-decoration:underline;">Key</button>
-                        <button class="chat-close" onclick="closeChat()">×</button>
-                    </div>
+                    <button class="chat-close" onclick="closeChat()">×</button>
                 </div>
-                <div class="chat-messages" id="chatHistory"></div>
-                <div class="chat-input-area">
-                    <textarea class="chat-input" id="chatInput" placeholder="Ask a doubt..." rows="1"></textarea>
-                    <button class="chat-send" onclick="sendToGemini()">➤</button>
+                <div id="chatHistory" style="flex:1; overflow-y:auto; padding:20px; background:var(--bg-body); display:flex; flex-direction:column; gap:15px;"></div>
+                <div style="padding:15px; background:var(--bg-card); display:flex; gap:10px;">
+                    <textarea id="chatInput" class="chat-input" placeholder="Ask a doubt..." rows="1" style="flex:1; border-radius:20px; padding:10px; border:1px solid var(--border-color);"></textarea>
+                    <button onclick="sendToGemini()" style="width:40px; height:40px; border-radius:50%; background:var(--primary); color:white; border:none;">➤</button>
                 </div>
             </div>
         </div>
 
-        <div class="chat-overlay" id="taskModal">
-            <div class="chat-container" style="height: auto; padding: 25px; border-radius: 24px; margin-bottom: 20px;">
-                <div class="chat-header" style="border:none; padding:0 0 20px 0;">
-                    <div class="chat-title">Create Daily Task</div>
-                    <button class="chat-close" onclick="closeTaskModal()">×</button>
-                </div>
-                <input type="text" id="newTaskName" class="auth-input" placeholder="Task Name (e.g. 5 Puzzles)">
-                <div style="margin: 15px 0 10px 0; font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">REPEAT ON:</div>
-                <div class="days-selector" id="daysSelector">
-                    <button class="day-btn" data-day="0">S</button>
-                    <button class="day-btn" data-day="1">M</button>
-                    <button class="day-btn" data-day="2">T</button>
-                    <button class="day-btn" data-day="3">W</button>
-                    <button class="day-btn" data-day="4">T</button>
-                    <button class="day-btn" data-day="5">F</button>
-                    <button class="day-btn" data-day="6">S</button>
-                </div>
-                <button class="auth-btn" style="margin-top: 25px;" onclick="saveNewTask()">Create Task</button>
-            </div>
+        <div class="chat-overlay" id="genericModal">
+            <div class="chat-container" id="modalContent"></div>
         </div>
-
-        <div id="toast" class="toast"><span id="toastIcon">✅</span><span id="toastMsg">Success</span></div>
 
         <div class="fixed-top-container" id="fixedHeader">
             <header class="app-header">
                 <div class="header-top">
-                    <div class="header-title">
-                        <h1 style="margin: 0; font-size: 1.25rem; font-weight: 700; line-height: 1.3;">BankPrep "Syllabus Tracker"</h1>
-                        <div style="font-size: 0.75rem; font-weight: 500; opacity: 0.9; margin-top: 2px;">(By Durga Prasad)</div>
-                        <div class="header-subtitle" style="margin-top: 4px;">100% Syllabus Coverage</div>
-                    </div>
+                    <h1 style="margin:0; font-size:1.25rem;">BankPrep Tracker</h1>
                     <div class="header-actions">
-                        <button class="icon-btn ai-btn" onclick="openChat()" aria-label="AI Tutor">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>
-                        </button>
-                        <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" aria-label="Toggle Theme"></button>
-                        <button class="icon-btn" onclick="handleLogout()" style="font-size: 0.9rem;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out-icon lucide-log-out"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg></button>
+                        <button class="icon-btn ai-btn" onclick="openChat()">✨</button>
+                        <button class="icon-btn" onclick="toggleTheme()" id="themeBtn"></button>
+                        <button class="icon-btn" onclick="handleLogout()">🚪</button>
                     </div>
                 </div>
                 <div class="global-progress-container"><div class="global-progress-fill" id="globalBar"></div></div>
-                <div class="progress-label" id="globalText">0% Complete</div>
+                <div class="progress-label" id="globalText">0% Covered</div>
             </header>
             <nav class="category-nav" id="categoryNav"></nav>
             <div class="search-container">
                 <div class="search-box">
-                    <span class="search-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                    </span>
-                    <input type="text" id="topicSearch" class="search-input" placeholder="Search topics..." autocomplete="off">
+                    <input type="text" id="topicSearch" class="search-input" placeholder="Search...">
                     <button class="search-clear" id="searchClear" onclick="clearSearch()">×</button>
                 </div>
             </div>
@@ -290,228 +171,177 @@
 
         <main class="content-area" id="contentArea"></main>
 
-        <button class="fab" id="addTaskBtn" onclick="openTaskModal()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </button>
+        <button class="fab" id="addTaskBtn" onclick="openContextModal()">+</button>
     </div>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyBPSXcRdCoik4vAKJxjB2258bWSpe_6nGU",
-            authDomain: "bankprep-tracker.firebaseapp.com",
-            projectId: "bankprep-tracker",
-            storageBucket: "bankprep-tracker.firebasestorage.app",
-            messagingSenderId: "254084569056",
-            appId: "1:254084569056:web:a6e3a75e0d80372b373d85"
-        };
-
-        if (firebaseConfig.apiKey !== "YOUR_API_KEY_HERE") { firebase.initializeApp(firebaseConfig); }
+        const firebaseConfig = { apiKey: "AIzaSyBPSXcRdCoik4vAKJxjB2258bWSpe_6nGU", authDomain: "bankprep-tracker.firebaseapp.com", projectId: "bankprep-tracker", storageBucket: "bankprep-tracker.firebasestorage.app", messagingSenderId: "254084569056", appId: "1:254084569056:web:a6e3a75e0d80372b373d85" };
+        firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(); const db = firebase.firestore();
 
         const syllabusData = {
-            "daily": { label: "Daily", icon: "📅", sections: [] },
-            "basics": { label: "Basics", icon: "⚡", sections: [{ title: "Calculation Drills", topics: ["Tables (1-20)", "Tables (21-30)", "Squares (1-50)", "Cubes (1-30)", "Fraction to % Drills"] }] },
-            "quant": { label: "Quant", icon: "📊", sections: [{ title: "Number System", topics: ["Natural, Whole, Integers", "Prime & Composite", "Factors & Multiples", "LCM & HCF", "Divisibility Rules", "Unit Digit", "Cyclicity"] }, { title: "Arithmetic Core", topics: ["Simplification", "Approximation", "BODMAS", "Fractions & Decimals", "Percentages", "Ratio & Proportion", "Average"] }, { title: "Commercial Maths", topics: ["Profit & Loss", "Simple Interest", "Compound Interest", "Time & Work", "Pipes & Cisterns", "Time Speed Distance", "Boats & Streams", "Mixtures & Alligation", "Partnership", "Ages"] }, { title: "Advanced & Mains", topics: ["Permutation & Combination", "Probability (Mains)", "Mensuration 2D", "Mensuration 3D", "Number Series", "Quadratic Equations"] }, { title: "Data Interpretation", topics: ["Table DI", "Bar Graph", "Line Graph", "Pie Chart", "Caselet DI", "Missing DI", "Radar / Web DI"] }] },
-            "reasoning": { label: "Logic", icon: "🧠", sections: [{ title: "Speed Reasoning", topics: ["Alphabet Series", "Number Series", "Alphanumeric Series", "Analogy", "Classification", "Inequality", "Syllogism (New Pattern)"] }, { title: "Spatial & Logic", topics: ["Direction & Distance", "Coding-Decoding", "Order & Ranking", "Blood Relations"] }, { title: "Seating Arrangement", topics: ["Linear Row", "Circular Seating", "Square/Rectangular", "Triangular Seating", "Uncertain Number"] }, { title: "Puzzles", topics: ["Floor Based", "Box Based", "Month/Day/Year", "Scheduling", "Designation Based", "Flat & Floor"] }, { title: "Mains Logic", topics: ["Input-Output", "Data Sufficiency", "Statement & Assumption", "Statement & Conclusion", "Cause & Effect", "Course of Action"] }] },
-            "english": { label: "English", icon: "📖", sections: [{ title: "Grammar Rules", topics: ["Parts of Speech", "Subject-Verb Agreement", "Tenses", "Articles", "Prepositions", "Conjunctions", "Active & Passive Voice", "Direct & Indirect Speech"] }, { title: "Vocabulary", topics: ["Synonyms & Antonyms", "Idioms & Phrases", "Phrasal Verbs", "Root Words", "One-word Substitution", "Word Usage/Swap"] }, { title: "Reading Skills", topics: ["Reading Comprehension", "RC Inference & Tone", "Cloze Test", "Para Jumbles", "Para Completion", "Sentence Rearrangement"] }, { title: "Mains Descriptive", topics: ["Essay Writing", "Letter Writing"] }] },
-            "ga": { label: "G.A.", icon: "🏦", sections: [{ title: "Banking Awareness", topics: ["RBI Functions & Structure", "Monetary Policy", "Repo, Reverse Repo, CRR, SLR", "Types of Accounts", "Basel Norms", "Financial Inclusion", "NPCI (UPI, IMPS)"] }, { title: "Static GK", topics: ["National Parks & Sanctuaries", "Dams & Rivers", "Country Capitals & Currencies", "HQ of Int. Organizations", "Airports & Stadiums", "Power Plants"] }, { title: "Current Affairs", topics: ["Last 6 Months News", "Union Budget", "Government Schemes", "Appointments", "Awards & Honours", "Books & Authors", "Sports News"] }] },
-            "computer": { label: "Computer", icon: "💻", sections: [{ title: "Hardware & OS", topics: ["Generations of Computers", "Input/Output Devices", "Memory (RAM, ROM)", "Operating Systems"] }, { title: "Networking & Security", topics: ["Internet & Browsers", "OSI Model", "IP Addresses & Protocols", "Cyber Security", "Virus & Malware", "MS Office Shortcuts"] }] },
-            "schedule": { label: "Revision", icon: "🕒", sections: [] }
+            "daily": { label: "Daily", icon: "📅" },
+            "planner": { label: "Planner", icon: "🕒" },
+            "basics": { label: "Basics", icon: "⚡", sections: [{ title: "Calculation", topics: ["Tables (1-20)", "Tables (21-30)", "Squares (1-50)", "Cubes (1-30)"] }] },
+            "quant": { label: "Quant", icon: "📊", sections: [{ title: "Arithmetic", topics: ["Percentages", "Ratio", "Average", "Profit Loss", "SI & CI", "Time Work"] }] },
+            "reasoning": { label: "Logic", icon: "🧠", sections: [{ title: "Reasoning", topics: ["Syllogism", "Inequality", "Puzzles", "Seating"] }] },
+            "english": { label: "English", icon: "📖", sections: [{ title: "Grammar", topics: ["Tenses", "Articles", "Error Spotting"] }] }
         };
 
-        const API_KEY_STORAGE = 'gemini_api_key'; const THEME_KEY = 'bank_theme_pref';
-        let state = {}; let currentTab = 'quant'; let isSignup = false; let currentUser = null;
-        let selectedDays = []; // For task modal
+        let state = {}; let currentTab = 'planner'; let currentUser = null; let selectedDays = [];
 
-        const SUN_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`;
-        const MOON_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>`;
-
-        // AUTH & INIT
         auth.onAuthStateChanged(user => {
-            if (user) {
-                currentUser = user; document.getElementById('authScreen').style.display = 'none';
-                document.getElementById('appContainer').style.display = 'block'; loadUserData(); initTheme();
-            } else {
-                currentUser = null; document.getElementById('authScreen').style.display = 'flex';
-                document.getElementById('appContainer').style.display = 'none';
-            }
+            if (user) { currentUser = user; document.getElementById('authScreen').style.display = 'none'; document.getElementById('appContainer').style.display = 'block'; loadUserData(); }
+            else { document.getElementById('authScreen').style.display = 'flex'; document.getElementById('appContainer').style.display = 'none'; }
         });
 
-        function toggleAuth() {
-            isSignup = !isSignup;
-            document.getElementById('mainAuthBtn').textContent = isSignup ? "Create Account" : "Sign In";
-            document.getElementById('toggleAuthMode').textContent = isSignup ? "Already have an account? Sign In" : "New here? Create Account";
-            document.getElementById('authError').textContent = "";
-        }
-
         async function handleLogin() {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
-            try { if(isSignup) await auth.createUserWithEmailAndPassword(email, pass); else await auth.signInWithEmailAndPassword(email, pass); }
-            catch(error) { document.getElementById('authError').textContent = error.message; }
+            const e = document.getElementById('email').value; const p = document.getElementById('password').value;
+            try { await auth.signInWithEmailAndPassword(e, p); } catch(err) { alert(err.message); }
         }
         function handleLogout() { auth.signOut(); }
 
-        // FIRESTORE SYNC
         function loadUserData() {
             db.collection('users').doc(currentUser.uid).onSnapshot(doc => {
-                if (doc.exists) state = doc.data().progress || {}; else state = {};
+                state = doc.exists ? doc.data().progress || {} : {};
                 if (!state.customTasks) state.customTasks = {};
-                renderTabs(); renderContent(currentTab); updateGlobalStats(); adjustPadding();
+                if (!state.plannerTasks) state.plannerTasks = {};
+                renderTabs(); renderContent(currentTab); updateGlobalStats();
             });
         }
-        function saveState() {
-            if(currentUser) db.collection('users').doc(currentUser.uid).set({ progress: state }, { merge: true });
-            updateGlobalStats();
+        function saveState() { if(currentUser) db.collection('users').doc(currentUser.uid).set({ progress: state }, { merge: true }); updateGlobalStats(); }
+
+        function renderTabs() {
+            const n = document.getElementById('categoryNav'); n.innerHTML='';
+            Object.keys(syllabusData).forEach(k=>{
+                const d=document.createElement('div'); d.className=`nav-item ${k===currentTab?'active':''}`;
+                d.innerHTML=`<span class="nav-icon">${syllabusData[k].icon}</span><span class="nav-label">${syllabusData[k].label}</span>`;
+                d.onclick=()=>{currentTab=k;renderTabs();renderContent(k);}; n.appendChild(d);
+            });
+            document.getElementById('addTaskBtn').style.display = ['daily','planner'].includes(currentTab) ? 'flex' : 'none';
         }
 
-        // UTILS
-        function getFormattedDate(d) { if(!d) return "-"; return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
-        function addDays(d, days) { const date = new Date(d); date.setDate(date.getDate() + days); return date; }
-        function isSameDate(d1, d2) { return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate(); }
-        function adjustPadding() { document.body.style.paddingTop = (document.getElementById('fixedHeader').offsetHeight + 5) + 'px'; }
-        window.addEventListener('resize', adjustPadding);
-        function showToast(msg, type='success') { const t=document.getElementById('toast'); document.getElementById('toastIcon').innerText=type==='success'?'✅':'❌'; document.getElementById('toastMsg').innerText=msg; t.className=`toast ${type} show`; setTimeout(()=>t.classList.remove('show'),3000); }
+        function renderContent(k) {
+            const c=document.getElementById('contentArea'); c.innerHTML='';
+            if(k==='daily') { renderDaily(c); return; }
+            if(k==='planner') { renderPlanner(c); return; }
 
-        // THEME
-        function initTheme() { const p = localStorage.getItem(THEME_KEY); if(p==='dark'){document.documentElement.setAttribute('data-theme','dark');document.getElementById('themeBtn').innerHTML=SUN_ICON;}else{document.documentElement.setAttribute('data-theme','light');document.getElementById('themeBtn').innerHTML=MOON_ICON;} }
-        window.toggleTheme = function() { const c = document.documentElement.getAttribute('data-theme'); if(c==='light'){document.documentElement.setAttribute('data-theme','dark');localStorage.setItem(THEME_KEY,'dark');document.getElementById('themeBtn').innerHTML=SUN_ICON;}else{document.documentElement.setAttribute('data-theme','light');localStorage.setItem(THEME_KEY,'light');document.getElementById('themeBtn').innerHTML=MOON_ICON;} }
-
-        // TASK MODAL LOGIC
-        function openTaskModal() { document.getElementById('taskModal').classList.add('show'); }
-        function closeTaskModal() { document.getElementById('taskModal').classList.remove('show'); }
-        
-        document.querySelectorAll('.day-btn').forEach(btn => {
-            btn.onclick = () => {
-                btn.classList.toggle('selected');
-                const day = parseInt(btn.dataset.day);
-                if(selectedDays.includes(day)) selectedDays = selectedDays.filter(d => d !== day);
-                else selectedDays.push(day);
-            }
-        });
-
-        window.saveNewTask = function() {
-            const name = document.getElementById('newTaskName').value.trim();
-            if (!name || selectedDays.length === 0) { showToast("Name and days required", "error"); return; }
-            const taskId = 'task-' + Date.now();
-            if (!state.customTasks) state.customTasks = {};
-            state.customTasks[taskId] = { name: name, days: [...selectedDays], completions: {} };
-            saveState(); closeTaskModal();
-            document.getElementById('newTaskName').value = '';
-            document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('selected'));
-            selectedDays = []; renderContent('daily');
+            syllabusData[k].sections.forEach(s=>{
+                const h=document.createElement('div'); h.className='section-header'; h.textContent=s.title; c.appendChild(h);
+                s.topics.forEach(t=>{
+                    const id=`${k}-${t.replace(/\s/g,'')}`; const td=state[id]||{done:false};
+                    const div=document.createElement('div'); div.className='topic-wrapper';
+                    div.innerHTML=`<div class="topic-main"><div><h3>${t}</h3><div class="topic-status ${td.done?'active':''}">${td.done?'Completed':'Pending'}</div></div><label class="switch master-switch"><input type="checkbox" onchange="toggleSyllabus('${id}')" ${td.done?'checked':''}><span class="slider"></span></label></div>`;
+                    c.appendChild(div);
+                });
+            });
         }
 
-        // RENDER LOGIC
-        function renderTabs() { 
-            const n = document.getElementById('categoryNav'); n.innerHTML=''; 
-            Object.keys(syllabusData).forEach(k=>{ 
-                const d=document.createElement('div'); d.className=`nav-item ${k===currentTab?'active':''}`; 
-                d.innerHTML=`<span class="nav-icon">${syllabusData[k].icon}</span><span class="nav-label">${syllabusData[k].label}</span>`; 
-                d.onclick=()=>{currentTab=k;renderTabs();renderContent(k);window.scrollTo({top:0,behavior:'instant'});}; n.appendChild(d); 
-            }); 
-            document.getElementById('addTaskBtn').style.display = currentTab === 'daily' ? 'flex' : 'none';
+        function toggleSyllabus(id) {
+            if(!state[id]) state[id] = {};
+            state[id].done = event.target.checked;
+            saveState(); renderContent(currentTab);
         }
-        
-        function renderContent(k) { 
-            const c=document.getElementById('contentArea'); c.innerHTML=''; 
-            if (document.getElementById('topicSearch')) { document.getElementById('topicSearch').value = ''; document.getElementById('searchClear').classList.remove('show'); }
+
+        // --- PLANNER LOGIC (1-4-7) ---
+        function renderPlanner(container) {
+            const today = new Date().toDateString();
+            const h = document.createElement('div'); h.className='section-header'; h.textContent="Revisions Due Today"; container.appendChild(h);
             
-            if(k==='schedule'){renderDailySchedule(c);return;} 
-            if(k==='daily'){renderCustomTasks(c); return;}
+            let found = false;
+            Object.entries(state.plannerTasks || {}).forEach(([id, task]) => {
+                const start = new Date(task.startDate);
+                const checkDates = { 
+                    r1: new Date(new Date(start).setDate(start.getDate()+1)).toDateString(),
+                    r4: new Date(new Date(start).setDate(start.getDate()+4)).toDateString(),
+                    r7: new Date(new Date(start).setDate(start.getDate()+7)).toDateString()
+                };
 
-            const sub=syllabusData[k]; 
-            sub.sections.forEach(s=>{ 
-                const h=document.createElement('div'); h.className='section-header'; h.textContent=s.title; c.appendChild(h); 
-                s.topics.forEach(t=>{ 
-                    const id=`${k}-${t.replace(/[^a-zA-Z0-9]/g,'')}`; 
-                    const td=state[id]||{done:false,date:null}; 
-                    let st="Not Started",d1="Locked",d4="Locked",d7="Locked",l=true; 
-                    if(td.done&&td.date){st=`Started: ${getFormattedDate(td.date)}`; d1=getFormattedDate(addDays(td.date,1)); d4=getFormattedDate(addDays(td.date,4)); d7=getFormattedDate(addDays(td.date,7)); l=false;} 
-                    const cd=document.createElement('div'); cd.className=`topic-wrapper`; cd.id=`card-${id}`; 
-                    cd.innerHTML=`<div class="topic-main" onclick="toggleDrawer('${id}')"><div class="topic-left"><span class="chevron">▼</span><div class="topic-info"><h3>${t}</h3><div class="topic-status ${td.done?'active':''}">${st}</div></div></div><label class="switch master-switch" onclick="event.stopPropagation()"><input type="checkbox" onchange="handleMasterToggle('${id}')" ${td.done?'checked':''}><span class="slider"></span></label></div><div class="revision-drawer"><div class="drawer-content"><div class="schedule-title" style="font-weight:700; font-size:0.8rem; margin-bottom:10px; color:var(--primary);">1-4-7 REVISION SCHEDULE</div>${renderRevRow(id,'r1','1st Revision (Day 1)',d1,td.r1,l)}${renderRevRow(id,'r4','4th Day Revision',d4,td.r4,l)}${renderRevRow(id,'r7','7th Day Revision',d7,td.r7,l)}</div></div>`; 
-                    c.appendChild(cd); 
-                }); 
-            }); 
-            adjustPadding();
-        }
-
-        function renderCustomTasks(container) {
-            const today = new Date(); const dayOfWeek = today.getDay(); const dateKey = today.toISOString().split('T')[0];
-            const h = document.createElement('div'); h.className = 'section-header'; h.textContent = "Today's Checklist"; container.appendChild(h);
-            
-            let hasTasks = false;
-            if(state.customTasks) {
-                Object.entries(state.customTasks).forEach(([id, task]) => {
-                    if (task.days.includes(dayOfWeek)) {
-                        hasTasks = true; const isDone = task.completions && task.completions[dateKey];
-                        const div = document.createElement('div'); div.className = `topic-wrapper`;
-                        div.innerHTML = `<div class="topic-main"><div class="topic-left"><div class="topic-info"><h3>${task.name}</h3><div class="topic-status ${isDone?'active':''}">${isDone?'Finished for today':'Pending'}</div></div></div><label class="switch master-switch"><input type="checkbox" onchange="toggleCustomTask('${id}')" ${isDone?'checked':''}><span class="slider"></span></label></div>`;
+                Object.entries(checkDates).forEach(([key, dateStr]) => {
+                    if(dateStr === today) {
+                        found = true;
+                        const isDone = task.completions && task.completions[today + key];
+                        const div=document.createElement('div'); div.className='task-card';
+                        div.style.borderLeftColor = key==='r1'?'var(--primary)':key==='r4'?'var(--warning)':'var(--secondary)';
+                        div.innerHTML=`<div class="task-meta"><span class="task-tag">${key.toUpperCase()} Rev</span><h4>${task.name}</h4></div><label class="switch master-switch"><input type="checkbox" onchange="togglePlannerRev('${id}','${key}')" ${isDone?'checked':''}><span class="slider"></span></label>`;
                         container.appendChild(div);
                     }
                 });
+            });
+            if(!found) container.innerHTML += `<div class="empty-state">No revisions scheduled for today.</div>`;
+        }
+
+        function togglePlannerRev(id, key) {
+            const today = new Date().toDateString();
+            if(!state.plannerTasks[id].completions) state.plannerTasks[id].completions = {};
+            if(event.target.checked) state.plannerTasks[id].completions[today + key] = true;
+            else delete state.plannerTasks[id].completions[today + key];
+            saveState(); renderContent('planner');
+        }
+
+        // --- MODAL & ADD LOGIC ---
+        function openContextModal() {
+            const m = document.getElementById('genericModal'); const content = document.getElementById('modalContent');
+            m.classList.add('show');
+            if(currentTab === 'daily') {
+                content.innerHTML = `<div class="chat-header"><h3>New Daily Task</h3><button onclick="closeModal()">×</button></div><input type="text" id="tName" class="auth-input" placeholder="Task Name"><div class="days-selector">${['S','M','T','W','T','F','S'].map((d,i)=>`<button class="day-btn" onclick="this.classList.toggle('selected')" data-day="${i}">${d}</button>`).join('')}</div><button class="auth-btn" style="margin-top:20px;" onclick="addDailyTask()">Save Task</button>`;
+            } else {
+                content.innerHTML = `<div class="chat-header"><h3>New 1-4-7 Revision</h3><button onclick="closeModal()">×</button></div><input type="text" id="pName" class="auth-input" placeholder="Topic Name"><input type="date" id="pDate" class="auth-input" value="${new Date().toISOString().split('T')[0]}"><button class="auth-btn" style="margin-top:20px;" onclick="addPlannerTask()">Start Tracking</button>`;
             }
-            if(!hasTasks) container.innerHTML += `<div class="empty-state"><h3>No tasks for today!</h3><p>Click the + button to add a recurring task.</p></div>`;
-            adjustPadding();
+        }
+        function closeModal() { document.getElementById('genericModal').classList.remove('show'); }
+
+        function addPlannerTask() {
+            const name = document.getElementById('pName').value; const date = document.getElementById('pDate').value;
+            if(!name || !date) return;
+            const id = 'p-'+Date.now();
+            state.plannerTasks[id] = { name, startDate: date, completions: {} };
+            saveState(); closeModal(); renderContent('planner');
         }
 
-        window.toggleCustomTask = function(taskId) {
-            const dateKey = new Date().toISOString().split('T')[0]; const isChecked = event.target.checked;
-            if (!state.customTasks[taskId].completions) state.customTasks[taskId].completions = {};
-            if (isChecked) state.customTasks[taskId].completions[dateKey] = true; else delete state.customTasks[taskId].completions[dateKey];
+        function addDailyTask() {
+            const name = document.getElementById('tName').value;
+            const days = Array.from(document.querySelectorAll('.day-btn.selected')).map(b => parseInt(b.dataset.day));
+            if(!name || days.length === 0) return;
+            const id = 'd-'+Date.now();
+            state.customTasks[id] = { name, days, completions: {} };
+            saveState(); closeModal(); renderContent('daily');
+        }
+
+        function renderDaily(container) {
+            const day = new Date().getDay(); const date = new Date().toDateString();
+            const h = document.createElement('div'); h.className='section-header'; h.textContent="Daily Habits"; container.appendChild(h);
+            Object.entries(state.customTasks || {}).forEach(([id, task]) => {
+                if(task.days.includes(day)) {
+                    const isDone = task.completions && task.completions[date];
+                    const div=document.createElement('div'); div.className='topic-wrapper';
+                    div.innerHTML=`<div class="topic-main"><div><h3>${task.name}</h3><div class="topic-status ${isDone?'active':''}">${isDone?'Done':'Pending'}</div></div><label class="switch master-switch"><input type="checkbox" onchange="toggleDaily('${id}')" ${isDone?'checked':''}><span class="slider"></span></label></div>`;
+                    container.appendChild(div);
+                }
+            });
+        }
+        function toggleDaily(id) {
+            const date = new Date().toDateString();
+            if(!state.customTasks[id].completions) state.customTasks[id].completions = {};
+            state.customTasks[id].completions[date] = event.target.checked;
             saveState(); renderContent('daily');
-        };
-
-        function renderRevRow(id,k,l,d,c,loc){ return `<div class="rev-row ${loc?'locked':''}"><div class="rev-meta"><span class="rev-label">${l}</span><span class="rev-date ${!loc&&!c?'due':''}">${loc?'Topic Locked':(c?'Done':'Due: '+d)}</span></div><label class="switch rev-switch"><input type="checkbox" onchange="handleRevToggle('${id}','${k}')" ${c?'checked':''} ${loc?'disabled':''}><span class="slider"></span></label></div>`; }
-
-        function renderDailySchedule(c) { 
-            const t=new Date(); let f=false; const h=document.createElement('div'); h.className='section-header'; h.innerHTML=`Pending Revisions: ${getFormattedDate(t)}`; c.appendChild(h); 
-            Object.keys(syllabusData).filter(k=>!['schedule','daily'].includes(k)).forEach(sk=>{ 
-                syllabusData[sk].sections.forEach(s=>{ s.topics.forEach(tp=>{ 
-                    const id=`${sk}-${tp.replace(/[^a-zA-Z0-9]/g,'')}`; const d=state[id]; 
-                    if(d&&d.done&&d.date){ 
-                        const sd=new Date(d.date); 
-                        if(isSameDate(addDays(sd,1),t)){renderTaskCard(c,id,tp,'1st Revision','r1',d.r1);f=true;} 
-                        if(isSameDate(addDays(sd,4),t)){renderTaskCard(c,id,tp,'4th Day Revision','r4',d.r4);f=true;} 
-                        if(isSameDate(addDays(sd,7),t)){renderTaskCard(c,id,tp,'7th Day Revision','r7',d.r7);f=true;} 
-                    } 
-                }); }); 
-            }); 
-            if(!f) c.innerHTML+=`<div class="empty-state"><div style="font-size: 3rem; margin-bottom: 10px;">🎉</div><h3>Revision Clear!</h3><p>No 1-4-7 revisions due today.</p></div>`; 
-        }
-        function renderTaskCard(c,id,name,l,k,comp){ const cd=document.createElement('div'); cd.className=`task-card ${k} ${comp?'completed':''}`; cd.innerHTML=`<div class="task-meta"><span class="task-tag">${l}</span><h4>${name}</h4></div><label class="switch rev-switch"><input type="checkbox" onchange="handleRevToggle('${id}','${k}')" ${comp?'checked':''}><span class="slider"></span></label>`; c.appendChild(cd); }
-
-        // INTERACTION HANDLERS
-        window.toggleDrawer=function(id){ document.getElementById(`card-${id}`).classList.toggle('open'); }
-        window.handleMasterToggle=function(id){ const c=event.target.checked; if(!state[id])state[id]={}; if(c){state[id].done=true;state[id].date=new Date().toISOString(); setTimeout(()=>document.getElementById(`card-${id}`).classList.add('open'),100);}else{state[id].done=false;state[id].date=null; document.getElementById(`card-${id}`).classList.remove('open');} saveState(); renderContent(currentTab); }
-        window.handleRevToggle=function(id,k){ const c=event.target.checked; if(state[id]){state[id][k]=c; saveState(); if(currentTab==='schedule')renderContent('schedule'); else renderContent(currentTab);} }
-        function updateGlobalStats(){ 
-            let t=0,c=0; Object.keys(syllabusData).filter(k=>!['schedule','daily'].includes(k)).forEach(sk=>{ syllabusData[sk].sections.forEach(s=>{ s.topics.forEach(tp=>{ t++; const id=`${sk}-${tp.replace(/[^a-zA-Z0-9]/g,'')}`; if(state[id]&&state[id].done)c++; }); }); }); 
-            const p=t===0?0:Math.round((c/t)*100); document.getElementById('globalBar').style.width=`${p}%`; document.getElementById('globalText').textContent=`${p}% Syllabus Covered`; 
         }
 
-        // SEARCH
-        const sInput = document.getElementById('topicSearch'); const sClear = document.getElementById('searchClear');
-        sInput.addEventListener('input', e => { 
-            const term = e.target.value.toLowerCase().trim(); 
-            if(term) sClear.classList.add('show'); else sClear.classList.remove('show');
-            const cards = document.querySelectorAll('.topic-wrapper'); const headers = document.querySelectorAll('.section-header');
-            cards.forEach(card => { if(card.innerText.toLowerCase().includes(term)) card.style.display='block'; else card.style.display='none'; });
-        });
-        window.clearSearch = () => { sInput.value=''; sClear.classList.remove('show'); renderContent(currentTab); }
+        function updateGlobalStats() {
+            let t=0, c=0;
+            Object.keys(syllabusData).filter(k=>!['daily','planner'].includes(k)).forEach(k=>{
+                syllabusData[k].sections?.forEach(s=>s.topics.forEach(tp=>{
+                    t++; if(state[`${k}-${tp.replace(/\s/g,'')}`]?.done) c++;
+                }));
+            });
+            const p = t===0 ? 0 : Math.round((c/t)*100);
+            document.getElementById('globalBar').style.width = p+'%';
+            document.getElementById('globalText').textContent = p+'% Syllabus Covered';
+        }
 
-        // GEMINI AI
-        function openChat() { document.getElementById('aiChat').classList.add('show'); if(!localStorage.getItem(API_KEY_STORAGE)) { document.getElementById('chatHistory').innerHTML = '<div class="message ai">Please enter your Gemini API Key using the "Key" button.</div>'; } }
-        function closeChat() { document.getElementById('aiChat').classList.remove('show'); }
-        window.resetApiKey = function() { const k = prompt("Enter Gemini API Key:"); if(k) { localStorage.setItem(API_KEY_STORAGE, k); showToast("Key Saved"); } }
-        function appendMessage(sender, text) { const h = document.getElementById('chatHistory'); const d = document.createElement('div'); d.className = `message ${sender}`; d.innerHTML = text; h.appendChild(d); h.scrollTop=h.scrollHeight; }
-        window.sendToGemini = async function() {
-            const input = document.getElementById('chatInput'); const text = input.value.trim(); const apiKey = localStorage.getItem(API_KEY_STORAGE);
-            if(!text || !apiKey) return; appendMessage('user', text); input.value='';
-            try {
-                const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, { method: 'POST', body: JSON.stringify({ contents: [{ parts: [{ text: text }] }] }) });
-                const data = await resp.json(); appendMessage('ai', data.candidates[0].content.parts[0].text);
-            } catch(e) { appendMessage('system', 'Error connecting to AI'); }
+        function toggleTheme() {
+            const cur = document.documentElement.getAttribute('data-theme');
+            document.documentElement.setAttribute('data-theme', cur==='dark'?'light':'dark');
         }
     </script>
 </body>
