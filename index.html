@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BankPrep Syllabus Tracker</title>
+    <title>BankPrep Tracker</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -11,167 +11,120 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <style>
-        /* --- CSS VARIABLES --- */
         :root {
-            --primary: #4f46e5; --primary-light: #818cf8; --secondary: #ec4899;
+            --primary: #4f46e5; --secondary: #ec4899;
             --bg-body: #f8fafc; --bg-card: #ffffff;
             --text-main: #0f172a; --text-muted: #64748b;
             --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
             --border-color: rgba(0,0,0,0.05);
-            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            --radius: 16px; --drawer-bg: #f8fafc; --task-tag-bg: #f1f5f9;
-            --modal-overlay: rgba(15, 23, 42, 0.6);
-            --chat-user-bg: #4f46e5; --chat-ai-bg: #f1f5f9; --chat-text-ai: #0f172a;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --radius: 16px;
         }
 
         [data-theme="dark"] {
-            --primary: #6366f1; --bg-body: #0f172a; --bg-card: #1e293b;
+            --bg-body: #0f172a; --bg-card: #1e293b;
             --text-main: #f1f5f9; --text-muted: #94a3b8;
             --border-color: rgba(255,255,255,0.05);
-            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            --drawer-bg: #0f172a; --task-tag-bg: #334155;
-            --modal-overlay: rgba(0, 0, 0, 0.85);
-            --chat-user-bg: #6366f1; --chat-ai-bg: #334155; --chat-text-ai: #f1f5f9;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; transition: background-color 0.3s ease, color 0.3s ease; }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding-bottom: 90px; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; transition: background 0.2s, color 0.2s; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding-bottom: 100px; }
 
-        /* --- AUTH SCREEN --- */
+        /* --- AUTH --- */
         #authScreen { position: fixed; inset: 0; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; z-index: 5000; }
-        .auth-card { background: var(--bg-card); width: 100%; max-width: 360px; padding: 32px 28px; border-radius: 28px; box-shadow: 0 25px 60px rgba(0,0,0,0.25); text-align: center; animation: fadeIn 0.4s ease; }
-        .auth-logo { font-size: 3.2rem; margin-bottom: 8px; }
-        .auth-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 4px; }
-        .auth-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; }
-        .auth-input { width: 100%; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border-color); background: var(--bg-body); font-size: 0.95rem; margin-bottom: 14px; color: var(--text-main); }
-        .auth-input:focus { outline: none; border-color: var(--primary); }
-        .auth-btn { width: 100%; padding: 14px; border-radius: 14px; border: none; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 5px; }
-        .auth-link { margin-top: 18px; font-size: 0.85rem; color: var(--primary); cursor: pointer; font-weight: 600; }
-
-        #appContainer { display: none; }
+        .auth-card { background: var(--bg-card); width: 90%; max-width: 360px; padding: 30px; border-radius: 28px; text-align: center; }
+        .auth-input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 12px; background: var(--bg-body); color: var(--text-main); }
+        .auth-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 700; cursor: pointer; }
 
         /* --- HEADER --- */
-        .fixed-top-container { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background-color: var(--bg-body); }
-        .app-header { background: linear-gradient(135deg, var(--primary), var(--secondary)); padding: 20px 20px 50px 20px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; color: white; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); position: relative; z-index: 2; }
-        .header-top { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
-        .header-actions { align-self: flex-end; margin-top: 10px; display: flex; gap: 12px; }
-        .icon-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(4px); }
-        .icon-btn.ai-btn { background: linear-gradient(135deg, #FFD700, #FFA500); border: none; color: #78350f; }
-        .global-progress-container { margin-top: 20px; background: rgba(0,0,0,0.25); height: 8px; border-radius: 10px; overflow: hidden; position: relative; }
-        .global-progress-fill { height: 100%; background: #fff; width: 0%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
-        .progress-label { font-size: 0.8rem; text-align: right; margin-top: 6px; font-weight: 600; color: white; }
-
-        /* --- NAVIGATION --- */
-        .category-nav { display: flex; gap: 12px; overflow-x: auto; padding: 0 20px 15px 20px; margin-top: -35px; scrollbar-width: none; position: relative; z-index: 3; }
-        .category-nav::-webkit-scrollbar { display: none; }
-        .nav-item { background: var(--bg-card); min-width: 95px; padding: 12px 8px; border-radius: 14px; text-align: center; box-shadow: var(--shadow-card); cursor: pointer; transition: all 0.25s; opacity: 0.95; transform: scale(0.98); border: 2px solid transparent; flex-shrink: 0; }
-        .nav-item.active { border-color: var(--primary); transform: scale(1); opacity: 1; }
-        .nav-icon { font-size: 1.6rem; display: block; margin-bottom: 2px; }
-        .nav-label { font-size: 0.75rem; font-weight: 700; color: var(--text-main); }
+        .fixed-header { position: fixed; top: 0; width: 100%; z-index: 1000; background: var(--bg-body); }
+        .app-bar { background: linear-gradient(135deg, var(--primary), var(--secondary)); padding: 20px 20px 50px 20px; color: white; border-radius: 0 0 30px 30px; }
+        .bar-top { display: flex; justify-content: space-between; align-items: flex-start; }
         
-        .content-area { padding: 0 20px 25px 20px; animation: fadeIn 0.4s ease-out; }
-        .section-header { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-muted); font-weight: 800; margin: 15px 0 12px 5px; display: flex; align-items: center; }
-        .section-header::before { content: ''; width: 6px; height: 6px; background: var(--secondary); border-radius: 50%; margin-right: 10px; }
+        .progress-cont { background: rgba(0,0,0,0.2); height: 8px; border-radius: 10px; margin-top: 20px; overflow: hidden; }
+        #progFill { height: 100%; background: white; width: 0%; transition: width 0.5s; }
 
-        /* --- SEARCH --- */
-        .search-container { padding: 15px 20px 10px 20px; background: var(--bg-body); transition: background 0.3s ease; }
-        .search-box { position: relative; display: flex; align-items: center; }
-        .search-input { width: 100%; padding: 12px 40px 12px 42px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); font-family: 'Poppins', sans-serif; font-size: 0.9rem; outline: none; box-shadow: var(--shadow-card); transition: all 0.3s ease; }
-        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
-        .search-icon { position: absolute; left: 14px; color: var(--text-muted); display: flex; align-items: center; pointer-events: none; }
-        .search-clear { position: absolute; right: 12px; background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; display: none; padding: 0; }
-        .search-clear.show { display: block; }
+        /* --- NAV --- */
+        .nav-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 0 20px 15px 20px; margin-top: -30px; scrollbar-width: none; }
+        .nav-item { background: var(--bg-card); padding: 12px 18px; border-radius: 14px; box-shadow: var(--shadow); cursor: pointer; border: 2px solid transparent; flex-shrink: 0; text-align: center; min-width: 90px;}
+        .nav-item.active { border-color: var(--primary); }
+        .nav-icon { display: block; font-size: 1.4rem; }
+        .nav-label { font-size: 0.7rem; font-weight: 700; }
+
+        /* --- CONTENT --- */
+        .content { padding: 20px; }
+        .section-title { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin: 20px 0 10px 5px; display: flex; align-items: center; }
+        .section-title::before { content: ''; width: 6px; height: 6px; background: var(--secondary); border-radius: 50%; margin-right: 8px; }
 
         /* --- CARDS --- */
-        .topic-wrapper { background: var(--bg-card); border-radius: var(--radius); margin-bottom: 14px; box-shadow: var(--shadow-card); overflow: hidden; border: 1px solid var(--border-color); }
-        .topic-main { padding: 18px; display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); }
-        .topic-info h3 { margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
-        .topic-status { font-size: 0.7rem; margin-top: 4px; color: var(--text-muted); }
-        .topic-status.active { color: var(--success); font-weight: 600; }
+        .card { background: var(--bg-card); border-radius: var(--radius); padding: 18px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .card-info h3 { margin: 0; font-size: 0.9rem; }
+        .card-sub { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
+        .card-sub.active { color: var(--success); font-weight: 700; }
 
-        .switch { position: relative; display: inline-block; width: 48px; height: 28px; flex-shrink: 0; }
+        /* --- REVISION CARDS --- */
+        .rev-card { border-left: 5px solid var(--primary); }
+        .rev-tag { font-size: 0.65rem; background: #eef2ff; color: var(--primary); padding: 2px 8px; border-radius: 4px; font-weight: 700; margin-bottom: 5px; display: inline-block; }
+
+        /* --- SWITCH --- */
+        .switch { position: relative; width: 44px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 34px; }
-        [data-theme="dark"] .slider { background-color: #334155; }
-        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
-        .master-switch input:checked + .slider { background-color: var(--success); } .master-switch input:checked + .slider:before { transform: translateX(20px); }
+        .slider { position: absolute; inset: 0; background: #cbd5e1; border-radius: 30px; cursor: pointer; }
+        .slider:before { content: ""; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
+        input:checked + .slider { background: var(--success); }
+        input:checked + .slider:before { transform: translateX(20px); }
+        .planner-switch input:checked + .slider { background: var(--primary); }
 
-        .task-card { background: var(--bg-card); border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: var(--shadow-card); display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--warning); }
-        .task-card.r4 { border-left-color: var(--primary); } .task-card.r7 { border-left-color: var(--secondary); } .task-card.completed { opacity: 0.5; filter: grayscale(1); }
-        .task-meta h4 { margin: 0 0 5px 0; font-size: 1rem; color: var(--text-main); }
-        .task-tag { font-size: 0.75rem; background: var(--task-tag-bg); padding: 3px 8px; border-radius: 6px; color: var(--text-muted); font-weight: 600; }
+        /* --- FAB --- */
+        .fab { position: fixed; bottom: 30px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.2); cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 2000; font-size: 24px; }
 
-        /* --- MODALS & FAB --- */
-        .fab { position: fixed; bottom: 30px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); z-index: 2000; cursor: pointer; display: none; align-items: center; justify-content: center; }
-        .chat-overlay { position: fixed; inset: 0; background: var(--modal-overlay); z-index: 2500; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(5px); }
-        .chat-overlay.show { opacity: 1; pointer-events: auto; }
-        .chat-container { width: 100%; max-width: 600px; height: auto; background: var(--bg-card); border-top-left-radius: 24px; border-top-right-radius: 24px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 -10px 40px rgba(0,0,0,0.2); transform: translateY(100%); transition: transform 0.3s ease; padding: 25px; }
-        .chat-overlay.show .chat-container { transform: translateY(0); }
-        .days-selector { display: flex; gap: 8px; justify-content: space-between; margin-top: 10px; }
-        .day-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        /* --- MODAL --- */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 3000; display: none; align-items: flex-end; justify-content: center; }
+        .modal-card { background: var(--bg-card); width: 100%; max-width: 500px; border-radius: 24px 24px 0 0; padding: 30px; animation: slideUp 0.3s; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        .day-flex { display: flex; justify-content: space-between; margin: 15px 0; }
+        .day-btn { width: 35px; height: 35px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-body); cursor: pointer; font-weight: 700; font-size: 0.7rem; }
         .day-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .empty { text-align: center; padding: 40px; color: var(--text-muted); }
     </style>
 </head>
 <body>
 
     <div id="authScreen">
         <div class="auth-card">
-            <span class="auth-logo">🏦</span>
-            <div class="auth-title">BankPrep Cloud</div>
-            <input type="email" id="email" class="auth-input" placeholder="Email Address">
+            <h2>BankPrep Cloud</h2>
+            <input type="email" id="email" class="auth-input" placeholder="Email">
             <input type="password" id="password" class="auth-input" placeholder="Password">
-            <button class="auth-btn" onclick="handleLogin()">Sign In</button>
-            <div class="auth-link" onclick="toggleAuth()">New here? Create Account</div>
-            <div id="authError" style="color:var(--danger); font-size:0.8rem; margin-top:10px;"></div>
+            <button class="auth-btn" onclick="handleAuth()">Sign In / Sign Up</button>
+            <p id="authErr" style="color:red; font-size:0.7rem; margin-top:10px;"></p>
         </div>
     </div>
 
-    <div id="appContainer">
-        <div class="chat-overlay" id="aiChat">
-            <div class="chat-container" style="height:80vh; padding:0;">
-                <div class="chat-header" style="padding:15px 20px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
-                    <div class="chat-title">✨ BankPrep Tutor</div>
-                    <button class="chat-close" onclick="closeChat()">×</button>
-                </div>
-                <div id="chatHistory" style="flex:1; overflow-y:auto; padding:20px; background:var(--bg-body); display:flex; flex-direction:column; gap:15px;"></div>
-                <div style="padding:15px; background:var(--bg-card); display:flex; gap:10px;">
-                    <textarea id="chatInput" class="chat-input" placeholder="Ask a doubt..." rows="1" style="flex:1; border-radius:20px; padding:10px; border:1px solid var(--border-color);"></textarea>
-                    <button onclick="sendToGemini()" style="width:40px; height:40px; border-radius:50%; background:var(--primary); color:white; border:none;">➤</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="chat-overlay" id="genericModal">
-            <div class="chat-container" id="modalContent"></div>
-        </div>
-
-        <div class="fixed-top-container" id="fixedHeader">
-            <header class="app-header">
-                <div class="header-top">
-                    <h1 style="margin:0; font-size:1.25rem;">BankPrep Tracker</h1>
-                    <div class="header-actions">
-                        <button class="icon-btn ai-btn" onclick="openChat()">✨</button>
-                        <button class="icon-btn" onclick="toggleTheme()" id="themeBtn"></button>
-                        <button class="icon-btn" onclick="handleLogout()">🚪</button>
+    <div id="app" style="display:none;">
+        <div class="fixed-header" id="fHeader">
+            <header class="app-bar">
+                <div class="bar-top">
+                    <div>
+                        <h2 style="margin:0; font-size: 1.1rem;">BankPrep Tracker</h2>
+                        <span style="font-size:0.7rem; opacity:0.8;">Syllabus & Planner</span>
                     </div>
+                    <button onclick="auth.signOut()" style="background:none; border:none; color:white; font-size:1.2rem;">🚪</button>
                 </div>
-                <div class="global-progress-container"><div class="global-progress-fill" id="globalBar"></div></div>
-                <div class="progress-label" id="globalText">0% Covered</div>
+                <div class="progress-cont"><div id="progFill"></div></div>
+                <div id="progText" style="font-size:0.7rem; margin-top:5px; text-align:right;">0% Covered</div>
             </header>
-            <nav class="category-nav" id="categoryNav"></nav>
-            <div class="search-container">
-                <div class="search-box">
-                    <input type="text" id="topicSearch" class="search-input" placeholder="Search...">
-                    <button class="search-clear" id="searchClear" onclick="clearSearch()">×</button>
-                </div>
-            </div>
+            <nav class="nav-scroll" id="navbar"></nav>
         </div>
 
-        <main class="content-area" id="contentArea"></main>
+        <main class="content" id="mainContent"></main>
+        
+        <button class="fab" id="fab" onclick="openModal()">+</button>
+    </div>
 
-        <button class="fab" id="addTaskBtn" onclick="openContextModal()">+</button>
+    <div class="modal-overlay" id="modal">
+        <div class="modal-card" id="modalBody"></div>
     </div>
 
     <script>
@@ -179,169 +132,175 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(); const db = firebase.firestore();
 
-        const syllabusData = {
+        const syllabus = {
             "daily": { label: "Daily", icon: "📅" },
-            "planner": { label: "Planner", icon: "🕒" },
-            "basics": { label: "Basics", icon: "⚡", sections: [{ title: "Calculation", topics: ["Tables (1-20)", "Tables (21-30)", "Squares (1-50)", "Cubes (1-30)"] }] },
-            "quant": { label: "Quant", icon: "📊", sections: [{ title: "Arithmetic", topics: ["Percentages", "Ratio", "Average", "Profit Loss", "SI & CI", "Time Work"] }] },
-            "reasoning": { label: "Logic", icon: "🧠", sections: [{ title: "Reasoning", topics: ["Syllogism", "Inequality", "Puzzles", "Seating"] }] },
-            "english": { label: "English", icon: "📖", sections: [{ title: "Grammar", topics: ["Tenses", "Articles", "Error Spotting"] }] }
+            "planner": { label: "1-4-7 Planner", icon: "🕒" },
+            "quant": { label: "Quant", icon: "📊", sections: [{title: "Arithmetic", topics: ["Percentages", "Ratio & Proportion", "Average", "Profit & Loss", "Simple Interest", "Compound Interest", "Time & Work", "Speed Distance Time"]}] },
+            "logic": { label: "Reasoning", icon: "🧠", sections: [{title: "Logic", topics: ["Syllogism", "Inequality", "Blood Relations", "Direction Sense", "Puzzles", "Seating Arrangement"]}] },
+            "english": { label: "English", icon: "📖", sections: [{title: "Grammar", topics: ["Tenses", "Subject Verb Agreement", "Prepositions", "Articles", "Error Spotting"]}] }
         };
 
-        let state = {}; let currentTab = 'planner'; let currentUser = null; let selectedDays = [];
+        let state = {}; let currentTab = 'planner'; let tempDays = [];
 
         auth.onAuthStateChanged(user => {
-            if (user) { currentUser = user; document.getElementById('authScreen').style.display = 'none'; document.getElementById('appContainer').style.display = 'block'; loadUserData(); }
-            else { document.getElementById('authScreen').style.display = 'flex'; document.getElementById('appContainer').style.display = 'none'; }
+            if(user) {
+                document.getElementById('authScreen').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+                loadData(user.uid);
+            } else {
+                document.getElementById('authScreen').style.display = 'flex';
+                document.getElementById('app').style.display = 'none';
+            }
         });
 
-        async function handleLogin() {
+        async function handleAuth() {
             const e = document.getElementById('email').value; const p = document.getElementById('password').value;
-            try { await auth.signInWithEmailAndPassword(e, p); } catch(err) { alert(err.message); }
+            try { await auth.signInWithEmailAndPassword(e, p); } 
+            catch { try { await auth.createUserWithEmailAndPassword(e, p); } catch(err) { document.getElementById('authErr').innerText = err.message; } }
         }
-        function handleLogout() { auth.signOut(); }
 
-        function loadUserData() {
-            db.collection('users').doc(currentUser.uid).onSnapshot(doc => {
-                state = doc.exists ? doc.data().progress || {} : {};
-                if (!state.customTasks) state.customTasks = {};
-                if (!state.plannerTasks) state.plannerTasks = {};
-                renderTabs(); renderContent(currentTab); updateGlobalStats();
+        function loadData(uid) {
+            db.collection('users').doc(uid).onSnapshot(doc => {
+                state = doc.exists ? doc.data() : { syllabus: {}, daily: {}, planner: [] };
+                renderNav(); renderContent(); updateProgress();
             });
         }
-        function saveState() { if(currentUser) db.collection('users').doc(currentUser.uid).set({ progress: state }, { merge: true }); updateGlobalStats(); }
 
-        function renderTabs() {
-            const n = document.getElementById('categoryNav'); n.innerHTML='';
-            Object.keys(syllabusData).forEach(k=>{
-                const d=document.createElement('div'); d.className=`nav-item ${k===currentTab?'active':''}`;
-                d.innerHTML=`<span class="nav-icon">${syllabusData[k].icon}</span><span class="nav-label">${syllabusData[k].label}</span>`;
-                d.onclick=()=>{currentTab=k;renderTabs();renderContent(k);}; n.appendChild(d);
+        function save() { db.collection('users').doc(auth.currentUser.uid).set(state); }
+
+        function renderNav() {
+            const nav = document.getElementById('navbar'); nav.innerHTML = '';
+            Object.keys(syllabus).forEach(k => {
+                const item = document.createElement('div');
+                item.className = `nav-item ${currentTab === k ? 'active' : ''}`;
+                item.innerHTML = `<span class="nav-icon">${syllabus[k].icon}</span><span class="nav-label">${syllabus[k].label}</span>`;
+                item.onclick = () => { currentTab = k; renderNav(); renderContent(); };
+                nav.appendChild(item);
             });
-            document.getElementById('addTaskBtn').style.display = ['daily','planner'].includes(currentTab) ? 'flex' : 'none';
+            document.getElementById('fab').style.display = (currentTab === 'daily' || currentTab === 'planner') ? 'flex' : 'none';
+            document.body.style.paddingTop = document.getElementById('fHeader').offsetHeight + 'px';
         }
 
-        function renderContent(k) {
-            const c=document.getElementById('contentArea'); c.innerHTML='';
-            if(k==='daily') { renderDaily(c); return; }
-            if(k==='planner') { renderPlanner(c); return; }
+        function renderContent() {
+            const cont = document.getElementById('mainContent'); cont.innerHTML = '';
+            if (currentTab === 'daily') return renderDailyTab(cont);
+            if (currentTab === 'planner') return renderPlannerTab(cont);
 
-            syllabusData[k].sections.forEach(s=>{
-                const h=document.createElement('div'); h.className='section-header'; h.textContent=s.title; c.appendChild(h);
-                s.topics.forEach(t=>{
-                    const id=`${k}-${t.replace(/\s/g,'')}`; const td=state[id]||{done:false};
-                    const div=document.createElement('div'); div.className='topic-wrapper';
-                    div.innerHTML=`<div class="topic-main"><div><h3>${t}</h3><div class="topic-status ${td.done?'active':''}">${td.done?'Completed':'Pending'}</div></div><label class="switch master-switch"><input type="checkbox" onchange="toggleSyllabus('${id}')" ${td.done?'checked':''}><span class="slider"></span></label></div>`;
-                    c.appendChild(div);
+            syllabus[currentTab].sections.forEach(s => {
+                cont.innerHTML += `<div class="section-title">${s.title}</div>`;
+                s.topics.forEach(t => {
+                    const done = state.syllabus?.[t] || false;
+                    const card = document.createElement('div'); card.className = 'card';
+                    card.innerHTML = `<div class="card-info"><h3>${t}</h3><div class="card-sub ${done?'active':''}">${done?'Completed':'Pending'}</div></div><label class="switch"><input type="checkbox" onchange="toggleSyllabus('${t}')" ${done?'checked':''}><span class="slider"></span></label>`;
+                    cont.appendChild(card);
                 });
             });
         }
 
-        function toggleSyllabus(id) {
-            if(!state[id]) state[id] = {};
-            state[id].done = event.target.checked;
-            saveState(); renderContent(currentTab);
+        /* --- SYLLABUS LOGIC --- */
+        function toggleSyllabus(topic) {
+            if(!state.syllabus) state.syllabus = {};
+            state.syllabus[topic] = event.target.checked;
+            save();
         }
 
-        // --- PLANNER LOGIC (1-4-7) ---
-        function renderPlanner(container) {
-            const today = new Date().toDateString();
-            const h = document.createElement('div'); h.className='section-header'; h.textContent="Revisions Due Today"; container.appendChild(h);
-            
-            let found = false;
-            Object.entries(state.plannerTasks || {}).forEach(([id, task]) => {
-                const start = new Date(task.startDate);
-                const checkDates = { 
-                    r1: new Date(new Date(start).setDate(start.getDate()+1)).toDateString(),
-                    r4: new Date(new Date(start).setDate(start.getDate()+4)).toDateString(),
-                    r7: new Date(new Date(start).setDate(start.getDate()+7)).toDateString()
-                };
+        /* --- DAILY LOGIC --- */
+        function renderDailyTab(cont) {
+            const today = new Date().getDay(); const dateKey = new Date().toDateString();
+            cont.innerHTML = `<div class="section-title">Today's Tasks</div>`;
+            let hasTasks = false;
+            Object.entries(state.daily || {}).forEach(([id, task]) => {
+                if(task.days.includes(today)) {
+                    hasTasks = true;
+                    const done = task.history?.[dateKey] || false;
+                    const card = document.createElement('div'); card.className = 'card';
+                    card.innerHTML = `<div class="card-info"><h3>${task.name}</h3><div class="card-sub">${done?'Done for today':'Remaining'}</div></div><label class="switch"><input type="checkbox" onchange="toggleDaily('${id}')" ${done?'checked':''}><span class="slider"></span></label>`;
+                    cont.appendChild(card);
+                }
+            });
+            if(!hasTasks) cont.innerHTML += `<div class="empty">No tasks set for today. Use + to add recurring tasks.</div>`;
+        }
 
-                Object.entries(checkDates).forEach(([key, dateStr]) => {
-                    if(dateStr === today) {
-                        found = true;
-                        const isDone = task.completions && task.completions[today + key];
-                        const div=document.createElement('div'); div.className='task-card';
-                        div.style.borderLeftColor = key==='r1'?'var(--primary)':key==='r4'?'var(--warning)':'var(--secondary)';
-                        div.innerHTML=`<div class="task-meta"><span class="task-tag">${key.toUpperCase()} Rev</span><h4>${task.name}</h4></div><label class="switch master-switch"><input type="checkbox" onchange="togglePlannerRev('${id}','${key}')" ${isDone?'checked':''}><span class="slider"></span></label>`;
-                        container.appendChild(div);
+        function toggleDaily(id) {
+            const dateKey = new Date().toDateString();
+            if(!state.daily[id].history) state.daily[id].history = {};
+            state.daily[id].history[dateKey] = event.target.checked;
+            save();
+        }
+
+        /* --- PLANNER (1-4-7) LOGIC --- */
+        function renderPlannerTab(cont) {
+            const today = new Date(); const todayStr = today.toDateString();
+            cont.innerHTML = `<div class="section-title">Scheduled Revisions</div>`;
+            let count = 0;
+            (state.planner || []).forEach((item, index) => {
+                const start = new Date(item.date);
+                const schedule = [
+                    { day: 1, label: "1st Revision" },
+                    { day: 4, label: "4th Day Revision" },
+                    { day: 7, label: "7th Day Revision" }
+                ];
+
+                schedule.forEach(step => {
+                    const due = new Date(start); due.setDate(start.getDate() + step.day);
+                    if(due.toDateString() === todayStr) {
+                        count++;
+                        const compKey = `${todayStr}-${step.day}`;
+                        const done = item.completions?.[compKey] || false;
+                        const card = document.createElement('div'); card.className = 'card rev-card';
+                        card.innerHTML = `<div><span class="rev-tag">${step.label}</span><h3>${item.topic}</h3></div><label class="switch planner-switch"><input type="checkbox" onchange="togglePlanner(${index}, '${compKey}')" ${done?'checked':''}><span class="slider"></span></label>`;
+                        cont.appendChild(card);
                     }
                 });
             });
-            if(!found) container.innerHTML += `<div class="empty-state">No revisions scheduled for today.</div>`;
+            if(count === 0) cont.innerHTML += `<div class="empty">🎉 All clear! No revisions due today.</div>`;
         }
 
-        function togglePlannerRev(id, key) {
-            const today = new Date().toDateString();
-            if(!state.plannerTasks[id].completions) state.plannerTasks[id].completions = {};
-            if(event.target.checked) state.plannerTasks[id].completions[today + key] = true;
-            else delete state.plannerTasks[id].completions[today + key];
-            saveState(); renderContent('planner');
+        function togglePlanner(idx, key) {
+            if(!state.planner[idx].completions) state.planner[idx].completions = {};
+            state.planner[idx].completions[key] = event.target.checked;
+            save();
         }
 
-        // --- MODAL & ADD LOGIC ---
-        function openContextModal() {
-            const m = document.getElementById('genericModal'); const content = document.getElementById('modalContent');
-            m.classList.add('show');
+        /* --- MODAL LOGIC --- */
+        function openModal() {
+            const modal = document.getElementById('modal'); const body = document.getElementById('modalBody');
+            modal.style.display = 'flex'; tempDays = [];
             if(currentTab === 'daily') {
-                content.innerHTML = `<div class="chat-header"><h3>New Daily Task</h3><button onclick="closeModal()">×</button></div><input type="text" id="tName" class="auth-input" placeholder="Task Name"><div class="days-selector">${['S','M','T','W','T','F','S'].map((d,i)=>`<button class="day-btn" onclick="this.classList.toggle('selected')" data-day="${i}">${d}</button>`).join('')}</div><button class="auth-btn" style="margin-top:20px;" onclick="addDailyTask()">Save Task</button>`;
+                body.innerHTML = `<h3>Add Habit</h3><input type="text" id="mName" class="auth-input" placeholder="Task Name"><div class="day-flex">${['S','M','T','W','T','F','S'].map((d,i)=>`<button class="day-btn" onclick="selDay(this,${i})">${d}</button>`).join('')}</div><button class="auth-btn" onclick="addDaily()">Add Task</button>`;
             } else {
-                content.innerHTML = `<div class="chat-header"><h3>New 1-4-7 Revision</h3><button onclick="closeModal()">×</button></div><input type="text" id="pName" class="auth-input" placeholder="Topic Name"><input type="date" id="pDate" class="auth-input" value="${new Date().toISOString().split('T')[0]}"><button class="auth-btn" style="margin-top:20px;" onclick="addPlannerTask()">Start Tracking</button>`;
+                body.innerHTML = `<h3>Add to 1-4-7 Planner</h3><input type="text" id="mTopic" class="auth-input" placeholder="Topic Name"><p style="font-size:0.7rem; color:grey;">When did you complete this?</p><input type="date" id="mDate" class="auth-input" value="${new Date().toISOString().split('T')[0]}"><button class="auth-btn" onclick="addPlanner()">Start 1-4-7 Rule</button>`;
             }
         }
-        function closeModal() { document.getElementById('genericModal').classList.remove('show'); }
 
-        function addPlannerTask() {
-            const name = document.getElementById('pName').value; const date = document.getElementById('pDate').value;
-            if(!name || !date) return;
-            const id = 'p-'+Date.now();
-            state.plannerTasks[id] = { name, startDate: date, completions: {} };
-            saveState(); closeModal(); renderContent('planner');
+        function selDay(btn, i) { btn.classList.toggle('selected'); if(tempDays.includes(i)) tempDays = tempDays.filter(x=>x!==i); else tempDays.push(i); }
+
+        function addDaily() {
+            const name = document.getElementById('mName').value; if(!name || tempDays.length===0) return;
+            if(!state.daily) state.daily = {};
+            const id = 'd'+Date.now(); state.daily[id] = { name, days: tempDays, history: {} };
+            save(); closeModal();
         }
 
-        function addDailyTask() {
-            const name = document.getElementById('tName').value;
-            const days = Array.from(document.querySelectorAll('.day-btn.selected')).map(b => parseInt(b.dataset.day));
-            if(!name || days.length === 0) return;
-            const id = 'd-'+Date.now();
-            state.customTasks[id] = { name, days, completions: {} };
-            saveState(); closeModal(); renderContent('daily');
+        function addPlanner() {
+            const topic = document.getElementById('mTopic').value; const date = document.getElementById('mDate').value;
+            if(!topic || !date) return;
+            if(!state.planner) state.planner = [];
+            state.planner.push({ topic, date, completions: {} });
+            save(); closeModal();
         }
 
-        function renderDaily(container) {
-            const day = new Date().getDay(); const date = new Date().toDateString();
-            const h = document.createElement('div'); h.className='section-header'; h.textContent="Daily Habits"; container.appendChild(h);
-            Object.entries(state.customTasks || {}).forEach(([id, task]) => {
-                if(task.days.includes(day)) {
-                    const isDone = task.completions && task.completions[date];
-                    const div=document.createElement('div'); div.className='topic-wrapper';
-                    div.innerHTML=`<div class="topic-main"><div><h3>${task.name}</h3><div class="topic-status ${isDone?'active':''}">${isDone?'Done':'Pending'}</div></div><label class="switch master-switch"><input type="checkbox" onchange="toggleDaily('${id}')" ${isDone?'checked':''}><span class="slider"></span></label></div>`;
-                    container.appendChild(div);
-                }
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+        window.onclick = (e) => { if(e.target.id === 'modal') closeModal(); }
+
+        function updateProgress() {
+            let total = 0; let done = 0;
+            Object.values(syllabus).forEach(cat => {
+                cat.sections?.forEach(sec => sec.topics.forEach(t => { total++; if(state.syllabus?.[t]) done++; }));
             });
-        }
-        function toggleDaily(id) {
-            const date = new Date().toDateString();
-            if(!state.customTasks[id].completions) state.customTasks[id].completions = {};
-            state.customTasks[id].completions[date] = event.target.checked;
-            saveState(); renderContent('daily');
-        }
-
-        function updateGlobalStats() {
-            let t=0, c=0;
-            Object.keys(syllabusData).filter(k=>!['daily','planner'].includes(k)).forEach(k=>{
-                syllabusData[k].sections?.forEach(s=>s.topics.forEach(tp=>{
-                    t++; if(state[`${k}-${tp.replace(/\s/g,'')}`]?.done) c++;
-                }));
-            });
-            const p = t===0 ? 0 : Math.round((c/t)*100);
-            document.getElementById('globalBar').style.width = p+'%';
-            document.getElementById('globalText').textContent = p+'% Syllabus Covered';
-        }
-
-        function toggleTheme() {
-            const cur = document.documentElement.getAttribute('data-theme');
-            document.documentElement.setAttribute('data-theme', cur==='dark'?'light':'dark');
+            const p = total === 0 ? 0 : Math.round((done/total)*100);
+            document.getElementById('progFill').style.width = p + '%';
+            document.getElementById('progText').innerText = p + '% Covered';
         }
     </script>
 </body>
