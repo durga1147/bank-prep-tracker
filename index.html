@@ -107,20 +107,11 @@
 
         /* --- TOPIC CARDS --- */
         .topic-wrapper { background: var(--bg-card); border-radius: var(--radius); margin-bottom: 14px; box-shadow: var(--shadow-card); overflow: hidden; border: 1px solid var(--border-color); }
-        .topic-main { padding: 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: var(--bg-card); position: relative; z-index: 2; }
+        .topic-main { padding: 18px; display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); position: relative; z-index: 2; }
         .topic-left { display: flex; align-items: center; gap: 14px; flex: 1; }
         .topic-info h3 { margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
         .topic-status { font-size: 0.7rem; margin-top: 4px; color: var(--text-muted); }
         .topic-status.active { color: var(--success); font-weight: 600; }
-        .revision-drawer { background: var(--drawer-bg); max-height: 0; overflow: hidden; transition: max-height 0.3s; }
-        .topic-wrapper.open .revision-drawer { max-height: 400px; border-top: 1px dashed var(--text-muted); }
-        .topic-wrapper.open .chevron { transform: rotate(180deg); color: var(--primary); }
-        .drawer-content { padding: 16px 18px; }
-        .rev-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-        .rev-meta { display: flex; flex-direction: column; }
-        .rev-label { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
-        .rev-date { font-size: 0.75rem; color: var(--text-muted); }
-        .rev-date.due { color: var(--danger); font-weight: 700; }
 
         .switch { position: relative; display: inline-block; width: 48px; height: 28px; flex-shrink: 0; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -128,14 +119,6 @@
         [data-theme="dark"] .slider { background-color: #334155; }
         .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .master-switch input:checked + .slider { background-color: var(--success); } .master-switch input:checked + .slider:before { transform: translateX(20px); }
-        .rev-switch input:checked + .slider { background-color: var(--primary); } .rev-switch input:checked + .slider:before { transform: translateX(20px); }
-        .rev-row.locked { opacity: 0.4; pointer-events: none; }
-
-        .task-card { background: var(--bg-card); border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: var(--shadow-card); display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--warning); }
-        .task-card.r4 { border-left-color: var(--primary); } .task-card.r7 { border-left-color: var(--secondary); } .task-card.completed { opacity: 0.5; filter: grayscale(1); }
-        .task-meta h4 { margin: 0 0 5px 0; font-size: 1rem; color: var(--text-main); }
-        .task-tag { font-size: 0.75rem; background: var(--task-tag-bg); padding: 3px 8px; border-radius: 6px; color: var(--text-muted); font-weight: 600; }
-        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
 
         /* --- CHAT/MODAL OVERLAY --- */
         .chat-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--modal-overlay); z-index: 2500; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(5px); }
@@ -168,32 +151,27 @@
         .search-clear { position: absolute; right: 12px; background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; display: none; padding: 0; }
         .search-clear.show { display: block; }
 
-        /* --- NEW: DYNAMIC TASKS UI --- */
-        /* Floating Action Button - Refined Position */
-.fab { 
-    position: fixed; 
-    bottom: 30px; /* Moved closer to the bottom */
-    right: 20px;  /* Tucked to the right */
-    width: 56px;  /* Standard circular button size */
-    height: 56px; 
-    border-radius: 50%; 
-    background: linear-gradient(135deg, var(--primary), var(--secondary)); 
-    color: white; 
-    border: none; 
-    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); 
-    z-index: 2000; 
-    cursor: pointer; 
-    display: none; /* Controlled by JS */
-    align-items: center; 
-    justify-content: center;
-    padding: 0;
-}
+        /* --- FAB --- */
+        .fab { 
+            position: fixed; 
+            bottom: 30px; 
+            right: 20px;  
+            width: 56px;  
+            height: 56px; 
+            border-radius: 50%; 
+            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+            color: white; 
+            border: none; 
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); 
+            z-index: 2000; 
+            cursor: pointer; 
+            display: none; 
+            align-items: center; 
+            justify-content: center;
+            padding: 0;
+        }
 
-/* Ensure the icon inside is centered and sized correctly */
-.fab svg {
-    width: 24px;
-    height: 24px;
-}
+        .fab svg { width: 24px; height: 24px; }
         .days-selector { display: flex; gap: 8px; justify-content: space-between; margin-top: 10px; }
         .day-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .day-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
@@ -315,18 +293,16 @@
             "reasoning": { label: "Logic", icon: "🧠", sections: [{ title: "Speed Reasoning", topics: ["Alphabet Series", "Number Series", "Alphanumeric Series", "Analogy", "Classification", "Inequality", "Syllogism (New Pattern)"] }, { title: "Spatial & Logic", topics: ["Direction & Distance", "Coding-Decoding", "Order & Ranking", "Blood Relations"] }, { title: "Seating Arrangement", topics: ["Linear Row", "Circular Seating", "Square/Rectangular", "Triangular Seating", "Uncertain Number"] }, { title: "Puzzles", topics: ["Floor Based", "Box Based", "Month/Day/Year", "Scheduling", "Designation Based", "Flat & Floor"] }, { title: "Mains Logic", topics: ["Input-Output", "Data Sufficiency", "Statement & Assumption", "Statement & Conclusion", "Cause & Effect", "Course of Action"] }] },
             "english": { label: "English", icon: "📖", sections: [{ title: "Grammar Rules", topics: ["Parts of Speech", "Subject-Verb Agreement", "Tenses", "Articles", "Prepositions", "Conjunctions", "Active & Passive Voice", "Direct & Indirect Speech"] }, { title: "Vocabulary", topics: ["Synonyms & Antonyms", "Idioms & Phrases", "Phrasal Verbs", "Root Words", "One-word Substitution", "Word Usage/Swap"] }, { title: "Reading Skills", topics: ["Reading Comprehension", "RC Inference & Tone", "Cloze Test", "Para Jumbles", "Para Completion", "Sentence Rearrangement"] }, { title: "Mains Descriptive", topics: ["Essay Writing", "Letter Writing"] }] },
             "ga": { label: "G.A.", icon: "🏦", sections: [{ title: "Banking Awareness", topics: ["RBI Functions & Structure", "Monetary Policy", "Repo, Reverse Repo, CRR, SLR", "Types of Accounts", "Basel Norms", "Financial Inclusion", "NPCI (UPI, IMPS)"] }, { title: "Static GK", topics: ["National Parks & Sanctuaries", "Dams & Rivers", "Country Capitals & Currencies", "HQ of Int. Organizations", "Airports & Stadiums", "Power Plants"] }, { title: "Current Affairs", topics: ["Last 6 Months News", "Union Budget", "Government Schemes", "Appointments", "Awards & Honours", "Books & Authors", "Sports News"] }] },
-            "computer": { label: "Computer", icon: "💻", sections: [{ title: "Hardware & OS", topics: ["Generations of Computers", "Input/Output Devices", "Memory (RAM, ROM)", "Operating Systems"] }, { title: "Networking & Security", topics: ["Internet & Browsers", "OSI Model", "IP Addresses & Protocols", "Cyber Security", "Virus & Malware", "MS Office Shortcuts"] }] },
-            "schedule": { label: "Revision", icon: "🕒", sections: [] }
+            "computer": { label: "Computer", icon: "💻", sections: [{ title: "Hardware & OS", topics: ["Generations of Computers", "Input/Output Devices", "Memory (RAM, ROM)", "Operating Systems"] }, { title: "Networking & Security", topics: ["Internet & Browsers", "OSI Model", "IP Addresses & Protocols", "Cyber Security", "Virus & Malware", "MS Office Shortcuts"] }] }
         };
 
         const API_KEY_STORAGE = 'gemini_api_key'; const THEME_KEY = 'bank_theme_pref';
         let state = {}; let currentTab = 'quant'; let isSignup = false; let currentUser = null;
-        let selectedDays = []; // For task modal
+        let selectedDays = [];
 
         const SUN_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`;
         const MOON_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>`;
 
-        // AUTH & INIT
         auth.onAuthStateChanged(user => {
             if (user) {
                 currentUser = user; document.getElementById('authScreen').style.display = 'none';
@@ -352,7 +328,6 @@
         }
         function handleLogout() { auth.signOut(); }
 
-        // FIRESTORE SYNC
         function loadUserData() {
             db.collection('users').doc(currentUser.uid).onSnapshot(doc => {
                 if (doc.exists) state = doc.data().progress || {}; else state = {};
@@ -365,19 +340,14 @@
             updateGlobalStats();
         }
 
-        // UTILS
         function getFormattedDate(d) { if(!d) return "-"; return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
-        function addDays(d, days) { const date = new Date(d); date.setDate(date.getDate() + days); return date; }
-        function isSameDate(d1, d2) { return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate(); }
         function adjustPadding() { document.body.style.paddingTop = (document.getElementById('fixedHeader').offsetHeight + 5) + 'px'; }
         window.addEventListener('resize', adjustPadding);
         function showToast(msg, type='success') { const t=document.getElementById('toast'); document.getElementById('toastIcon').innerText=type==='success'?'✅':'❌'; document.getElementById('toastMsg').innerText=msg; t.className=`toast ${type} show`; setTimeout(()=>t.classList.remove('show'),3000); }
 
-        // THEME
         function initTheme() { const p = localStorage.getItem(THEME_KEY); if(p==='dark'){document.documentElement.setAttribute('data-theme','dark');document.getElementById('themeBtn').innerHTML=SUN_ICON;}else{document.documentElement.setAttribute('data-theme','light');document.getElementById('themeBtn').innerHTML=MOON_ICON;} }
         window.toggleTheme = function() { const c = document.documentElement.getAttribute('data-theme'); if(c==='light'){document.documentElement.setAttribute('data-theme','dark');localStorage.setItem(THEME_KEY,'dark');document.getElementById('themeBtn').innerHTML=SUN_ICON;}else{document.documentElement.setAttribute('data-theme','light');localStorage.setItem(THEME_KEY,'light');document.getElementById('themeBtn').innerHTML=MOON_ICON;} }
 
-        // TASK MODAL LOGIC
         function openTaskModal() { document.getElementById('taskModal').classList.add('show'); }
         function closeTaskModal() { document.getElementById('taskModal').classList.remove('show'); }
         
@@ -402,7 +372,6 @@
             selectedDays = []; renderContent('daily');
         }
 
-        // RENDER LOGIC
         function renderTabs() { 
             const n = document.getElementById('categoryNav'); n.innerHTML=''; 
             Object.keys(syllabusData).forEach(k=>{ 
@@ -417,7 +386,6 @@
             const c=document.getElementById('contentArea'); c.innerHTML=''; 
             if (document.getElementById('topicSearch')) { document.getElementById('topicSearch').value = ''; document.getElementById('searchClear').classList.remove('show'); }
             
-            if(k==='schedule'){renderDailySchedule(c);return;} 
             if(k==='daily'){renderCustomTasks(c); return;}
 
             const sub=syllabusData[k]; 
@@ -426,10 +394,19 @@
                 s.topics.forEach(t=>{ 
                     const id=`${k}-${t.replace(/[^a-zA-Z0-9]/g,'')}`; 
                     const td=state[id]||{done:false,date:null}; 
-                    let st="Not Started",d1="Locked",d4="Locked",d7="Locked",l=true; 
-                    if(td.done&&td.date){st=`Started: ${getFormattedDate(td.date)}`; d1=getFormattedDate(addDays(td.date,1)); d4=getFormattedDate(addDays(td.date,4)); d7=getFormattedDate(addDays(td.date,7)); l=false;} 
                     const cd=document.createElement('div'); cd.className=`topic-wrapper`; cd.id=`card-${id}`; 
-                    cd.innerHTML=`<div class="topic-main" onclick="toggleDrawer('${id}')"><div class="topic-left"><span class="chevron">▼</span><div class="topic-info"><h3>${t}</h3><div class="topic-status ${td.done?'active':''}">${st}</div></div></div><label class="switch master-switch" onclick="event.stopPropagation()"><input type="checkbox" onchange="handleMasterToggle('${id}')" ${td.done?'checked':''}><span class="slider"></span></label></div><div class="revision-drawer"><div class="drawer-content"><div class="schedule-title" style="font-weight:700; font-size:0.8rem; margin-bottom:10px; color:var(--primary);">1-4-7 REVISION SCHEDULE</div>${renderRevRow(id,'r1','1st Revision (Day 1)',d1,td.r1,l)}${renderRevRow(id,'r4','4th Day Revision',d4,td.r4,l)}${renderRevRow(id,'r7','7th Day Revision',d7,td.r7,l)}</div></div>`; 
+                    cd.innerHTML=`<div class="topic-main">
+                                    <div class="topic-left">
+                                        <div class="topic-info">
+                                            <h3>${t}</h3>
+                                            <div class="topic-status ${td.done?'active':''}">${td.done?'Completed':'Not Started'}</div>
+                                        </div>
+                                    </div>
+                                    <label class="switch master-switch">
+                                        <input type="checkbox" onchange="handleMasterToggle('${id}')" ${td.done?'checked':''}>
+                                        <span class="slider"></span>
+                                    </label>
+                                  </div>`; 
                     c.appendChild(cd); 
                 }); 
             }); 
@@ -462,45 +439,28 @@
             saveState(); renderContent('daily');
         };
 
-        function renderRevRow(id,k,l,d,c,loc){ return `<div class="rev-row ${loc?'locked':''}"><div class="rev-meta"><span class="rev-label">${l}</span><span class="rev-date ${!loc&&!c?'due':''}">${loc?'Topic Locked':(c?'Done':'Due: '+d)}</span></div><label class="switch rev-switch"><input type="checkbox" onchange="handleRevToggle('${id}','${k}')" ${c?'checked':''} ${loc?'disabled':''}><span class="slider"></span></label></div>`; }
-
-        function renderDailySchedule(c) { 
-            const t=new Date(); let f=false; const h=document.createElement('div'); h.className='section-header'; h.innerHTML=`Pending Revisions: ${getFormattedDate(t)}`; c.appendChild(h); 
-            Object.keys(syllabusData).filter(k=>!['schedule','daily'].includes(k)).forEach(sk=>{ 
-                syllabusData[sk].sections.forEach(s=>{ s.topics.forEach(tp=>{ 
-                    const id=`${sk}-${tp.replace(/[^a-zA-Z0-9]/g,'')}`; const d=state[id]; 
-                    if(d&&d.done&&d.date){ 
-                        const sd=new Date(d.date); 
-                        if(isSameDate(addDays(sd,1),t)){renderTaskCard(c,id,tp,'1st Revision','r1',d.r1);f=true;} 
-                        if(isSameDate(addDays(sd,4),t)){renderTaskCard(c,id,tp,'4th Day Revision','r4',d.r4);f=true;} 
-                        if(isSameDate(addDays(sd,7),t)){renderTaskCard(c,id,tp,'7th Day Revision','r7',d.r7);f=true;} 
-                    } 
-                }); }); 
-            }); 
-            if(!f) c.innerHTML+=`<div class="empty-state"><div style="font-size: 3rem; margin-bottom: 10px;">🎉</div><h3>Revision Clear!</h3><p>No 1-4-7 revisions due today.</p></div>`; 
+        window.handleMasterToggle=function(id){ 
+            const c=event.target.checked; 
+            if(!state[id])state[id]={}; 
+            state[id].done=c; 
+            state[id].date=c?new Date().toISOString():null; 
+            saveState(); renderContent(currentTab); 
         }
-        function renderTaskCard(c,id,name,l,k,comp){ const cd=document.createElement('div'); cd.className=`task-card ${k} ${comp?'completed':''}`; cd.innerHTML=`<div class="task-meta"><span class="task-tag">${l}</span><h4>${name}</h4></div><label class="switch rev-switch"><input type="checkbox" onchange="handleRevToggle('${id}','${k}')" ${comp?'checked':''}><span class="slider"></span></label>`; c.appendChild(cd); }
 
-        // INTERACTION HANDLERS
-        window.toggleDrawer=function(id){ document.getElementById(`card-${id}`).classList.toggle('open'); }
-        window.handleMasterToggle=function(id){ const c=event.target.checked; if(!state[id])state[id]={}; if(c){state[id].done=true;state[id].date=new Date().toISOString(); setTimeout(()=>document.getElementById(`card-${id}`).classList.add('open'),100);}else{state[id].done=false;state[id].date=null; document.getElementById(`card-${id}`).classList.remove('open');} saveState(); renderContent(currentTab); }
-        window.handleRevToggle=function(id,k){ const c=event.target.checked; if(state[id]){state[id][k]=c; saveState(); if(currentTab==='schedule')renderContent('schedule'); else renderContent(currentTab);} }
         function updateGlobalStats(){ 
-            let t=0,c=0; Object.keys(syllabusData).filter(k=>!['schedule','daily'].includes(k)).forEach(sk=>{ syllabusData[sk].sections.forEach(s=>{ s.topics.forEach(tp=>{ t++; const id=`${sk}-${tp.replace(/[^a-zA-Z0-9]/g,'')}`; if(state[id]&&state[id].done)c++; }); }); }); 
+            let t=0,c=0; Object.keys(syllabusData).filter(k=>k!=='daily').forEach(sk=>{ syllabusData[sk].sections.forEach(s=>{ s.topics.forEach(tp=>{ t++; const id=`${sk}-${tp.replace(/[^a-zA-Z0-9]/g,'')}`; if(state[id]&&state[id].done)c++; }); }); }); 
             const p=t===0?0:Math.round((c/t)*100); document.getElementById('globalBar').style.width=`${p}%`; document.getElementById('globalText').textContent=`${p}% Syllabus Covered`; 
         }
 
-        // SEARCH
         const sInput = document.getElementById('topicSearch'); const sClear = document.getElementById('searchClear');
         sInput.addEventListener('input', e => { 
             const term = e.target.value.toLowerCase().trim(); 
             if(term) sClear.classList.add('show'); else sClear.classList.remove('show');
-            const cards = document.querySelectorAll('.topic-wrapper'); const headers = document.querySelectorAll('.section-header');
+            const cards = document.querySelectorAll('.topic-wrapper');
             cards.forEach(card => { if(card.innerText.toLowerCase().includes(term)) card.style.display='block'; else card.style.display='none'; });
         });
         window.clearSearch = () => { sInput.value=''; sClear.classList.remove('show'); renderContent(currentTab); }
 
-        // GEMINI AI
         function openChat() { document.getElementById('aiChat').classList.add('show'); if(!localStorage.getItem(API_KEY_STORAGE)) { document.getElementById('chatHistory').innerHTML = '<div class="message ai">Please enter your Gemini API Key using the "Key" button.</div>'; } }
         function closeChat() { document.getElementById('aiChat').classList.remove('show'); }
         window.resetApiKey = function() { const k = prompt("Enter Gemini API Key:"); if(k) { localStorage.setItem(API_KEY_STORAGE, k); showToast("Key Saved"); } }
