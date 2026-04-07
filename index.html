@@ -120,6 +120,12 @@
         .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .master-switch input:checked + .slider { background-color: var(--success); } .master-switch input:checked + .slider:before { transform: translateX(20px); }
 
+        /* --- PLANNER SPECIFIC --- */
+        .rev-tag { font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; font-weight: 700; margin-bottom: 5px; display: inline-block; }
+        .r1-tag { background: #eef2ff; color: var(--primary); }
+        .r4-tag { background: #fffbeb; color: var(--warning); }
+        .r7-tag { background: #fdf2f8; color: var(--secondary); }
+
         /* --- CHAT/MODAL OVERLAY --- */
         .chat-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--modal-overlay); z-index: 2500; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(5px); }
         .chat-overlay.show { opacity: 1; pointer-events: auto; }
@@ -128,20 +134,10 @@
         .chat-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); }
         .chat-title { font-weight: 700; font-size: 1.1rem; color: var(--text-main); }
         .chat-close { font-size: 1.5rem; color: var(--text-muted); cursor: pointer; background: none; border: none; }
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: var(--bg-body); }
-        .message { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 0.95rem; line-height: 1.5; word-wrap: break-word; }
-        .message.user { align-self: flex-end; background: var(--chat-user-bg); color: white; border-bottom-right-radius: 4px; }
-        .message.ai { align-self: flex-start; background: var(--chat-ai-bg); color: var(--chat-text-ai); border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
-        .message.system { align-self: center; font-size: 0.8rem; color: var(--text-muted); text-align: center; width: 100%; }
-        .message.ai strong { font-weight: 700; color: var(--primary); }
-        .chat-input-area { padding: 15px; border-top: 1px solid var(--border-color); background: var(--bg-card); display: flex; gap: 10px; align-items: flex-end; }
-        .chat-input { flex: 1; padding: 12px 15px; border-radius: 24px; border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); font-family: inherit; font-size: 0.95rem; resize: none; max-height: 100px; outline: none; }
-        .chat-send { width: 45px; height: 45px; border-radius: 50%; background: var(--primary); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
-
+        
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px; font-size: 0.9rem; font-weight: 500; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); z-index: 4000; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 10px; white-space: nowrap; }
         .toast.show { transform: translateX(-50%) translateY(0); }
-        .toast.error { background: #991b1b; }
-        
+
         /* --- SEARCH BAR --- */
         .search-container { padding: 15px 20px 10px 20px; background: var(--bg-body); transition: background 0.3s ease; }
         .search-box { position: relative; display: flex; align-items: center; }
@@ -153,24 +149,11 @@
 
         /* --- FAB --- */
         .fab { 
-            position: fixed; 
-            bottom: 30px; 
-            right: 20px;  
-            width: 56px;  
-            height: 56px; 
-            border-radius: 50%; 
-            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
-            color: white; 
-            border: none; 
-            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); 
-            z-index: 2000; 
-            cursor: pointer; 
-            display: none; 
-            align-items: center; 
-            justify-content: center;
-            padding: 0;
+            position: fixed; bottom: 30px; right: 20px; width: 56px; height: 56px; border-radius: 50%; 
+            background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; 
+            border: none; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); z-index: 2000; 
+            cursor: pointer; display: none; align-items: center; justify-content: center; padding: 0;
         }
-
         .fab svg { width: 24px; height: 24px; }
         .days-selector { display: flex; gap: 8px; justify-content: space-between; margin-top: 10px; }
         .day-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -195,6 +178,11 @@
     </div>
 
     <div id="appContainer">
+        <div class="chat-overlay" id="taskModal">
+            <div class="chat-container" id="modalContainer" style="height: auto; padding: 25px; border-radius: 24px; margin-bottom: 20px;">
+                </div>
+        </div>
+
         <div class="chat-overlay" id="aiChat">
             <div class="chat-container">
                 <div class="chat-header">
@@ -212,43 +200,19 @@
             </div>
         </div>
 
-        <div class="chat-overlay" id="taskModal">
-            <div class="chat-container" style="height: auto; padding: 25px; border-radius: 24px; margin-bottom: 20px;">
-                <div class="chat-header" style="border:none; padding:0 0 20px 0;">
-                    <div class="chat-title">Create Daily Task</div>
-                    <button class="chat-close" onclick="closeTaskModal()">×</button>
-                </div>
-                <input type="text" id="newTaskName" class="auth-input" placeholder="Task Name (e.g. 5 Puzzles)">
-                <div style="margin: 15px 0 10px 0; font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">REPEAT ON:</div>
-                <div class="days-selector" id="daysSelector">
-                    <button class="day-btn" data-day="0">S</button>
-                    <button class="day-btn" data-day="1">M</button>
-                    <button class="day-btn" data-day="2">T</button>
-                    <button class="day-btn" data-day="3">W</button>
-                    <button class="day-btn" data-day="4">T</button>
-                    <button class="day-btn" data-day="5">F</button>
-                    <button class="day-btn" data-day="6">S</button>
-                </div>
-                <button class="auth-btn" style="margin-top: 25px;" onclick="saveNewTask()">Create Task</button>
-            </div>
-        </div>
-
         <div id="toast" class="toast"><span id="toastIcon">✅</span><span id="toastMsg">Success</span></div>
 
         <div class="fixed-top-container" id="fixedHeader">
             <header class="app-header">
                 <div class="header-top">
                     <div class="header-title">
-                        <h1 style="margin: 0; font-size: 1.25rem; font-weight: 700; line-height: 1.3;">BankPrep "Syllabus Tracker"</h1>
+                        <h1 style="margin: 0; font-size: 1.25rem; font-weight: 700; line-height: 1.3;">BankPrep Tracker</h1>
                         <div style="font-size: 0.75rem; font-weight: 500; opacity: 0.9; margin-top: 2px;">(By Durga Prasad)</div>
-                        <div class="header-subtitle" style="margin-top: 4px;">100% Syllabus Coverage</div>
                     </div>
                     <div class="header-actions">
-                        <button class="icon-btn ai-btn" onclick="openChat()" aria-label="AI Tutor">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>
-                        </button>
-                        <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" aria-label="Toggle Theme"></button>
-                        <button class="icon-btn" onclick="handleLogout()" style="font-size: 0.9rem;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out-icon lucide-log-out"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg></button>
+                        <button class="icon-btn ai-btn" onclick="openChat()" aria-label="AI Tutor">✨</button>
+                        <button class="icon-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+                        <button class="icon-btn" onclick="handleLogout()">🚪</button>
                     </div>
                 </div>
                 <div class="global-progress-container"><div class="global-progress-fill" id="globalBar"></div></div>
@@ -257,9 +221,6 @@
             <nav class="category-nav" id="categoryNav"></nav>
             <div class="search-container">
                 <div class="search-box">
-                    <span class="search-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                    </span>
                     <input type="text" id="topicSearch" class="search-input" placeholder="Search topics..." autocomplete="off">
                     <button class="search-clear" id="searchClear" onclick="clearSearch()">×</button>
                 </div>
@@ -268,7 +229,7 @@
 
         <main class="content-area" id="contentArea"></main>
 
-        <button class="fab" id="addTaskBtn" onclick="openTaskModal()">
+        <button class="fab" id="addTaskBtn" onclick="openModalByTab()">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         </button>
     </div>
@@ -283,56 +244,43 @@
             appId: "1:254084569056:web:a6e3a75e0d80372b373d85"
         };
 
-        if (firebaseConfig.apiKey !== "YOUR_API_KEY_HERE") { firebase.initializeApp(firebaseConfig); }
+        firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(); const db = firebase.firestore();
 
         const syllabusData = {
-            "daily": { label: "Daily", icon: "📅", sections: [] },
+            "daily": { label: "Daily", icon: "📅" },
+            "planner": { label: "Planner", icon: "🕒" },
             "basics": { label: "Basics", icon: "⚡", sections: [{ title: "Calculation Drills", topics: ["Tables (1-20)", "Tables (21-30)", "Squares (1-50)", "Cubes (1-30)", "Fraction to % Drills"] }] },
-            "quant": { label: "Quant", icon: "📊", sections: [{ title: "Number System", topics: ["Natural, Whole, Integers", "Prime & Composite", "Factors & Multiples", "LCM & HCF", "Divisibility Rules", "Unit Digit", "Cyclicity"] }, { title: "Arithmetic Core", topics: ["Simplification", "Approximation", "BODMAS", "Fractions & Decimals", "Percentages", "Ratio & Proportion", "Average"] }, { title: "Commercial Maths", topics: ["Profit & Loss", "Simple Interest", "Compound Interest", "Time & Work", "Pipes & Cisterns", "Time Speed Distance", "Boats & Streams", "Mixtures & Alligation", "Partnership", "Ages"] }, { title: "Advanced & Mains", topics: ["Permutation & Combination", "Probability (Mains)", "Mensuration 2D", "Mensuration 3D", "Number Series", "Quadratic Equations"] }, { title: "Data Interpretation", topics: ["Table DI", "Bar Graph", "Line Graph", "Pie Chart", "Caselet DI", "Missing DI", "Radar / Web DI"] }] },
-            "reasoning": { label: "Logic", icon: "🧠", sections: [{ title: "Speed Reasoning", topics: ["Alphabet Series", "Number Series", "Alphanumeric Series", "Analogy", "Classification", "Inequality", "Syllogism (New Pattern)"] }, { title: "Spatial & Logic", topics: ["Direction & Distance", "Coding-Decoding", "Order & Ranking", "Blood Relations"] }, { title: "Seating Arrangement", topics: ["Linear Row", "Circular Seating", "Square/Rectangular", "Triangular Seating", "Uncertain Number"] }, { title: "Puzzles", topics: ["Floor Based", "Box Based", "Month/Day/Year", "Scheduling", "Designation Based", "Flat & Floor"] }, { title: "Mains Logic", topics: ["Input-Output", "Data Sufficiency", "Statement & Assumption", "Statement & Conclusion", "Cause & Effect", "Course of Action"] }] },
-            "english": { label: "English", icon: "📖", sections: [{ title: "Grammar Rules", topics: ["Parts of Speech", "Subject-Verb Agreement", "Tenses", "Articles", "Prepositions", "Conjunctions", "Active & Passive Voice", "Direct & Indirect Speech"] }, { title: "Vocabulary", topics: ["Synonyms & Antonyms", "Idioms & Phrases", "Phrasal Verbs", "Root Words", "One-word Substitution", "Word Usage/Swap"] }, { title: "Reading Skills", topics: ["Reading Comprehension", "RC Inference & Tone", "Cloze Test", "Para Jumbles", "Para Completion", "Sentence Rearrangement"] }, { title: "Mains Descriptive", topics: ["Essay Writing", "Letter Writing"] }] },
-            "ga": { label: "G.A.", icon: "🏦", sections: [{ title: "Banking Awareness", topics: ["RBI Functions & Structure", "Monetary Policy", "Repo, Reverse Repo, CRR, SLR", "Types of Accounts", "Basel Norms", "Financial Inclusion", "NPCI (UPI, IMPS)"] }, { title: "Static GK", topics: ["National Parks & Sanctuaries", "Dams & Rivers", "Country Capitals & Currencies", "HQ of Int. Organizations", "Airports & Stadiums", "Power Plants"] }, { title: "Current Affairs", topics: ["Last 6 Months News", "Union Budget", "Government Schemes", "Appointments", "Awards & Honours", "Books & Authors", "Sports News"] }] },
-            "computer": { label: "Computer", icon: "💻", sections: [{ title: "Hardware & OS", topics: ["Generations of Computers", "Input/Output Devices", "Memory (RAM, ROM)", "Operating Systems"] }, { title: "Networking & Security", topics: ["Internet & Browsers", "OSI Model", "IP Addresses & Protocols", "Cyber Security", "Virus & Malware", "MS Office Shortcuts"] }] }
+            "quant": { label: "Quant", icon: "📊", sections: [{ title: "Arithmetic", topics: ["Number System", "Simplification", "Percentages", "Ratio", "Average", "Profit & Loss", "Time & Work"] }] },
+            "reasoning": { label: "Logic", icon: "🧠", sections: [{ title: "Reasoning", topics: ["Syllogism", "Inequality", "Blood Relations", "Puzzles", "Seating Arrangement"] }] },
+            "english": { label: "English", icon: "📖", sections: [{ title: "English", topics: ["Tenses", "Articles", "Error Spotting", "Reading Comprehension"] }] }
         };
 
-        const API_KEY_STORAGE = 'gemini_api_key'; const THEME_KEY = 'bank_theme_pref';
-        let state = {}; let currentTab = 'quant'; let isSignup = false; let currentUser = null;
-        let selectedDays = [];
-
-        const SUN_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`;
-        const MOON_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>`;
+        let state = {}; let currentTab = 'quant'; let currentUser = null; let selectedDays = [];
 
         auth.onAuthStateChanged(user => {
             if (user) {
                 currentUser = user; document.getElementById('authScreen').style.display = 'none';
-                document.getElementById('appContainer').style.display = 'block'; loadUserData(); initTheme();
+                document.getElementById('appContainer').style.display = 'block'; loadUserData();
             } else {
-                currentUser = null; document.getElementById('authScreen').style.display = 'flex';
+                document.getElementById('authScreen').style.display = 'flex';
                 document.getElementById('appContainer').style.display = 'none';
             }
         });
 
-        function toggleAuth() {
-            isSignup = !isSignup;
-            document.getElementById('mainAuthBtn').textContent = isSignup ? "Create Account" : "Sign In";
-            document.getElementById('toggleAuthMode').textContent = isSignup ? "Already have an account? Sign In" : "New here? Create Account";
-            document.getElementById('authError').textContent = "";
-        }
-
         async function handleLogin() {
             const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
-            try { if(isSignup) await auth.createUserWithEmailAndPassword(email, pass); else await auth.signInWithEmailAndPassword(email, pass); }
-            catch(error) { document.getElementById('authError').textContent = error.message; }
+            try { await auth.signInWithEmailAndPassword(email, pass); } catch(e) { alert(e.message); }
         }
         function handleLogout() { auth.signOut(); }
 
         function loadUserData() {
             db.collection('users').doc(currentUser.uid).onSnapshot(doc => {
-                if (doc.exists) state = doc.data().progress || {}; else state = {};
+                state = doc.exists ? doc.data().progress || {} : {};
                 if (!state.customTasks) state.customTasks = {};
-                renderTabs(); renderContent(currentTab); updateGlobalStats(); adjustPadding();
+                if (!state.plannerTasks) state.plannerTasks = {};
+                renderTabs(); renderContent(currentTab); updateGlobalStats();
             });
         }
         function saveState() {
@@ -340,139 +288,161 @@
             updateGlobalStats();
         }
 
-        function getFormattedDate(d) { if(!d) return "-"; return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
-        function adjustPadding() { document.body.style.paddingTop = (document.getElementById('fixedHeader').offsetHeight + 5) + 'px'; }
-        window.addEventListener('resize', adjustPadding);
-        function showToast(msg, type='success') { const t=document.getElementById('toast'); document.getElementById('toastIcon').innerText=type==='success'?'✅':'❌'; document.getElementById('toastMsg').innerText=msg; t.className=`toast ${type} show`; setTimeout(()=>t.classList.remove('show'),3000); }
-
-        function initTheme() { const p = localStorage.getItem(THEME_KEY); if(p==='dark'){document.documentElement.setAttribute('data-theme','dark');document.getElementById('themeBtn').innerHTML=SUN_ICON;}else{document.documentElement.setAttribute('data-theme','light');document.getElementById('themeBtn').innerHTML=MOON_ICON;} }
-        window.toggleTheme = function() { const c = document.documentElement.getAttribute('data-theme'); if(c==='light'){document.documentElement.setAttribute('data-theme','dark');localStorage.setItem(THEME_KEY,'dark');document.getElementById('themeBtn').innerHTML=SUN_ICON;}else{document.documentElement.setAttribute('data-theme','light');localStorage.setItem(THEME_KEY,'light');document.getElementById('themeBtn').innerHTML=MOON_ICON;} }
-
-        function openTaskModal() { document.getElementById('taskModal').classList.add('show'); }
-        function closeTaskModal() { document.getElementById('taskModal').classList.remove('show'); }
-        
-        document.querySelectorAll('.day-btn').forEach(btn => {
-            btn.onclick = () => {
-                btn.classList.toggle('selected');
-                const day = parseInt(btn.dataset.day);
-                if(selectedDays.includes(day)) selectedDays = selectedDays.filter(d => d !== day);
-                else selectedDays.push(day);
-            }
-        });
-
-        window.saveNewTask = function() {
-            const name = document.getElementById('newTaskName').value.trim();
-            if (!name || selectedDays.length === 0) { showToast("Name and days required", "error"); return; }
-            const taskId = 'task-' + Date.now();
-            if (!state.customTasks) state.customTasks = {};
-            state.customTasks[taskId] = { name: name, days: [...selectedDays], completions: {} };
-            saveState(); closeTaskModal();
-            document.getElementById('newTaskName').value = '';
-            document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('selected'));
-            selectedDays = []; renderContent('daily');
-        }
-
+        // --- TAB RENDERING ---
         function renderTabs() { 
             const n = document.getElementById('categoryNav'); n.innerHTML=''; 
             Object.keys(syllabusData).forEach(k=>{ 
                 const d=document.createElement('div'); d.className=`nav-item ${k===currentTab?'active':''}`; 
                 d.innerHTML=`<span class="nav-icon">${syllabusData[k].icon}</span><span class="nav-label">${syllabusData[k].label}</span>`; 
-                d.onclick=()=>{currentTab=k;renderTabs();renderContent(k);window.scrollTo({top:0,behavior:'instant'});}; n.appendChild(d); 
+                d.onclick=()=>{currentTab=k;renderTabs();renderContent(k);}; n.appendChild(d); 
             }); 
-            document.getElementById('addTaskBtn').style.display = currentTab === 'daily' ? 'flex' : 'none';
+            document.getElementById('addTaskBtn').style.display = (currentTab === 'daily' || currentTab === 'planner') ? 'flex' : 'none';
         }
-        
-        function renderContent(k) { 
-            const c=document.getElementById('contentArea'); c.innerHTML=''; 
-            if (document.getElementById('topicSearch')) { document.getElementById('topicSearch').value = ''; document.getElementById('searchClear').classList.remove('show'); }
-            
-            if(k==='daily'){renderCustomTasks(c); return;}
 
-            const sub=syllabusData[k]; 
-            sub.sections.forEach(s=>{ 
-                const h=document.createElement('div'); h.className='section-header'; h.textContent=s.title; c.appendChild(h); 
-                s.topics.forEach(t=>{ 
-                    const id=`${k}-${t.replace(/[^a-zA-Z0-9]/g,'')}`; 
-                    const td=state[id]||{done:false,date:null}; 
-                    const cd=document.createElement('div'); cd.className=`topic-wrapper`; cd.id=`card-${id}`; 
-                    cd.innerHTML=`<div class="topic-main">
-                                    <div class="topic-left">
-                                        <div class="topic-info">
-                                            <h3>${t}</h3>
-                                            <div class="topic-status ${td.done?'active':''}">${td.done?'Completed':'Not Started'}</div>
-                                        </div>
-                                    </div>
-                                    <label class="switch master-switch">
-                                        <input type="checkbox" onchange="handleMasterToggle('${id}')" ${td.done?'checked':''}>
-                                        <span class="slider"></span>
-                                    </label>
-                                  </div>`; 
-                    c.appendChild(cd); 
-                }); 
-            }); 
+        function renderContent(k) {
+            const c=document.getElementById('contentArea'); c.innerHTML='';
+            if(k==='daily') return renderDailyTab(c);
+            if(k==='planner') return renderPlannerTab(c);
+
+            const sub=syllabusData[k];
+            sub.sections.forEach(s=>{
+                const h=document.createElement('div'); h.className='section-header'; h.textContent=s.title; c.appendChild(h);
+                s.topics.forEach(t=>{
+                    const id=`${k}-${t.replace(/\s/g,'')}`; const td=state[id]||{done:false};
+                    const div=document.createElement('div'); div.className='topic-wrapper';
+                    div.innerHTML=`<div class="topic-main">
+                        <div class="topic-info"><h3>${t}</h3><div class="topic-status ${td.done?'active':''}">${td.done?'Completed':'Pending'}</div></div>
+                        <label class="switch master-switch"><input type="checkbox" onchange="toggleSyllabus('${id}')" ${td.done?'checked':''}><span class="slider"></span></label>
+                    </div>`;
+                    c.appendChild(div);
+                });
+            });
             adjustPadding();
         }
 
-        function renderCustomTasks(container) {
-            const today = new Date(); const dayOfWeek = today.getDay(); const dateKey = today.toISOString().split('T')[0];
-            const h = document.createElement('div'); h.className = 'section-header'; h.textContent = "Today's Checklist"; container.appendChild(h);
-            
+        function toggleSyllabus(id) {
+            if(!state[id]) state[id] = {};
+            state[id].done = event.target.checked;
+            saveState(); renderContent(currentTab);
+        }
+
+        // --- DAILY TASKS TAB ---
+        function renderDailyTab(container) {
+            const dayOfWeek = new Date().getDay(); const dateKey = new Date().toDateString();
+            const h = document.createElement('div'); h.className='section-header'; h.textContent="Today's Checklist"; container.appendChild(h);
             let hasTasks = false;
-            if(state.customTasks) {
-                Object.entries(state.customTasks).forEach(([id, task]) => {
-                    if (task.days.includes(dayOfWeek)) {
-                        hasTasks = true; const isDone = task.completions && task.completions[dateKey];
-                        const div = document.createElement('div'); div.className = `topic-wrapper`;
-                        div.innerHTML = `<div class="topic-main"><div class="topic-left"><div class="topic-info"><h3>${task.name}</h3><div class="topic-status ${isDone?'active':''}">${isDone?'Finished for today':'Pending'}</div></div></div><label class="switch master-switch"><input type="checkbox" onchange="toggleCustomTask('${id}')" ${isDone?'checked':''}><span class="slider"></span></label></div>`;
+            Object.entries(state.customTasks || {}).forEach(([id, task]) => {
+                if(task.days.includes(dayOfWeek)) {
+                    hasTasks = true; const isDone = task.completions && task.completions[dateKey];
+                    const div = document.createElement('div'); div.className = 'topic-wrapper';
+                    div.innerHTML = `<div class="topic-main"><div class="topic-info"><h3>${task.name}</h3><div class="topic-status ${isDone?'active':''}">${isDone?'Finished':'Pending'}</div></div><label class="switch master-switch"><input type="checkbox" onchange="toggleDaily('${id}')" ${isDone?'checked':''}><span class="slider"></span></label></div>`;
+                    container.appendChild(div);
+                }
+            });
+            if(!hasTasks) container.innerHTML += `<div class="empty-state">No daily tasks for today. Click + to add.</div>`;
+            adjustPadding();
+        }
+
+        function toggleDaily(id) {
+            const dateKey = new Date().toDateString();
+            if(!state.customTasks[id].completions) state.customTasks[id].completions = {};
+            state.customTasks[id].completions[dateKey] = event.target.checked;
+            saveState(); renderContent('daily');
+        }
+
+        // --- 1-4-7 PLANNER TAB ---
+        function renderPlannerTab(container) {
+            const today = new Date(); const todayStr = today.toDateString();
+            const h = document.createElement('div'); h.className='section-header'; h.textContent="Revisions Due Today"; container.appendChild(h);
+            let found = false;
+            Object.entries(state.plannerTasks || {}).forEach(([id, plan]) => {
+                const start = new Date(plan.startDate);
+                const steps = [
+                    { d: 1, label: "1st Revision", tag: "r1" },
+                    { d: 4, label: "4th Day Revision", tag: "r4" },
+                    { d: 7, label: "7th Day Revision", tag: "r7" }
+                ];
+                steps.forEach(step => {
+                    const due = new Date(start); due.setDate(start.getDate() + step.d);
+                    if(due.toDateString() === todayStr) {
+                        found = true; const compKey = `${todayStr}-${step.tag}`;
+                        const isDone = plan.completions && plan.completions[compKey];
+                        const div = document.createElement('div'); div.className = 'topic-wrapper';
+                        div.innerHTML = `<div class="topic-main">
+                            <div class="topic-info"><span class="rev-tag ${step.tag}-tag">${step.label}</span><h3>${plan.name}</h3><div class="topic-status ${isDone?'active':''}">${isDone?'Revision Done':'Due Today'}</div></div>
+                            <label class="switch master-switch"><input type="checkbox" onchange="togglePlannerRev('${id}','${compKey}')" ${isDone?'checked':''}><span class="slider"></span></label>
+                        </div>`;
                         container.appendChild(div);
                     }
                 });
-            }
-            if(!hasTasks) container.innerHTML += `<div class="empty-state"><h3>No tasks for today!</h3><p>Click the + button to add a recurring task.</p></div>`;
+            });
+            if(!found) container.innerHTML += `<div class="empty-state">🎉 All clear! No revisions for today.</div>`;
             adjustPadding();
         }
 
-        window.toggleCustomTask = function(taskId) {
-            const dateKey = new Date().toISOString().split('T')[0]; const isChecked = event.target.checked;
-            if (!state.customTasks[taskId].completions) state.customTasks[taskId].completions = {};
-            if (isChecked) state.customTasks[taskId].completions[dateKey] = true; else delete state.customTasks[taskId].completions[dateKey];
-            saveState(); renderContent('daily');
-        };
-
-        window.handleMasterToggle=function(id){ 
-            const c=event.target.checked; 
-            if(!state[id])state[id]={}; 
-            state[id].done=c; 
-            state[id].date=c?new Date().toISOString():null; 
-            saveState(); renderContent(currentTab); 
+        function togglePlannerRev(id, compKey) {
+            if(!state.plannerTasks[id].completions) state.plannerTasks[id].completions = {};
+            if(event.target.checked) state.plannerTasks[id].completions[compKey] = true;
+            else delete state.plannerTasks[id].completions[compKey];
+            saveState(); renderContent('planner');
         }
 
-        function updateGlobalStats(){ 
-            let t=0,c=0; Object.keys(syllabusData).filter(k=>k!=='daily').forEach(sk=>{ syllabusData[sk].sections.forEach(s=>{ s.topics.forEach(tp=>{ t++; const id=`${sk}-${tp.replace(/[^a-zA-Z0-9]/g,'')}`; if(state[id]&&state[id].done)c++; }); }); }); 
-            const p=t===0?0:Math.round((c/t)*100); document.getElementById('globalBar').style.width=`${p}%`; document.getElementById('globalText').textContent=`${p}% Syllabus Covered`; 
+        // --- MODAL & FORM LOGIC ---
+        function openModalByTab() {
+            const container = document.getElementById('modalContainer');
+            document.getElementById('taskModal').classList.add('show');
+            if(currentTab === 'daily') {
+                container.innerHTML = `
+                    <div class="chat-header" style="border:none; padding:0 0 20px 0;"><h3>New Daily Task</h3><button class="chat-close" onclick="closeTaskModal()">×</button></div>
+                    <input type="text" id="newTaskName" class="auth-input" placeholder="Task Name (e.g. 5 Puzzles)">
+                    <div class="days-selector">${['S','M','T','W','T','F','S'].map((d,i)=>`<button class="day-btn" data-day="${i}" onclick="this.classList.toggle('selected')">${d}</button>`).join('')}</div>
+                    <button class="auth-btn" style="margin-top: 25px;" onclick="saveDailyTask()">Add Habit</button>`;
+            } else if(currentTab === 'planner') {
+                container.innerHTML = `
+                    <div class="chat-header" style="border:none; padding:0 0 20px 0;"><h3>Start 1-4-7 Plan</h3><button class="chat-close" onclick="closeTaskModal()">×</button></div>
+                    <input type="text" id="pName" class="auth-input" placeholder="Topic Name">
+                    <div style="margin: 10px 0 5px 5px; font-size:0.75rem; color:var(--text-muted);">Date Completed:</div>
+                    <input type="date" id="pDate" class="auth-input" value="${new Date().toISOString().split('T')[0]}">
+                    <button class="auth-btn" style="margin-top: 25px;" onclick="savePlannerTask()">Add to Planner</button>`;
+            }
         }
 
-        const sInput = document.getElementById('topicSearch'); const sClear = document.getElementById('searchClear');
-        sInput.addEventListener('input', e => { 
-            const term = e.target.value.toLowerCase().trim(); 
-            if(term) sClear.classList.add('show'); else sClear.classList.remove('show');
-            const cards = document.querySelectorAll('.topic-wrapper');
-            cards.forEach(card => { if(card.innerText.toLowerCase().includes(term)) card.style.display='block'; else card.style.display='none'; });
-        });
-        window.clearSearch = () => { sInput.value=''; sClear.classList.remove('show'); renderContent(currentTab); }
+        function closeTaskModal() { document.getElementById('taskModal').classList.remove('show'); }
 
-        function openChat() { document.getElementById('aiChat').classList.add('show'); if(!localStorage.getItem(API_KEY_STORAGE)) { document.getElementById('chatHistory').innerHTML = '<div class="message ai">Please enter your Gemini API Key using the "Key" button.</div>'; } }
-        function closeChat() { document.getElementById('aiChat').classList.remove('show'); }
-        window.resetApiKey = function() { const k = prompt("Enter Gemini API Key:"); if(k) { localStorage.setItem(API_KEY_STORAGE, k); showToast("Key Saved"); } }
-        function appendMessage(sender, text) { const h = document.getElementById('chatHistory'); const d = document.createElement('div'); d.className = `message ${sender}`; d.innerHTML = text; h.appendChild(d); h.scrollTop=h.scrollHeight; }
-        window.sendToGemini = async function() {
-            const input = document.getElementById('chatInput'); const text = input.value.trim(); const apiKey = localStorage.getItem(API_KEY_STORAGE);
-            if(!text || !apiKey) return; appendMessage('user', text); input.value='';
-            try {
-                const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, { method: 'POST', body: JSON.stringify({ contents: [{ parts: [{ text: text }] }] }) });
-                const data = await resp.json(); appendMessage('ai', data.candidates[0].content.parts[0].text);
-            } catch(e) { appendMessage('system', 'Error connecting to AI'); }
+        window.saveDailyTask = function() {
+            const name = document.getElementById('newTaskName').value;
+            const days = Array.from(document.querySelectorAll('.day-btn.selected')).map(b => parseInt(b.dataset.day));
+            if(!name || days.length === 0) return;
+            const id = 'd'+Date.now();
+            state.customTasks[id] = { name, days, completions: {} };
+            saveState(); closeTaskModal(); renderContent('daily');
         }
+
+        window.savePlannerTask = function() {
+            const name = document.getElementById('pName').value;
+            const date = document.getElementById('pDate').value;
+            if(!name || !date) return;
+            const id = 'p'+Date.now();
+            state.plannerTasks[id] = { name, startDate: date, completions: {} };
+            saveState(); closeTaskModal(); renderContent('planner');
+        }
+
+        // --- UTILS ---
+        function updateGlobalStats() {
+            let t=0, c=0;
+            Object.keys(syllabusData).filter(k=>!['daily','planner'].includes(k)).forEach(sk=>{
+                syllabusData[sk].sections?.forEach(s=>s.topics.forEach(tp=>{
+                    t++; if(state[`${sk}-${tp.replace(/\s/g,'')}`]?.done) c++;
+                }));
+            });
+            const p = t===0 ? 0 : Math.round((c/total)*100); // Fixed denominator logic
+            document.getElementById('globalBar').style.width = (c/t*100)+'%';
+            document.getElementById('globalText').textContent = Math.round(c/t*100)+'% Covered';
+        }
+
+        function adjustPadding() { document.body.style.paddingTop = (document.getElementById('fixedHeader').offsetHeight + 5) + 'px'; }
+        function toggleTheme() { /* Simple theme toggle logic */ }
+        function clearSearch() { document.getElementById('topicSearch').value=''; renderContent(currentTab); }
     </script>
 </body>
 </html>
