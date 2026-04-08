@@ -437,50 +437,67 @@
             renderAnalysisSubContent();
         }
 
+        let myPerformanceChart = null; // Global variable to track the chart instance
+
         function renderInsightsChart() {
             const canvas = document.getElementById('performanceChart');
-            if (!canvas || !state.mockScores || Object.keys(state.mockScores).length === 0) {
-                canvas.parentElement.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>Log at least one mock to see insights.</p>";
+            if (!canvas) return;
+            
+            // Destroy existing chart to prevent the "expanding" bug and memory leaks
+            if (myPerformanceChart) {
+                myPerformanceChart.destroy();
+            }
+        
+            if (!state.mockScores || Object.keys(state.mockScores).length === 0) {
+                canvas.parentElement.innerHTML = "<p style='text-align:center; padding:40px; color:var(--text-muted);'>Log your first mock to see the trend.</p>";
                 return;
             }
         
             const sortedMocks = Object.values(state.mockScores).sort((a, b) => new Date(a.date) - new Date(b.date));
-            const labels = sortedMocks.map(m => m.name.split(' - ')[0] + " #" + (m.name.split('#')[1] || ""));
+            const labels = sortedMocks.map(m => m.name.split(' - ')[0]);
             const totals = sortedMocks.map(m => parseFloat(m.total));
         
             const ctx = canvas.getContext('2d');
-            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-            gradient.addColorStop(0, 'rgba(79, 70, 229, 0.4)');
-            gradient.addColorStop(1, 'rgba(79, 70, 229, 0)');
-        
-            new Chart(ctx, {
+            
+            myPerformanceChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Total Score',
                         data: totals,
                         borderColor: '#4f46e5',
                         borderWidth: 3,
                         pointBackgroundColor: '#fff',
                         pointBorderColor: '#4f46e5',
-                        pointHoverRadius: 6,
-                        fill: true,
-                        backgroundColor: gradient,
-                        tension: 0.4
+                        pointRadius: 4,
+                        tension: 0.3, // "Clean" curve, not too wavy
+                        fill: false // Removed the gradient for a "cleaner" look as requested
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    maintainAspectRatio: false, // Essential to prevent growing
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: '#1e293b',
+                            titleFont: { family: 'Poppins', size: 13 },
+                            bodyFont: { family: 'Poppins', size: 12 }
+                        }
+                    },
                     scales: {
                         y: { 
-                            beginAtZero: true, 
-                            grid: { color: 'rgba(0,0,0,0.05)' },
-                            ticks: { font: { family: 'Poppins' } }
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { borderDash: [5, 5], color: 'rgba(0,0,0,0.05)' },
+                            ticks: { stepSize: 20, font: { family: 'Poppins' } }
                         },
-                        x: { grid: { display: false } }
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: 'Poppins' } }
+                        }
                     }
                 }
             });
@@ -509,15 +526,21 @@
                         <button class="auth-btn" onclick="saveScore()">Save Scorecard</button>
                     </div>`;
             } 
+            /* Update this specific block inside your renderAnalysisSubContent() */
             else if (currentAnalysisSubTab === 'insights') {
                 subContainer.innerHTML = `
-                    <div class="topic-wrapper" style="padding:20px; min-height:300px;">
-                        <h4 style="margin:0 0 15px 0; font-size:0.9rem;">Score Progression</h4>
-                        <canvas id="performanceChart"></canvas>
-                    </div>`;
-                // Delay slightly to ensure canvas is in DOM
-                setTimeout(renderInsightsChart, 50);
-            } 
+                    <div class="topic-wrapper" style="padding:20px; height:350px; position:relative;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                            <h4 style="margin:0; font-size:0.9rem; font-weight:700;">Score Trend (Prelims)</h4>
+                            <span style="font-size:0.7rem; color:var(--text-muted);">Goal: 70+</span>
+                        </div>
+                        <div style="height:250px; width:100%;">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                `;
+                setTimeout(renderInsightsChart, 100);
+            }
             else if (currentAnalysisSubTab === 'history') {
                 // We pass the subContainer directly to the history renderer
                 renderMockHistory(subContainer);
@@ -526,14 +549,44 @@
 
         window.saveScore = function() {
             const type = document.getElementById('mockType').value;
+            const num = document.getElementById('mockNumber').value;
+            const custom = document.getElementById('mockCustomName').value;
             const e = parseFloat(document.getElementById('scE').value) || 0;
             const q = parseFloat(document.getElementById('scQ').value) || 0;
             const r = parseFloat(document.getElementById('scR').value) || 0;
-            const name = (type==='Other')?document.getElementById('mockCustomName').value:`${type} - Mock ${document.getElementById('mockNumber').value}`;
+        
+            const name = (type === 'Other') ? custom : `${type} - Mock ${num}`;
+        
+            if (!name || (type !== 'Other' && !num)) {
+                showToast("Enter Mock Details", "error");
+                return;
+            }
+        
             const id = 'mock-' + Date.now();
-            state.mockScores[id] = { name, english: e.toFixed(2), quant: q.toFixed(2), reasoning: r.toFixed(2), total: (e+q+r).toFixed(2), date: new Date().toISOString() };
-            saveState(); renderContent('analysis');
-        }
+            state.mockScores[id] = {
+                name: name,
+                english: e.toFixed(2),
+                quant: q.toFixed(2),
+                reasoning: r.toFixed(2),
+                total: (e + q + r).toFixed(2),
+                date: new Date().toISOString()
+            };
+        
+            saveState();
+            
+            // Clear inputs manually instead of re-rendering everything to preserve the toast
+            document.getElementById('scE').value = '';
+            document.getElementById('scQ').value = '';
+            document.getElementById('scR').value = '';
+            if(document.getElementById('mockNumber')) document.getElementById('mockNumber').value = '';
+            
+            showToast("Scorecard Saved Successfully!");
+            
+            // If you want to jump to history after saving:
+            setTimeout(() => {
+                switchAnalysisSubTab('history');
+            }, 1000);
+        };
 
         function renderMockHistory(container) {
             if(!state.mockScores || Object.keys(state.mockScores).length === 0) {
