@@ -12,7 +12,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* --- ALL ORIGINAL STYLES RESTORED --- */
         :root {
             --primary: #4f46e5; --primary-light: #818cf8; --secondary: #ec4899;
             --bg-body: #f8fafc; --bg-card: #ffffff;
@@ -22,7 +21,6 @@
             --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             --radius: 16px; --drawer-bg: #f8fafc; --task-tag-bg: #f1f5f9;
             --modal-overlay: rgba(15, 23, 42, 0.6);
-            --chat-user-bg: #4f46e5; --chat-ai-bg: #f1f5f9; --chat-text-ai: #0f172a;
         }
 
         [data-theme="dark"] {
@@ -32,7 +30,6 @@
             --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
             --drawer-bg: #0f172a; --task-tag-bg: #334155;
             --modal-overlay: rgba(0, 0, 0, 0.85);
-            --chat-user-bg: #6366f1; --chat-ai-bg: #334155; --chat-text-ai: #f1f5f9;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; transition: background-color 0.3s ease, color 0.3s ease; }
@@ -46,7 +43,6 @@
         .auth-input { width: 100%; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border-color); background: var(--bg-body); font-size: 0.95rem; margin-bottom: 14px; color: var(--text-main); }
         .auth-input:focus { outline: none; border-color: var(--primary); }
         .auth-btn { width: 100%; padding: 14px; border-radius: 14px; border: none; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 5px; }
-        .auth-link { margin-top: 18px; font-size: 0.85rem; color: var(--primary); cursor: pointer; font-weight: 600; }
 
         #appContainer { display: none; }
         .fixed-top-container { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background-color: var(--bg-body); }
@@ -54,7 +50,6 @@
         .header-top { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
         .header-actions { align-self: flex-end; margin-top: 10px; display: flex; gap: 12px; }
         .icon-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(4px); }
-        .icon-btn.ai-btn { background: linear-gradient(135deg, #FFD700, #FFA500); border: none; color: #78350f; }
 
         .global-progress-container { margin-top: 20px; background: rgba(0,0,0,0.25); height: 8px; border-radius: 10px; overflow: hidden; position: relative; }
         .global-progress-fill { height: 100%; background: #fff; width: 0%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -168,7 +163,6 @@
                         <div style="font-size: 0.75rem; font-weight: 500; opacity: 0.9; margin-top: 2px;">(By Durga Prasad)</div>
                     </div>
                     <div class="header-actions">
-                        <button class="icon-btn ai-btn">✨</button>
                         <button class="icon-btn" onclick="toggleTheme()" id="themeBtn"></button>
                         <button class="icon-btn" onclick="handleLogout()" style="font-size: 0.9rem;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg></button>
                     </div>
@@ -195,7 +189,6 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(); const db = firebase.firestore();
 
-        // --- FULL SYLLABUS DATA RESTORED ---
         const syllabusData = {
             "daily": { label: "Daily", icon: "📅", sections: [] },
             "revision": { label: "Revision", icon: "🔄", sections: [] },
@@ -297,7 +290,6 @@
             if(!hasRevision) container.innerHTML += `<div style="text-align:center; padding:40px; color:var(--text-muted);">No revisions due today.</div>`;
         }
 
-        // ANALYSIS TAB
         function renderAnalysis(container) {
             container.innerHTML = `<div class="section-header">Mock Analytics</div><div class="sub-nav-container"><button onclick="switchAnalysisSubTab('log')" class="sub-nav-btn ${currentAnalysisSubTab==='log'?'active':''}" id="btn-log">Log New</button><button onclick="switchAnalysisSubTab('insights')" class="sub-nav-btn ${currentAnalysisSubTab==='insights'?'active':''}" id="btn-insights">Insights</button><button onclick="switchAnalysisSubTab('history')" class="sub-nav-btn ${currentAnalysisSubTab==='history'?'active':''}" id="btn-history">My Mocks</button></div><div id="analysisSubContent"></div>`;
             renderAnalysisSubContent();
@@ -339,7 +331,6 @@
             });
         }
 
-        // HELPERS
         function openTaskModal() {
             const modal = document.getElementById('taskModal'); const title = document.getElementById('taskModalTitle');
             const dG = document.getElementById('daysSelectorGroup'); const rG = document.getElementById('revisionSelectorGroup');
