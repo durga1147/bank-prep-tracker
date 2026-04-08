@@ -439,12 +439,27 @@
             container.innerHTML = `
                 <div class="section-header">Log New Mock Test</div>
                 <div class="topic-wrapper" style="padding:20px;">
-                    <input type="text" id="mockName" class="auth-input" placeholder="Mock Name (e.g. SBI Prelims 1)">
+                    <select id="mockType" class="auth-input" onchange="toggleMockInputs()">
+                        <option value="SBI PO">SBI PO</option>
+                        <option value="SBI Clerk">SBI Clerk</option>
+                        <option value="IBPS PO">IBPS PO</option>
+                        <option value="IBPS Clerk">IBPS Clerk</option>
+                        <option value="Other">Other</option>
+                    </select>
+        
+                    <div id="testNumContainer">
+                        <input type="number" id="mockNumber" class="auth-input" placeholder="Test Number (e.g. 1, 5, 12)">
+                    </div>
+                    <div id="customNameContainer" style="display:none;">
+                        <input type="text" id="mockCustomName" class="auth-input" placeholder="Enter Custom Mock Name">
+                    </div>
+        
                     <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-top:10px;">
                         <input type="number" id="scoreEnglish" class="auth-input" placeholder="English">
                         <input type="number" id="scoreQuant" class="auth-input" placeholder="Quant">
                         <input type="number" id="scoreReasoning" class="auth-input" placeholder="Logic">
                     </div>
+                    
                     <button class="auth-btn" onclick="saveMockScore()">Save Scorecard</button>
                 </div>
                 <div class="section-header">Recent Performance</div>
@@ -453,23 +468,56 @@
             renderMockHistory();
         }
 
+        window.toggleMockInputs = function() {
+            const type = document.getElementById('mockType').value;
+            const numCont = document.getElementById('testNumContainer');
+            const customCont = document.getElementById('customNameContainer');
+        
+            if (type === 'Other') {
+                numCont.style.display = 'none';
+                customCont.style.display = 'block';
+            } else {
+                numCont.style.display = 'block';
+                customCont.style.display = 'none';
+            }
+        };
         window.saveMockScore = function() {
-            const name = document.getElementById('mockName').value;
+            const type = document.getElementById('mockType').value;
+            const num = document.getElementById('mockNumber').value;
+            const customName = document.getElementById('mockCustomName').value;
+            
             const q = document.getElementById('scoreQuant').value;
             const r = document.getElementById('scoreReasoning').value;
             const e = document.getElementById('scoreEnglish').value;
-            if(!name || !q || !r || !e) { showToast("Fill all fields", "error"); return; }
+        
+            // Determine the Final Name
+            let finalName = "";
+            if (type === 'Other') {
+                finalName = customName.trim();
+            } else {
+                finalName = `${type} - Mock ${num}`;
+            }
+        
+            if(!finalName || (type !== 'Other' && !num) || !q || !r || !e) { 
+                showToast("Please fill all details", "error"); 
+                return; 
+            }
+        
             const mockId = 'mock-' + Date.now();
             if(!state.mockScores) state.mockScores = {};
+            
             state.mockScores[mockId] = {
-                name: name, quant: parseInt(q), reasoning: parseInt(r), english: parseInt(e),
-                total: parseInt(q) + parseInt(r) + parseInt(e), date: new Date().toISOString()
+                name: finalName,
+                quant: parseInt(q),
+                reasoning: parseInt(r),
+                english: parseInt(e),
+                total: parseInt(q) + parseInt(r) + parseInt(e),
+                date: new Date().toISOString()
             };
-            saveState(); showToast("Scorecard Added!"); renderMockHistory();
-            document.getElementById('mockName').value = '';
-            document.getElementById('scoreQuant').value = '';
-            document.getElementById('scoreReasoning').value = '';
-            document.getElementById('scoreEnglish').value = '';
+        
+            saveState();
+            showToast("Scorecard Saved!");
+            renderContent('analysis'); // Refresh the tab to reset inputs
         };
 
         function renderMockHistory() {
