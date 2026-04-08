@@ -11,6 +11,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <style>
+        /* --- ALL ORIGINAL STYLES RESTORED --- */
         :root {
             --primary: #4f46e5; --primary-light: #818cf8; --secondary: #ec4899;
             --bg-body: #f8fafc; --bg-card: #ffffff;
@@ -18,7 +19,8 @@
             --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
             --border-color: rgba(0,0,0,0.05);
             --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            --radius: 16px; --modal-overlay: rgba(15, 23, 42, 0.6);
+            --radius: 16px; --drawer-bg: #f8fafc; --task-tag-bg: #f1f5f9;
+            --modal-overlay: rgba(15, 23, 42, 0.6);
             --chat-user-bg: #4f46e5; --chat-ai-bg: #f1f5f9; --chat-text-ai: #0f172a;
         }
 
@@ -27,6 +29,7 @@
             --text-main: #f1f5f9; --text-muted: #94a3b8;
             --border-color: rgba(255,255,255,0.05);
             --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --drawer-bg: #0f172a; --task-tag-bg: #334155;
             --modal-overlay: rgba(0, 0, 0, 0.85);
             --chat-user-bg: #6366f1; --chat-ai-bg: #334155; --chat-text-ai: #f1f5f9;
         }
@@ -35,131 +38,194 @@
         body { font-family: 'Poppins', sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding-bottom: 90px; }
 
         #authScreen { position: fixed; inset: 0; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; z-index: 5000; }
-        .auth-card { background: var(--bg-card); width: 100%; max-width: 360px; padding: 32px 28px; border-radius: 28px; box-shadow: 0 25px 60px rgba(0,0,0,0.25); text-align: center; }
+        .auth-card { background: var(--bg-card); width: 100%; max-width: 360px; padding: 32px 28px; border-radius: 28px; box-shadow: 0 25px 60px rgba(0,0,0,0.25); text-align: center; animation: fadeIn 0.4s ease; }
+        .auth-logo { font-size: 3.2rem; margin-bottom: 8px; }
+        .auth-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 4px; }
+        .auth-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; }
         .auth-input { width: 100%; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border-color); background: var(--bg-body); font-size: 0.95rem; margin-bottom: 14px; color: var(--text-main); }
-        .auth-btn { width: 100%; padding: 14px; border-radius: 14px; border: none; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; font-weight: 700; cursor: pointer; }
+        .auth-input:focus { outline: none; border-color: var(--primary); }
+        .auth-btn { width: 100%; padding: 14px; border-radius: 14px; border: none; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 5px; }
+        .auth-link { margin-top: 18px; font-size: 0.85rem; color: var(--primary); cursor: pointer; font-weight: 600; }
 
         #appContainer { display: none; }
         .fixed-top-container { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background-color: var(--bg-body); }
-        .app-header { background: linear-gradient(135deg, var(--primary), var(--secondary)); padding: 20px 20px 50px 20px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; color: white; position: relative; z-index: 2; }
-        
-        .header-actions { display: flex; gap: 12px; position: absolute; right: 20px; top: 20px; }
-        .icon-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .app-header { background: linear-gradient(135deg, var(--primary), var(--secondary)); padding: 20px 20px 50px 20px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; color: white; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); position: relative; z-index: 2; }
+        .header-top { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
+        .header-actions { align-self: flex-end; margin-top: 10px; display: flex; gap: 12px; }
+        .icon-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(4px); }
+        .icon-btn.ai-btn { background: linear-gradient(135deg, #FFD700, #FFA500); border: none; color: #78350f; }
 
-        .global-progress-container { margin-top: 20px; background: rgba(0,0,0,0.25); height: 8px; border-radius: 10px; overflow: hidden; }
-        .global-progress-fill { height: 100%; background: #fff; width: 0%; transition: width 0.6s ease; }
+        .global-progress-container { margin-top: 20px; background: rgba(0,0,0,0.25); height: 8px; border-radius: 10px; overflow: hidden; position: relative; }
+        .global-progress-fill { height: 100%; background: #fff; width: 0%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         .progress-label { font-size: 0.8rem; text-align: right; margin-top: 6px; font-weight: 600; color: white; }
 
-        .category-nav { display: flex; gap: 12px; overflow-x: auto; padding: 0 20px 15px 20px; margin-top: -35px; position: relative; z-index: 3; scrollbar-width: none; }
-        .nav-item { background: var(--bg-card); min-width: 95px; padding: 12px 8px; border-radius: 14px; text-align: center; box-shadow: var(--shadow-card); cursor: pointer; border: 2px solid transparent; }
-        .nav-item.active { border-color: var(--primary); }
-        .nav-icon { font-size: 1.6rem; display: block; }
+        .category-nav { display: flex; gap: 12px; overflow-x: auto; padding: 0 20px 15px 20px; margin-top: -35px; scrollbar-width: none; position: relative; z-index: 3; }
+        .category-nav::-webkit-scrollbar { display: none; }
+        .nav-item { background: var(--bg-card); min-width: 95px; padding: 12px 8px; border-radius: 14px; text-align: center; box-shadow: var(--shadow-card); cursor: pointer; transition: all 0.25s; opacity: 0.95; transform: scale(0.98); border: 2px solid transparent; flex-shrink: 0; }
+        .nav-item.active { border-color: var(--primary); transform: scale(1); opacity: 1; }
+        .nav-icon { font-size: 1.6rem; display: block; margin-bottom: 2px; }
         .nav-label { font-size: 0.75rem; font-weight: 700; color: var(--text-main); }
         
-        .content-area { padding: 0 20px 25px 20px; margin-top: 10px; }
-        .section-header { font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 800; margin: 15px 0 12px 5px; display: flex; align-items: center; }
+        .content-area { padding: 0 20px 25px 20px; animation: fadeIn 0.4s ease-out; }
+        .section-header { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-muted); font-weight: 800; margin: 15px 0 12px 5px; display: flex; align-items: center; }
         .section-header::before { content: ''; width: 6px; height: 6px; background: var(--secondary); border-radius: 50%; margin-right: 10px; }
 
         .topic-wrapper { background: var(--bg-card); border-radius: var(--radius); margin-bottom: 14px; box-shadow: var(--shadow-card); overflow: hidden; border: 1px solid var(--border-color); }
-        .topic-main { padding: 18px; display: flex; justify-content: space-between; align-items: center; }
-        .topic-status { font-size: 0.7rem; color: var(--text-muted); }
+        .topic-main { padding: 18px; display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); position: relative; z-index: 2; }
+        .topic-left { display: flex; align-items: center; gap: 14px; flex: 1; }
+        .topic-info h3 { margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        .topic-status { font-size: 0.7rem; margin-top: 4px; color: var(--text-muted); }
         .topic-status.active { color: var(--success); font-weight: 600; }
 
-        .switch { position: relative; display: inline-block; width: 48px; height: 28px; }
+        .switch { position: relative; display: inline-block; width: 48px; height: 28px; flex-shrink: 0; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--success); }
-        input:checked + .slider:before { transform: translateX(20px); }
+        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .master-switch input:checked + .slider { background-color: var(--success); } .master-switch input:checked + .slider:before { transform: translateX(20px); }
 
-        .chat-overlay { position: fixed; inset: 0; background: var(--modal-overlay); z-index: 2500; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(5px); }
+        .chat-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--modal-overlay); z-index: 2500; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(5px); }
         .chat-overlay.show { opacity: 1; pointer-events: auto; }
-        .chat-container { width: 100%; max-width: 600px; background: var(--bg-card); border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 25px; display: flex; flex-direction: column; box-shadow: 0 -10px 40px rgba(0,0,0,0.2); }
-        
-        .search-container { padding: 15px 20px 10px 20px; background: var(--bg-body); }
-        .search-input { width: 100%; padding: 12px 40px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); font-family: inherit; outline: none; }
-        
-        .fab { position: fixed; bottom: 30px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); z-index: 2000; display: none; align-items: center; justify-content: center; cursor: pointer; }
-        
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px; z-index: 4000; transition: transform 0.3s ease; }
+        .chat-container { width: 100%; max-width: 600px; height: 85vh; background: var(--bg-card); border-top-left-radius: 24px; border-top-right-radius: 24px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 -10px 40px rgba(0,0,0,0.2); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .chat-overlay.show .chat-container { transform: translateY(0); }
+        .chat-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); }
+        .chat-title { font-weight: 700; font-size: 1.1rem; color: var(--text-main); }
+        .chat-close { font-size: 1.5rem; color: var(--text-muted); cursor: pointer; background: none; border: none; }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: var(--bg-body); }
+        .message { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 0.95rem; line-height: 1.5; word-wrap: break-word; }
+        .message.user { align-self: flex-end; background: var(--chat-user-bg); color: white; border-bottom-right-radius: 4px; }
+        .message.ai { align-self: flex-start; background: var(--chat-ai-bg); color: var(--chat-text-ai); border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
+        .chat-input-area { padding: 15px; border-top: 1px solid var(--border-color); background: var(--bg-card); display: flex; gap: 10px; align-items: flex-end; }
+        .chat-input { flex: 1; padding: 12px 15px; border-radius: 24px; border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); font-family: inherit; font-size: 0.95rem; resize: none; max-height: 100px; outline: none; }
+        .chat-send { width: 45px; height: 45px; border-radius: 50%; background: var(--primary); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px; font-size: 0.9rem; font-weight: 500; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); z-index: 4000; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 10px; white-space: nowrap; }
         .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.error { background: #991b1b; }
+        
+        .search-container { padding: 15px 20px 10px 20px; background: var(--bg-body); transition: background 0.3s ease; }
+        .search-box { position: relative; display: flex; align-items: center; }
+        .search-input { width: 100%; padding: 12px 40px 12px 42px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); font-family: 'Poppins', sans-serif; font-size: 0.9rem; outline: none; box-shadow: var(--shadow-card); transition: all 0.3s ease; }
+        .search-icon { position: absolute; left: 14px; color: var(--text-muted); display: flex; align-items: center; pointer-events: none; }
+        .search-clear { position: absolute; right: 12px; background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; display: none; padding: 0; }
+        .search-clear.show { display: block; }
+
+        .fab { position: fixed; bottom: 30px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); z-index: 2000; cursor: pointer; display: none; align-items: center; justify-content: center; padding: 0; }
+        .fab svg { width: 24px; height: 24px; }
+        .days-selector { display: flex; gap: 8px; justify-content: space-between; margin-top: 10px; }
+        .day-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .day-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
     <div id="authScreen">
         <div class="auth-card">
-            <span style="font-size:3rem;">🏦</span>
-            <h2>BankPrep Cloud</h2>
-            <input type="email" id="email" class="auth-input" placeholder="Email">
+            <span class="auth-logo">🏦</span>
+            <div class="auth-title">BankPrep Cloud</div>
+            <div class="auth-sub">Sign in to sync your progress</div>
+            <input type="email" id="email" class="auth-input" placeholder="Email Address">
             <input type="password" id="password" class="auth-input" placeholder="Password">
-            <button class="auth-btn" onclick="handleLogin()">Sign In</button>
+            <button class="auth-btn" id="mainAuthBtn" onclick="handleLogin()">Sign In</button>
+            <div class="auth-link" id="toggleAuthMode" onclick="toggleAuth()">New here? Create Account</div>
+            <div id="authError" style="color:var(--danger); font-size:0.8rem; margin-top:10px;"></div>
         </div>
     </div>
 
     <div id="appContainer">
-        <div class="chat-overlay" id="taskModal">
+        <div class="chat-overlay" id="aiChat">
             <div class="chat-container">
-                <h3>New Daily Task</h3>
-                <input type="text" id="newTaskName" class="auth-input" placeholder="e.g. 10 Puzzles">
-                <div class="days-selector" id="daysSelector" style="display:flex; gap:5px; margin-bottom:15px;">
-                    <button class="day-btn" onclick="this.classList.toggle('selected')" data-day="0">S</button>
-                    <button class="day-btn" onclick="this.classList.toggle('selected')" data-day="1">M</button>
-                    <button class="day-btn" onclick="this.classList.toggle('selected')" data-day="2">T</button>
-                    <button class="day-btn" onclick="this.classList.toggle('selected')" data-day="3">W</button>
-                    <button class="day-btn" onclick="this.classList.toggle('selected')" data-day="4">T</button>
-                    <button class="day-btn" onclick="this.classList.toggle('selected')" data-day="5">F</button>
-                    <button class="day-btn" onclick="this.classList.toggle('selected')" data-day="6">S</button>
+                <div class="chat-header">
+                    <div class="chat-title">✨ BankPrep Tutor</div>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <button onclick="resetApiKey()" style="background:none; border:none; color:var(--text-muted); font-size:0.7rem; cursor:pointer; text-decoration:underline;">Key</button>
+                        <button class="chat-close" onclick="closeChat()">×</button>
+                    </div>
                 </div>
-                <button class="auth-btn" onclick="saveNewTask()">Create</button>
-                <button onclick="closeTaskModal()" style="background:none; border:none; margin-top:10px; cursor:pointer; color:var(--text-muted);">Cancel</button>
+                <div class="chat-messages" id="chatHistory"></div>
+                <div class="chat-input-area">
+                    <textarea class="chat-input" id="chatInput" placeholder="Ask a doubt..." rows="1"></textarea>
+                    <button class="chat-send" onclick="sendToGemini()">➤</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-overlay" id="taskModal">
+            <div class="chat-container" style="height: auto; padding: 25px; border-radius: 24px; margin-bottom: 20px;">
+                <div class="chat-header" style="border:none; padding:0 0 20px 0;">
+                    <div class="chat-title">Create Daily Task</div>
+                    <button class="chat-close" onclick="closeTaskModal()">×</button>
+                </div>
+                <input type="text" id="newTaskName" class="auth-input" placeholder="Task Name (e.g. 5 Puzzles)">
+                <div style="margin: 15px 0 10px 0; font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">REPEAT ON:</div>
+                <div class="days-selector" id="daysSelector">
+                    <button class="day-btn" data-day="0">S</button>
+                    <button class="day-btn" data-day="1">M</button>
+                    <button class="day-btn" data-day="2">T</button>
+                    <button class="day-btn" data-day="3">W</button>
+                    <button class="day-btn" data-day="4">T</button>
+                    <button class="day-btn" data-day="5">F</button>
+                    <button class="day-btn" data-day="6">S</button>
+                </div>
+                <button class="auth-btn" style="margin-top: 25px;" onclick="saveNewTask()">Create Task</button>
             </div>
         </div>
 
         <div class="chat-overlay" id="editMockModal">
-            <div class="chat-container">
-                <h3>Edit Scorecard</h3>
-                <select id="editMockType" class="auth-input" onchange="toggleEditMockInputs()">
-                    <option value="SBI PO">SBI PO</option><option value="IBPS PO">IBPS PO</option><option value="Other">Other</option>
-                </select>
-                <input type="number" id="editMockNumber" class="auth-input" placeholder="Mock #">
-                <input type="text" id="editMockCustomName" class="auth-input" style="display:none;" placeholder="Name">
-                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
-                    <input type="number" id="editE" class="auth-input" step="0.01" placeholder="Eng">
-                    <input type="number" id="editQ" class="auth-input" step="0.01" placeholder="Quant">
-                    <input type="number" id="editR" class="auth-input" step="0.01" placeholder="Logic">
+            <div class="chat-container" style="height: auto; padding: 25px; border-radius: 24px; margin-bottom: 20px;">
+                <div class="chat-header" style="border:none; padding:0 0 20px 0;">
+                    <div class="chat-title">Edit Scorecard</div>
+                    <button class="chat-close" onclick="closeEditModal()">×</button>
                 </div>
-                <button class="auth-btn" onclick="updateExistingMock()">Update</button>
-                <button onclick="closeEditModal()" style="background:none; border:none; margin-top:10px; cursor:pointer; color:var(--text-muted);">Cancel</button>
+                <select id="editMockType" class="auth-input" onchange="toggleEditMockInputs()">
+                    <option value="SBI PO">SBI PO</option><option value="SBI Clerk">SBI Clerk</option><option value="IBPS PO">IBPS PO</option><option value="IBPS Clerk">IBPS Clerk</option><option value="Other">Other</option>
+                </select>
+                <div id="editTestNumContainer"><input type="number" id="editMockNumber" class="auth-input" placeholder="Test Number"></div>
+                <div id="editCustomNameContainer" style="display:none;"><input type="text" id="editMockCustomName" class="auth-input" placeholder="Custom Name"></div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-top:10px;">
+                    <input type="number" id="editScoreEnglish" class="auth-input" step="0.01" placeholder="Eng">
+                    <input type="number" id="editScoreQuant" class="auth-input" step="0.01" placeholder="Quant">
+                    <input type="number" id="editScoreReasoning" class="auth-input" step="0.01" placeholder="Logic">
+                </div>
+                <button class="auth-btn" style="margin-top: 20px;" onclick="updateExistingMock()">Update Changes</button>
             </div>
         </div>
 
-        <div id="toast" class="toast"><span id="toastMsg">Success</span></div>
+        <div id="toast" class="toast"><span id="toastIcon">✅</span><span id="toastMsg">Success</span></div>
 
         <div class="fixed-top-container" id="fixedHeader">
             <header class="app-header">
-                <div>
-                    <h1 style="margin:0; font-size:1.2rem;">BankPrep Tracker</h1>
-                    <div style="font-size:0.7rem; opacity:0.8;">By Durga Prasad</div>
-                </div>
-                <div class="header-actions">
-                    <button class="icon-btn" onclick="toggleTheme()">🌓</button>
-                    <button class="icon-btn" onclick="handleLogout()">🚪</button>
+                <div class="header-top">
+                    <div class="header-title">
+                        <h1 style="margin: 0; font-size: 1.25rem; font-weight: 700; line-height: 1.3;">BankPrep "Syllabus Tracker"</h1>
+                        <div style="font-size: 0.75rem; font-weight: 500; opacity: 0.9; margin-top: 2px;">(By Durga Prasad)</div>
+                    </div>
+                    <div class="header-actions">
+                        <button class="icon-btn ai-btn" onclick="openChat()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><circle cx="4" cy="20" r="2"/></svg></button>
+                        <button class="icon-btn" onclick="toggleTheme()" id="themeBtn"></button>
+                        <button class="icon-btn" onclick="handleLogout()" style="font-size: 0.9rem;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg></button>
+                    </div>
                 </div>
                 <div class="global-progress-container"><div class="global-progress-fill" id="globalBar"></div></div>
                 <div class="progress-label" id="globalText">0% Covered</div>
             </header>
             <nav class="category-nav" id="categoryNav"></nav>
             <div class="search-container">
-                <input type="text" id="topicSearch" class="search-input" placeholder="Search topics..." oninput="handleSearch()">
+                <div class="search-box">
+                    <span class="search-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+                    <input type="text" id="topicSearch" class="search-input" placeholder="Search topics..." autocomplete="off">
+                    <button class="search-clear" id="searchClear" onclick="clearSearch()">×</button>
+                </div>
             </div>
         </div>
 
         <main class="content-area" id="contentArea"></main>
-        <button class="fab" id="addTaskBtn" onclick="openTaskModal()">+</button>
+        <button class="fab" id="addTaskBtn" onclick="openTaskModal()"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
     </div>
 
     <script>
+        // --- CONFIG & DATA RESTORED ---
         const firebaseConfig = {
             apiKey: "AIzaSyBPSXcRdCoik4vAKJxjB2258bWSpe_6nGU",
             authDomain: "bankprep-tracker.firebaseapp.com",
@@ -174,18 +240,28 @@
         const syllabusData = {
             "daily": { label: "Daily", icon: "📅", sections: [] },
             "analysis": { label: "Analysis", icon: "📈", sections: [] },
-            "basics": { label: "Basics", icon: "⚡", sections: [{ title: "Drills", topics: ["Tables (1-20)", "Tables (21-30)", "Squares (1-50)", "Cubes (1-30)"] }] },
-            "quant": { label: "Quant", icon: "📊", sections: [{ title: "Core", topics: ["Simplification", "Percentages", "Ratio", "Averages", "SI & CI", "Time & Work"] }] },
-            "reasoning": { label: "Logic", icon: "🧠", sections: [{ title: "Logic", topics: ["Syllogism", "Inequality", "Coding", "Blood Relation", "Puzzles"] }] },
-            "english": { label: "English", icon: "📖", sections: [{ title: "Grammar", topics: ["Tenses", "Articles", "Error Spotting", "Reading Comprehension"] }] }
+            "basics": { label: "Basics", icon: "⚡", sections: [{ title: "Calculation Drills", topics: ["Tables (1-20)", "Tables (21-30)", "Squares (1-50)", "Cubes (1-30)", "Fraction to % Drills"] }] },
+            "quant": { label: "Quant", icon: "📊", sections: [{ title: "Number System", topics: ["Natural, Whole, Integers", "Prime & Composite", "Factors & Multiples", "LCM & HCF", "Divisibility Rules", "Unit Digit", "Cyclicity"] }, { title: "Arithmetic Core", topics: ["Simplification", "Approximation", "BODMAS", "Fractions & Decimals", "Percentages", "Ratio & Proportion", "Average"] }, { title: "Commercial Maths", topics: ["Profit & Loss", "Simple Interest", "Compound Interest", "Time & Work", "Pipes & Cisterns", "Time Speed Distance", "Boats & Streams", "Mixtures & Alligation", "Partnership", "Ages"] }, { title: "Advanced & Mains", topics: ["Permutation & Combination", "Probability (Mains)", "Mensuration 2D", "Mensuration 3D", "Number Series", "Quadratic Equations"] }, { title: "Data Interpretation", topics: ["Table DI", "Bar Graph", "Line Graph", "Pie Chart", "Caselet DI", "Missing DI", "Radar / Web DI"] }] },
+            "reasoning": { label: "Logic", icon: "🧠", sections: [{ title: "Speed Reasoning", topics: ["Alphabet Series", "Number Series", "Alphanumeric Series", "Analogy", "Classification", "Inequality", "Syllogism (New Pattern)"] }, { title: "Spatial & Logic", topics: ["Direction & Distance", "Coding-Decoding", "Order & Ranking", "Blood Relations"] }, { title: "Seating Arrangement", topics: ["Linear Row", "Circular Seating", "Square/Rectangular", "Triangular Seating", "Uncertain Number"] }, { title: "Puzzles", topics: ["Floor Based", "Box Based", "Month/Day/Year", "Scheduling", "Designation Based", "Flat & Floor"] }, { title: "Mains Logic", topics: ["Input-Output", "Data Sufficiency", "Statement & Assumption", "Statement & Conclusion", "Cause & Effect", "Course of Action"] }] },
+            "english": { label: "English", icon: "📖", sections: [{ title: "Grammar Rules", topics: ["Parts of Speech", "Subject-Verb Agreement", "Tenses", "Articles", "Prepositions", "Conjunctions", "Active & Passive Voice", "Direct & Indirect Speech"] }, { title: "Vocabulary", topics: ["Synonyms & Antonyms", "Idioms & Phrases", "Phrasal Verbs", "Root Words", "One-word Substitution", "Word Usage/Swap"] }, { title: "Reading Skills", topics: ["Reading Comprehension", "RC Inference & Tone", "Cloze Test", "Para Jumbles", "Para Completion", "Sentence Rearrangement"] }, { title: "Mains Descriptive", topics: ["Essay Writing", "Letter Writing"] }] },
+            "ga": { label: "G.A.", icon: "🏦", sections: [{ title: "Banking Awareness", topics: ["RBI Functions & Structure", "Monetary Policy", "Repo, Reverse Repo, CRR, SLR", "Types of Accounts", "Basel Norms", "Financial Inclusion", "NPCI (UPI, IMPS)"] }, { title: "Static GK", topics: ["National Parks & Sanctuaries", "Dams & Rivers", "Country Capitals & Currencies", "HQ of Int. Organizations", "Airports & Stadiums", "Power Plants"] }, { title: "Current Affairs", topics: ["Last 6 Months News", "Union Budget", "Government Schemes", "Appointments", "Awards & Honours", "Books & Authors", "Sports News"] }] },
+            "computer": { label: "Computer", icon: "💻", sections: [{ title: "Hardware & OS", topics: ["Generations of Computers", "Input/Output Devices", "Memory (RAM, ROM)", "Operating Systems"] }, { title: "Networking & Security", topics: ["Internet & Browsers", "OSI Model", "IP Addresses & Protocols", "Cyber Security", "Virus & Malware", "MS Office Shortcuts"] }] }
         };
 
         let state = {}; let currentTab = 'quant'; let currentUser = null; let currentEditId = null;
+        const MOON_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>`;
+        const SUN_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`;
 
         auth.onAuthStateChanged(user => {
-            if (user) { currentUser = user; document.getElementById('authScreen').style.display = 'none'; document.getElementById('appContainer').style.display = 'block'; loadUserData(); }
+            if (user) { currentUser = user; document.getElementById('authScreen').style.display = 'none'; document.getElementById('appContainer').style.display = 'block'; loadUserData(); initTheme(); }
             else { currentUser = null; document.getElementById('authScreen').style.display = 'flex'; document.getElementById('appContainer').style.display = 'none'; }
         });
+
+        async function handleLogin() {
+            const email = document.getElementById('email').value; const pass = document.getElementById('password').value;
+            try { await auth.signInWithEmailAndPassword(email, pass); } catch(e) { document.getElementById('authError').textContent = e.message; }
+        }
+        function handleLogout() { auth.signOut(); }
 
         function loadUserData() {
             db.collection('users').doc(currentUser.uid).onSnapshot(doc => {
@@ -196,6 +272,7 @@
             });
         }
 
+        // CRITICAL SYNC FIX: Using non-merge set for deletion persistence
         function saveState() {
             if(currentUser) db.collection('users').doc(currentUser.uid).set({ progress: state });
             updateGlobalStats();
@@ -207,7 +284,7 @@
                 const d = document.createElement('div');
                 d.className = `nav-item ${k===currentTab?'active':''}`;
                 d.innerHTML = `<span class="nav-icon">${syllabusData[k].icon}</span><span class="nav-label">${syllabusData[k].label}</span>`;
-                d.onclick = () => { currentTab = k; renderTabs(); renderContent(k); };
+                d.onclick = () => { currentTab = k; renderTabs(); renderContent(k); window.scrollTo({top:0}); };
                 nav.appendChild(d);
             });
             document.getElementById('addTaskBtn').style.display = (currentTab==='daily')?'flex':'none';
@@ -219,29 +296,33 @@
             if (k === 'analysis') { renderAnalysis(c); return; }
 
             syllabusData[k].sections.forEach(s => {
-                c.innerHTML += `<div class="section-header">${s.title}</div>`;
+                const h = document.createElement('div'); h.className = 'section-header'; h.textContent = s.title; c.appendChild(h);
                 s.topics.forEach(t => {
                     const id = `${k}-${t.replace(/[^a-zA-Z0-9]/g,'')}`;
                     const td = state[id] || {done:false};
-                    c.innerHTML += `<div class="topic-wrapper"><div class="topic-main"><div><h3>${t}</h3><div class="topic-status ${td.done?'active':''}">${td.done?'Done':'Pending'}</div></div><label class="switch"><input type="checkbox" onchange="toggleTopic('${id}')" ${td.done?'checked':''}><span class="slider"></span></label></div></div>`;
+                    const cd = document.createElement('div'); cd.className = `topic-wrapper`;
+                    cd.innerHTML = `<div class="topic-main"><div class="topic-left"><div class="topic-info"><h3>${t}</h3><div class="topic-status ${td.done?'active':''}">${td.done?'Completed':'Not Started'}</div></div></div><label class="switch master-switch"><input type="checkbox" onchange="toggleTopic('${id}')" ${td.done?'checked':''}><span class="slider"></span></label></div>`;
+                    c.appendChild(cd);
                 });
             });
         }
 
+        // ANALYSIS TAB
         function renderAnalysis(container) {
             container.innerHTML = `
-                <div class="section-header">New Scorecard</div>
-                <div class="topic-wrapper" style="padding:15px;">
+                <div class="section-header">Log New Mock Test</div>
+                <div class="topic-wrapper" style="padding:20px;">
                     <select id="mockType" class="auth-input" onchange="toggleMockInputs()"><option value="SBI PO">SBI PO</option><option value="IBPS PO">IBPS PO</option><option value="Other">Other</option></select>
-                    <input type="number" id="mockNumber" class="auth-input" placeholder="Mock #">
-                    <input type="text" id="mockCustomName" class="auth-input" style="display:none;" placeholder="Name">
-                    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+                    <div id="testNumContainer"><input type="number" id="mockNumber" class="auth-input" placeholder="Test Number"></div>
+                    <div id="customNameContainer" style="display:none;"><input type="text" id="mockCustomName" class="auth-input" placeholder="Custom Name"></div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-top:10px;">
                         <input type="number" id="scE" class="auth-input" step="0.01" placeholder="Eng">
                         <input type="number" id="scQ" class="auth-input" step="0.01" placeholder="Quant">
                         <input type="number" id="scR" class="auth-input" step="0.01" placeholder="Logic">
                     </div>
-                    <button class="auth-btn" onclick="saveScore()">Save</button>
+                    <button class="auth-btn" onclick="saveScore()">Save Scorecard</button>
                 </div>
+                <div class="section-header">Recent Performance</div>
                 <div id="mockList"></div>`;
             renderMockList();
         }
@@ -261,11 +342,13 @@
             const list = document.getElementById('mockList'); if(!list) return;
             const sorted = Object.entries(state.mockScores).sort((a,b) => new Date(b[1].date) - new Date(a[1].date));
             sorted.forEach(([id, m]) => {
-                list.innerHTML += `<div class="topic-wrapper" style="padding:15px;"><div style="display:flex; justify-content:space-between;"><div><strong>${m.name}</strong><div style="font-size:0.7rem;">${new Date(m.date).toLocaleDateString()}</div></div><div style="text-align:right;"><div style="color:var(--primary); font-weight:700;">${m.total}</div><div style="display:flex; gap:10px;"><span onclick="editMock('${id}')" style="color:var(--primary); cursor:pointer; font-size:0.7rem;">Edit</span><span onclick="deleteMock('${id}')" style="color:var(--danger); cursor:pointer; font-size:0.7rem;">Delete</span></div></div></div><div style="font-size:0.7rem; margin-top:5px;">E: ${m.english} | Q: ${m.quant} | R: ${m.reasoning}</div></div>`;
+                const div = document.createElement('div'); div.className = 'topic-wrapper'; div.style.padding = '18px';
+                div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:start;"><div><strong>${m.name}</strong><div style="font-size:0.75rem; color:var(--text-muted);">${new Date(m.date).toLocaleDateString()}</div></div><div style="text-align:right;"><div style="font-size:1.2rem; font-weight:700; color:var(--primary);">${m.total}</div><div style="display:flex; gap:10px; margin-top:5px;"><button onclick="editMock('${id}')" style="color:var(--primary); background:none; border:none; font-size:0.75rem; cursor:pointer; font-weight:600;">Edit</button><button onclick="deleteMock('${id}')" style="color:var(--danger); background:none; border:none; font-size:0.75rem; cursor:pointer; font-weight:600;">Delete</button></div></div></div><div style="display:flex; gap:15px; margin-top:12px; font-size:0.8rem; border-top:1px solid var(--border-color); padding-top:12px;"><span>📖 E: <b>${m.english}</b></span><span>📊 Q: <b>${m.quant}</b></span><span>🧠 R: <b>${m.reasoning}</b></span></div>`;
+                list.appendChild(div);
             });
         }
 
-        window.deleteMock = function(id) { if(confirm("Delete permanently?")) { delete state.mockScores[id]; saveState(); } };
+        window.deleteMock = function(id) { if(confirm("Permanently delete?")) { delete state.mockScores[id]; saveState(); showToast("Deleted Permanently"); } };
 
         window.editMock = function(id) {
             currentEditId = id; const m = state.mockScores[id];
@@ -279,16 +362,17 @@
             m.quant = parseFloat(document.getElementById('editQ').value).toFixed(2);
             m.reasoning = parseFloat(document.getElementById('editR').value).toFixed(2);
             m.total = (parseFloat(m.english)+parseFloat(m.quant)+parseFloat(m.reasoning)).toFixed(2);
-            saveState(); closeEditModal();
+            saveState(); closeEditModal(); showToast("Updated");
         }
 
+        // DAILY TASKS
         function renderDaily(container) {
             const day = new Date().getDay(); const date = new Date().toISOString().split('T')[0];
             container.innerHTML = `<div class="section-header">Checklist</div>`;
             Object.entries(state.customTasks).forEach(([id, t]) => {
                 if (t.days.includes(day)) {
                     const done = t.completions && t.completions[date];
-                    container.innerHTML += `<div class="topic-wrapper"><div class="topic-main"><div><h3>${t.name}</h3><div class="topic-status ${done?'active':''}">${done?'Done':'Pending'}</div></div><label class="switch"><input type="checkbox" onchange="toggleDaily('${id}')" ${done?'checked':''}><span class="slider"></span></label></div></div>`;
+                    container.innerHTML += `<div class="topic-wrapper"><div class="topic-main"><div class="topic-left"><div class="topic-info"><h3>${t.name}</h3><div class="topic-status ${done?'active':''}">${done?'Done':'Pending'}</div></div></div><label class="switch"><input type="checkbox" onchange="toggleDaily('${id}')" ${done?'checked':''}><span class="slider"></span></label></div></div>`;
                 }
             });
         }
@@ -301,16 +385,16 @@
             saveState();
         }
 
+        // HELPERS RESTORED
         function toggleTopic(id) { if(!state[id]) state[id]={}; state[id].done = event.target.checked; saveState(); }
-        function handleLogin() { auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).catch(e => alert(e.message)); }
-        function handleLogout() { auth.signOut(); }
-        function toggleTheme() { const d = document.documentElement; const t = d.getAttribute('data-theme')==='dark'?'light':'dark'; d.setAttribute('data-theme', t); localStorage.setItem('theme', t); }
-        function initTheme() { const t = localStorage.getItem('theme') || 'light'; document.documentElement.setAttribute('data-theme', t); }
-        function openTaskModal() { document.getElementById('taskModal').classList.add('show'); }
-        function closeTaskModal() { document.getElementById('taskModal').classList.remove('show'); }
-        function closeEditModal() { document.getElementById('editMockModal').classList.remove('show'); }
+        function toggleTheme() { const d = document.documentElement; const t = d.getAttribute('data-theme')==='dark'?'light':'dark'; d.setAttribute('data-theme', t); localStorage.setItem('theme', t); initTheme(); }
+        function initTheme() { const t = localStorage.getItem('theme') || 'light'; document.documentElement.setAttribute('data-theme', t); document.getElementById('themeBtn').innerHTML = (t==='dark')?SUN_ICON:MOON_ICON; }
+        function showToast(m) { const t = document.getElementById('toast'); document.getElementById('toastMsg').textContent = m; t.className = 'toast show'; setTimeout(() => t.className = 'toast', 3000); }
         function toggleMockInputs() { const t = document.getElementById('mockType').value; document.getElementById('testNumContainer').style.display = t==='Other'?'none':'block'; document.getElementById('customNameContainer').style.display = t==='Other'?'block':'none'; }
         function toggleEditMockInputs() { const t = document.getElementById('editMockType').value; document.getElementById('editTestNumContainer').style.display = t==='Other'?'none':'block'; document.getElementById('editCustomNameContainer').style.display = t==='Other'?'block':'none'; }
+        function closeEditModal() { document.getElementById('editMockModal').classList.remove('show'); }
+        function openTaskModal() { document.getElementById('taskModal').classList.add('show'); }
+        function closeTaskModal() { document.getElementById('taskModal').classList.remove('show'); }
         function adjustPadding() { document.body.style.paddingTop = document.getElementById('fixedHeader').offsetHeight + 'px'; }
         function updateGlobalStats() {
             let total = 0, done = 0;
@@ -322,7 +406,7 @@
             const p = Math.round((done/total)*100) || 0;
             document.getElementById('globalBar').style.width = p+'%'; document.getElementById('globalText').textContent = p+'% Covered';
         }
-        function showToast(m) { const t = document.getElementById('toast'); document.getElementById('toastMsg').textContent = m; t.className = 'toast show'; setTimeout(() => t.className = 'toast', 3000); }
+
         window.saveNewTask = function() {
             const name = document.getElementById('newTaskName').value;
             const days = Array.from(document.querySelectorAll('.day-btn.selected')).map(b => parseInt(b.dataset.day));
@@ -330,7 +414,6 @@
             state.customTasks['task-'+Date.now()] = { name, days, completions: {} };
             saveState(); closeTaskModal();
         }
-        window.addEventListener('resize', adjustPadding);
     </script>
 </body>
 </html>
