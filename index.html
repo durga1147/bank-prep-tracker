@@ -12,6 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
+        /* --- ALL ORIGINAL STYLES PRESERVED --- */
         :root {
             --primary: #4f46e5; --primary-light: #818cf8; --secondary: #ec4899;
             --bg-body: #f8fafc; --bg-card: #ffffff;
@@ -38,9 +39,14 @@
         body { font-family: 'Poppins', sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding-bottom: 90px; }
 
         #authScreen { position: fixed; inset: 0; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; z-index: 5000; }
-        .auth-card { background: var(--bg-card); width: 100%; max-width: 360px; padding: 32px 28px; border-radius: 28px; box-shadow: 0 25px 60px rgba(0,0,0,0.25); text-align: center; }
+        .auth-card { background: var(--bg-card); width: 100%; max-width: 360px; padding: 32px 28px; border-radius: 28px; box-shadow: 0 25px 60px rgba(0,0,0,0.25); text-align: center; animation: fadeIn 0.4s ease; }
+        .auth-logo { font-size: 3.2rem; margin-bottom: 8px; }
+        .auth-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 4px; }
+        .auth-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; }
         .auth-input { width: 100%; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border-color); background: var(--bg-body); font-size: 0.95rem; margin-bottom: 14px; color: var(--text-main); }
+        .auth-input:focus { outline: none; border-color: var(--primary); }
         .auth-btn { width: 100%; padding: 14px; border-radius: 14px; border: none; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 5px; }
+        .auth-link { margin-top: 18px; font-size: 0.85rem; color: var(--primary); cursor: pointer; font-weight: 600; }
 
         #appContainer { display: none; }
         .fixed-top-container { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background-color: var(--bg-body); }
@@ -55,6 +61,7 @@
         .progress-label { font-size: 0.8rem; text-align: right; margin-top: 6px; font-weight: 600; color: white; }
 
         .category-nav { display: flex; gap: 12px; overflow-x: auto; padding: 0 20px 15px 20px; margin-top: -35px; scrollbar-width: none; position: relative; z-index: 3; }
+        .category-nav::-webkit-scrollbar { display: none; }
         .nav-item { background: var(--bg-card); min-width: 95px; padding: 12px 8px; border-radius: 14px; text-align: center; box-shadow: var(--shadow-card); cursor: pointer; transition: all 0.25s; opacity: 0.95; transform: scale(0.98); border: 2px solid transparent; flex-shrink: 0; }
         .nav-item.active { border-color: var(--primary); transform: scale(1); opacity: 1; }
         .nav-icon { font-size: 1.6rem; display: block; margin-bottom: 2px; }
@@ -66,6 +73,8 @@
 
         .topic-wrapper { background: var(--bg-card); border-radius: var(--radius); margin-bottom: 14px; box-shadow: var(--shadow-card); overflow: hidden; border: 1px solid var(--border-color); }
         .topic-main { padding: 18px; display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); position: relative; z-index: 2; }
+        .topic-left { display: flex; align-items: center; gap: 14px; flex: 1; }
+        .topic-info h3 { margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
         .topic-status { font-size: 0.7rem; margin-top: 4px; color: var(--text-muted); }
         .topic-status.active { color: var(--success); font-weight: 600; }
 
@@ -73,26 +82,28 @@
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 34px; }
         .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        input:checked + .slider { background-color: var(--success); }
-        input:checked + .slider:before { transform: translateX(20px); }
+        .master-switch input:checked + .slider { background-color: var(--success); } .master-switch input:checked + .slider:before { transform: translateX(20px); }
 
-        .checkbox-container { display: block; position: relative; width: 28px; height: 28px; cursor: pointer; }
-        .checkbox-container input { position: absolute; opacity: 0; height: 0; width: 0; }
-        .checkmark { position: absolute; top: 0; left: 0; height: 28px; width: 28px; background-color: var(--task-tag-bg); border: 2px solid var(--border-color); border-radius: 8px; }
+        /* --- SQUARE CHECKBOX FOR DAILY/REVISION --- */
+        .checkbox-container { display: block; position: relative; width: 28px; height: 28px; cursor: pointer; user-select: none; }
+        .checkbox-container input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
+        .checkmark { position: absolute; top: 0; left: 0; height: 28px; width: 28px; background-color: var(--task-tag-bg); border: 2px solid var(--border-color); border-radius: 8px; transition: all 0.2s ease; }
         .checkbox-container input:checked ~ .checkmark { background-color: var(--success); border-color: var(--success); }
         .checkmark:after { content: ""; position: absolute; display: none; left: 9px; top: 5px; width: 7px; height: 12px; border: solid white; border-width: 0 3px 3px 0; transform: rotate(45deg); }
         .checkbox-container input:checked ~ .checkmark:after { display: block; }
 
-        .chat-overlay { position: fixed; inset: 0; background: var(--modal-overlay); z-index: 2500; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(5px); }
-        .chat-overlay.show { opacity: 1; pointer-events: auto; }
-        .chat-container { width: 100%; max-width: 600px; background: var(--bg-card); border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 25px; display: flex; flex-direction: column; }
-
+        /* --- ANALYSIS SUB NAV --- */
         .sub-nav-container { display: flex; gap: 10px; margin-bottom: 20px; background: var(--task-tag-bg); padding: 5px; border-radius: 12px; }
-        .sub-nav-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; }
+        .sub-nav-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; background: transparent; color: var(--text-muted); font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.3s ease; }
         .sub-nav-btn.active { background: var(--bg-card); color: var(--primary); box-shadow: var(--shadow-card); }
 
-        .fab { position: fixed; bottom: 30px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); z-index: 2000; display: none; align-items: center; justify-content: center; cursor: pointer; }
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px; z-index: 4000; transition: transform 0.3s ease; }
+        .chat-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--modal-overlay); z-index: 2500; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(5px); }
+        .chat-overlay.show { opacity: 1; pointer-events: auto; }
+        .chat-container { width: 100%; max-width: 600px; height: auto; background: var(--bg-card); border-top-left-radius: 24px; border-top-right-radius: 24px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 -10px 40px rgba(0,0,0,0.2); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); padding: 25px; }
+        .chat-overlay.show .chat-container { transform: translateY(0); }
+        
+        .fab { position: fixed; bottom: 30px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); z-index: 2000; cursor: pointer; display: none; align-items: center; justify-content: center; }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px; font-size: 0.9rem; font-weight: 500; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); z-index: 4000; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 10px; white-space: nowrap; }
         .toast.show { transform: translateX(-50%) translateY(0); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -101,54 +112,52 @@
 
     <div id="authScreen">
         <div class="auth-card">
-            <span style="font-size:3rem;">🏦</span>
-            <h2>BankPrep Cloud</h2>
-            <input type="email" id="email" class="auth-input" placeholder="Email">
+            <span class="auth-logo">🏦</span>
+            <div class="auth-title">BankPrep Cloud</div>
+            <div class="auth-sub">Sign in to sync your progress</div>
+            <input type="email" id="email" class="auth-input" placeholder="Email Address">
             <input type="password" id="password" class="auth-input" placeholder="Password">
-            <button class="auth-btn" onclick="handleLogin()">Sign In</button>
+            <button class="auth-btn" id="mainAuthBtn" onclick="handleLogin()">Sign In</button>
+            <div id="authError" style="color:var(--danger); font-size:0.8rem; margin-top:10px;"></div>
         </div>
     </div>
 
     <div id="appContainer">
         <div class="chat-overlay" id="taskModal">
             <div class="chat-container">
-                <h3 id="taskModalTitle">New Daily Task</h3>
-                <input type="text" id="newTaskName" class="auth-input" placeholder="Topic/Task Name">
-                <div id="daysSelectorContainer">
-                    <div style="margin-bottom:10px; font-size:0.8rem; font-weight:700;">REPEAT ON:</div>
-                    <div class="days-selector" style="display:flex; gap:8px; margin-bottom:15px;">
-                        <button class="day-btn" onclick="this.classList.toggle('selected')" data-day="0">S</button>
-                        <button class="day-btn" onclick="this.classList.toggle('selected')" data-day="1">M</button>
-                        <button class="day-btn" onclick="this.classList.toggle('selected')" data-day="2">T</button>
-                        <button class="day-btn" onclick="this.classList.toggle('selected')" data-day="3">W</button>
-                        <button class="day-btn" onclick="this.classList.toggle('selected')" data-day="4">T</button>
-                        <button class="day-btn" onclick="this.classList.toggle('selected')" data-day="5">F</button>
-                        <button class="day-btn" onclick="this.classList.toggle('selected')" data-day="6">S</button>
+                <div class="chat-header" style="border:none; padding:0 0 20px 0;">
+                    <div class="chat-title" id="taskModalTitle">Create Task</div>
+                </div>
+                <input type="text" id="newTaskName" class="auth-input" placeholder="Name (e.g. 5 Puzzles)">
+                <div id="daysSelectorGroup">
+                    <div style="margin: 15px 0 10px 0; font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">REPEAT ON:</div>
+                    <div class="days-selector" id="daysSelector" style="display:flex; gap:8px;">
+                        <button class="day-btn" data-day="0">S</button><button class="day-btn" data-day="1">M</button><button class="day-btn" data-day="2">T</button><button class="day-btn" data-day="3">W</button><button class="day-btn" data-day="4">T</button><button class="day-btn" data-day="5">F</button><button class="day-btn" data-day="6">S</button>
                     </div>
                 </div>
-                <div id="dateSelectorContainer" style="display:none;">
-                    <div style="margin-bottom:10px; font-size:0.8rem; font-weight:700;">START DATE:</div>
+                <div id="revisionSelectorGroup" style="display:none;">
+                    <div style="margin: 15px 0 10px 0; font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">START DATE:</div>
                     <input type="date" id="revStartDate" class="auth-input">
                 </div>
-                <button class="auth-btn" id="modalSubmitBtn" onclick="saveNewTask()">Create</button>
+                <button class="auth-btn" id="modalSubmitBtn" style="margin-top: 25px;">Save</button>
                 <button onclick="closeTaskModal()" style="background:none; border:none; margin-top:10px; cursor:pointer; color:var(--text-muted);">Cancel</button>
             </div>
         </div>
 
         <div class="chat-overlay" id="editMockModal">
             <div class="chat-container">
-                <h3>Edit Scorecard</h3>
+                <div class="chat-header" style="border:none; padding:0 0 20px 0;"><div class="chat-title">Edit Scorecard</div></div>
                 <select id="editMockType" class="auth-input" onchange="toggleEditMockInputs()">
-                    <option value="SBI PO">SBI PO</option><option value="IBPS PO">IBPS PO</option><option value="Other">Other</option>
+                    <option value="SBI PO">SBI PO</option><option value="SBI Clerk">SBI Clerk</option><option value="IBPS PO">IBPS PO</option><option value="IBPS Clerk">IBPS Clerk</option><option value="Other">Other</option>
                 </select>
-                <input type="number" id="editMockNumber" class="auth-input" placeholder="Mock #">
-                <input type="text" id="editMockCustomName" class="auth-input" style="display:none;" placeholder="Name">
-                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
-                    <input type="number" id="editE" class="auth-input" step="0.01" placeholder="Eng">
-                    <input type="number" id="editQ" class="auth-input" step="0.01" placeholder="Quant">
-                    <input type="number" id="editR" class="auth-input" step="0.01" placeholder="Logic">
+                <div id="editTestNumContainer"><input type="number" id="editMockNumber" class="auth-input" placeholder="Test Number"></div>
+                <div id="editCustomNameContainer" style="display:none;"><input type="text" id="editMockCustomName" class="auth-input" placeholder="Custom Name"></div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-top:10px;">
+                    <input type="number" id="editScoreEnglish" class="auth-input" step="0.01" placeholder="Eng">
+                    <input type="number" id="editScoreQuant" class="auth-input" step="0.01" placeholder="Quant">
+                    <input type="number" id="editScoreReasoning" class="auth-input" step="0.01" placeholder="Logic">
                 </div>
-                <button class="auth-btn" onclick="updateExistingMock()">Update</button>
+                <button class="auth-btn" style="margin-top: 20px;" onclick="updateExistingMock()">Update Changes</button>
                 <button onclick="closeEditModal()" style="background:none; border:none; margin-top:10px; cursor:pointer; color:var(--text-muted);">Cancel</button>
             </div>
         </div>
@@ -158,13 +167,15 @@
         <div class="fixed-top-container" id="fixedHeader">
             <header class="app-header">
                 <div class="header-top">
-                    <h1 style="margin:0; font-size:1.2rem;">BankPrep Tracker</h1>
-                    <div style="font-size:0.7rem; opacity:0.8;">By Durga Prasad</div>
-                </div>
-                <div class="header-actions">
-                    <button class="icon-btn ai-btn">✨</button>
-                    <button class="icon-btn" onclick="toggleTheme()" id="themeBtn">🌓</button>
-                    <button class="icon-btn" onclick="handleLogout()">🚪</button>
+                    <div class="header-title">
+                        <h1 style="margin: 0; font-size: 1.25rem; font-weight: 700; line-height: 1.3;">BankPrep "Syllabus Tracker"</h1>
+                        <div style="font-size: 0.75rem; font-weight: 500; opacity: 0.9; margin-top: 2px;">(By Durga Prasad)</div>
+                    </div>
+                    <div class="header-actions">
+                        <button class="icon-btn ai-btn">✨</button>
+                        <button class="icon-btn" onclick="toggleTheme()" id="themeBtn"></button>
+                        <button class="icon-btn" onclick="handleLogout()" style="font-size: 0.9rem;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg></button>
+                    </div>
                 </div>
                 <div class="global-progress-container"><div class="global-progress-fill" id="globalBar"></div></div>
                 <div class="progress-label" id="globalText">0% Covered</div>
@@ -173,7 +184,7 @@
         </div>
 
         <main class="content-area" id="contentArea"></main>
-        <button class="fab" id="addTaskBtn" onclick="openTaskModal()">+</button>
+        <button class="fab" id="addTaskBtn" onclick="openTaskModal()"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
     </div>
 
     <script>
@@ -193,18 +204,26 @@
             "revision": { label: "Revision", icon: "🔄", sections: [] },
             "analysis": { label: "Analysis", icon: "📈", sections: [] },
             "basics": { label: "Basics", icon: "⚡", sections: [{ title: "Calculation Drills", topics: ["Tables (1-20)", "Tables (21-30)", "Squares (1-50)", "Cubes (1-30)"] }] },
-            "quant": { label: "Quant", icon: "📊", sections: [{ title: "Core", topics: ["Simplification", "Percentages", "Ratio", "Averages"] }] },
-            "reasoning": { label: "Logic", icon: "🧠", sections: [{ title: "Logic", topics: ["Syllogism", "Inequality", "Puzzles"] }] },
+            "quant": { label: "Quant", icon: "📊", sections: [{ title: "Arithmetic Core", topics: ["Simplification", "Percentages", "Ratio", "Averages"] }] },
+            "reasoning": { label: "Logic", icon: "🧠", sections: [{ title: "Speed Reasoning", topics: ["Syllogism", "Inequality", "Coding-Decoding", "Puzzles"] }] },
             "english": { label: "English", icon: "📖", sections: [{ title: "Grammar", topics: ["Tenses", "Articles", "Reading Comprehension"] }] }
         };
 
-        let state = {}; let currentTab = 'quant'; let currentUser = null; let currentEditId = null; let myPerformanceChart = null;
-        let currentAnalysisSubTab = 'log';
+        let state = {}; let currentTab = 'quant'; let currentUser = null; let selectedDays = []; let currentAnalysisSubTab = 'log'; let currentEditId = null; let myPerformanceChart = null;
+
+        const MOON_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>`;
+        const SUN_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`;
 
         auth.onAuthStateChanged(user => {
             if (user) { currentUser = user; document.getElementById('authScreen').style.display = 'none'; document.getElementById('appContainer').style.display = 'block'; loadUserData(); initTheme(); }
             else { currentUser = null; document.getElementById('authScreen').style.display = 'flex'; document.getElementById('appContainer').style.display = 'none'; }
         });
+
+        async function handleLogin() {
+            const email = document.getElementById('email').value; const pass = document.getElementById('password').value;
+            try { await auth.signInWithEmailAndPassword(email, pass); } catch(e) { document.getElementById('authError').textContent = e.message; }
+        }
+        function handleLogout() { auth.signOut(); }
 
         function loadUserData() {
             db.collection('users').doc(currentUser.uid).onSnapshot(doc => {
@@ -224,8 +243,7 @@
         function renderTabs() {
             const nav = document.getElementById('categoryNav'); nav.innerHTML = '';
             Object.keys(syllabusData).forEach(k => {
-                const d = document.createElement('div');
-                d.className = `nav-item ${k===currentTab?'active':''}`;
+                const d = document.createElement('div'); d.className = `nav-item ${k===currentTab?'active':''}`;
                 d.innerHTML = `<span class="nav-icon">${syllabusData[k].icon}</span><span class="nav-label">${syllabusData[k].label}</span>`;
                 d.onclick = () => { currentTab = k; renderTabs(); renderContent(k); window.scrollTo({top:0}); };
                 nav.appendChild(d);
@@ -240,17 +258,19 @@
             if (k === 'analysis') { renderAnalysis(c); return; }
 
             syllabusData[k].sections.forEach(s => {
-                c.innerHTML += `<div class="section-header">${s.title}</div>`;
+                const h = document.createElement('div'); h.className = 'section-header'; h.textContent = s.title; c.appendChild(h);
                 s.topics.forEach(t => {
                     const id = `${k}-${t.replace(/[^a-zA-Z0-9]/g,'')}`;
                     const td = state[id] || {done:false};
                     const cd = document.createElement('div'); cd.className = `topic-wrapper`;
-                    cd.innerHTML = `<div class="topic-main"><div class="topic-left"><div class="topic-info"><h3>${t}</h3><div class="topic-status ${td.done?'active':''}">${td.done?'Completed':'Not Started'}</div></div></div><label class="switch"><input type="checkbox" onchange="toggleTopic('${id}')" ${td.done?'checked':''}><span class="slider"></span></label></div>`;
+                    cd.innerHTML = `<div class="topic-main"><div class="topic-left"><div class="topic-info"><h3>${t}</h3><div class="topic-status ${td.done?'active':''}">${td.done?'Completed':'Not Started'}</div></div></div><label class="switch master-switch"><input type="checkbox" onchange="toggleTopic('${id}')" ${td.done?'checked':''}><span class="slider"></span></label></div>`;
                     c.appendChild(cd);
                 });
             });
+            adjustPadding();
         }
 
+        // DAILY
         function renderDaily(container) {
             const day = new Date().getDay(); const date = new Date().toISOString().split('T')[0];
             container.innerHTML = `<div class="section-header">Today's Checklist</div>`;
@@ -265,68 +285,52 @@
             });
         }
 
+        window.toggleDaily = function(id) {
+            const date = new Date().toISOString().split('T')[0]; const isChecked = event.target.checked;
+            if(!state.customTasks[id].completions) state.customTasks[id].completions = {};
+            if(isChecked) state.customTasks[id].completions[date] = true; else delete state.customTasks[id].completions[date];
+            saveState(); const s = document.getElementById(`status-${id}`);
+            if(s) { s.textContent = isChecked?'Done':'Pending'; isChecked?s.classList.add('active'):s.classList.remove('active'); }
+        }
+
+        // REVISION
         function renderRevision(container) {
             const today = new Date().toISOString().split('T')[0];
             container.innerHTML = `<div class="section-header">Today's Revisions (1-4-7 Rule)</div>`;
             let hasRevision = false;
             Object.entries(state.revisions).forEach(([id, rev]) => {
                 if (rev.dates.includes(today)) {
-                    hasRevision = true;
-                    const isDone = rev.completions && rev.completions[today];
+                    hasRevision = true; const isDone = rev.completions && rev.completions[today];
                     const div = document.createElement('div'); div.className = 'topic-wrapper';
                     div.innerHTML = `<div class="topic-main"><div class="topic-left"><div class="topic-info"><h3>${rev.name}</h3><div class="topic-status ${isDone?'active':''}" id="rev-status-${id}">${isDone?'Revised':'Due Today'}</div></div></div><label class="checkbox-container"><input type="checkbox" onchange="toggleRevision('${id}')" ${isDone?'checked':''}><span class="checkmark"></span></label></div>`;
                     container.appendChild(div);
                 }
             });
-            if(!hasRevision) container.innerHTML += `<div style="text-align:center; padding:40px; color:var(--text-muted);">No revisions due for today.</div>`;
+            if(!hasRevision) container.innerHTML += `<div style="text-align:center; padding:40px; color:var(--text-muted);">No revisions due today.</div>`;
         }
 
         window.toggleRevision = function(id) {
-            const today = new Date().toISOString().split('T')[0];
-            const isChecked = event.target.checked;
+            const today = new Date().toISOString().split('T')[0]; const isChecked = event.target.checked;
             if(!state.revisions[id].completions) state.revisions[id].completions = {};
             if(isChecked) state.revisions[id].completions[today] = true; else delete state.revisions[id].completions[today];
-            saveState();
-            const statusLabel = document.getElementById(`rev-status-${id}`);
-            if(statusLabel) { statusLabel.textContent = isChecked ? 'Revised' : 'Due Today'; isChecked ? statusLabel.classList.add('active') : statusLabel.classList.remove('active'); }
+            saveState(); const s = document.getElementById(`rev-status-${id}`);
+            if(s) { s.textContent = isChecked?'Revised':'Due Today'; isChecked?s.classList.add('active'):s.classList.remove('active'); }
         }
 
-        function openTaskModal() {
-            const modal = document.getElementById('taskModal');
-            const title = document.getElementById('taskModalTitle');
-            const daysCont = document.getElementById('daysSelectorContainer');
-            const dateCont = document.getElementById('dateSelectorContainer');
-            const submitBtn = document.getElementById('modalSubmitBtn');
-            if (currentTab === 'daily') { title.textContent = "New Daily Task"; daysCont.style.display = 'block'; dateCont.style.display = 'none'; submitBtn.setAttribute('onclick', 'saveNewTask()'); }
-            else { title.textContent = "Schedule Revision"; daysCont.style.display = 'none'; dateCont.style.display = 'block'; submitBtn.setAttribute('onclick', 'saveRevision()'); }
-            modal.classList.add('show');
-        }
-
-        window.saveRevision = function() {
-            const name = document.getElementById('newTaskName').value.trim();
-            const start = document.getElementById('revStartDate').value;
-            if(!name || !start) { showToast("Name and date required", "error"); return; }
-            const d = new Date(start);
-            const dates = [0, 1, 4, 7].map(days => {
-                const next = new Date(d); next.setDate(d.getDate() + days); return next.toISOString().split('T')[0];
-            }).slice(1); // 1, 4, 7
-            state.revisions['rev-'+Date.now()] = { name, start, dates, completions: {} };
-            saveState(); closeTaskModal(); showToast("Revision Scheduled");
-        }
-
+        // ANALYSIS
         function renderAnalysis(container) {
             container.innerHTML = `<div class="section-header">Mock Analytics</div><div class="sub-nav-container"><button onclick="switchAnalysisSubTab('log')" class="sub-nav-btn ${currentAnalysisSubTab==='log'?'active':''}" id="btn-log">Log New</button><button onclick="switchAnalysisSubTab('insights')" class="sub-nav-btn ${currentAnalysisSubTab==='insights'?'active':''}" id="btn-insights">Insights</button><button onclick="switchAnalysisSubTab('history')" class="sub-nav-btn ${currentAnalysisSubTab==='history'?'active':''}" id="btn-history">My Mocks</button></div><div id="analysisSubContent"></div>`;
             renderAnalysisSubContent();
         }
 
-        function switchAnalysisSubTab(tab) { currentAnalysisSubTab = tab; document.querySelectorAll('.sub-nav-btn').forEach(btn => btn.classList.remove('active')); if(document.getElementById(`btn-${tab}`)) document.getElementById(`btn-${tab}`).classList.add('active'); renderAnalysisSubContent(); }
+        function switchAnalysisSubTab(t) { currentAnalysisSubTab = t; document.querySelectorAll('.sub-nav-btn').forEach(b => b.classList.remove('active')); if(document.getElementById(`btn-${t}`)) document.getElementById(`btn-${t}`).classList.add('active'); renderAnalysisSubContent(); }
 
         function renderAnalysisSubContent() {
             const sub = document.getElementById('analysisSubContent'); if(!sub) return;
             if(currentAnalysisSubTab === 'log') {
-                sub.innerHTML = `<div class="topic-wrapper" style="padding:20px;"><select id="mockType" class="auth-input" onchange="toggleMockInputs()"><option value="SBI PO">SBI PO</option><option value="IBPS PO">IBPS PO</option><option value="Other">Other</option></select><input type="number" id="mockNumber" class="auth-input" placeholder="Mock #"><input type="text" id="mockCustomName" class="auth-input" style="display:none;" placeholder="Name"><div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;"><input type="number" id="scE" class="auth-input" step="0.01" placeholder="Eng"><input type="number" id="scQ" class="auth-input" step="0.01" placeholder="Quant"><input type="number" id="scR" class="auth-input" step="0.01" placeholder="Logic"></div><button class="auth-btn" onclick="saveScore()">Save</button></div>`;
+                sub.innerHTML = `<div class="topic-wrapper" style="padding:20px;"><select id="mockType" class="auth-input" onchange="toggleMockInputs()"><option value="SBI PO">SBI PO</option><option value="IBPS PO">IBPS PO</option><option value="Other">Other</option></select><input type="number" id="mockNumber" class="auth-input" placeholder="Mock #"><input type="text" id="mockCustomName" class="auth-input" style="display:none;" placeholder="Name"><div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-top:10px;"><input type="number" id="scE" class="auth-input" step="0.01" placeholder="Eng"><input type="number" id="scQ" class="auth-input" step="0.01" placeholder="Quant"><input type="number" id="scR" class="auth-input" step="0.01" placeholder="Logic"></div><button class="auth-btn" onclick="saveScore()">Save Scorecard</button></div>`;
             } else if(currentAnalysisSubTab === 'insights') {
-                sub.innerHTML = `<div class="topic-wrapper" style="padding:20px; height:350px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><h4>Performance Trend</h4><select id="insightFilter" class="auth-input" style="width:auto; margin:0;" onchange="renderInsightsChart()"><option value="ALL">All</option><option value="SBI PO">SBI PO</option><option value="IBPS PO">IBPS PO</option></select></div><div style="height:250px;"><canvas id="performanceChart"></canvas></div></div>`;
+                sub.innerHTML = `<div class="topic-wrapper" style="padding:20px; height:400px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;"><h4>Trends</h4><select id="insightFilter" class="auth-input" style="width:auto; margin:0; padding:5px;" onchange="renderInsightsChart()"><option value="ALL">All</option><option value="SBI PO">SBI PO</option><option value="IBPS PO">IBPS PO</option></select></div><div style="height:280px; width:100%;"><canvas id="performanceChart"></canvas></div><div id="insightSummary" style="margin-top:15px; font-size:0.8rem; text-align:center; color:var(--text-muted);"></div></div>`;
                 setTimeout(renderInsightsChart, 100);
             } else { renderMockHistory(sub); }
         }
@@ -334,49 +338,76 @@
         function renderInsightsChart() {
             const canvas = document.getElementById('performanceChart'); if(!canvas) return; if(myPerformanceChart) myPerformanceChart.destroy();
             const filter = document.getElementById('insightFilter').value;
-            let data = Object.values(state.mockScores).sort((a,b) => new Date(a.date) - new Date(b.date));
-            if(filter !== 'ALL') data = data.filter(m => m.name.includes(filter));
-            if(data.length === 0) return;
+            let dataArr = Object.values(state.mockScores).sort((a,b) => new Date(a.date) - new Date(b.date));
+            if(filter !== 'ALL') dataArr = dataArr.filter(m => m.name.includes(filter));
+            if(dataArr.length === 0) return;
             myPerformanceChart = new Chart(canvas.getContext('2d'), {
                 type: 'line',
-                data: { labels: data.map(m => m.name.split(' - ')[1] || m.name), datasets: [{ data: data.map(m => m.total), borderColor: '#4f46e5', tension: 0.3, fill: false }] },
+                data: { labels: dataArr.map(m => m.name.split(' - ')[1] || m.name), datasets: [{ data: dataArr.map(m => m.total), borderColor: '#4f46e5', tension: 0.3, fill: false, pointRadius: 5 }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } }
             });
+            const avg = (dataArr.reduce((a,b) => a + parseFloat(b.total), 0) / dataArr.length).toFixed(2);
+            document.getElementById('insightSummary').innerHTML = `Average: ${avg} | Mocks: ${dataArr.length}`;
         }
 
         function renderMockHistory(container) {
             const sorted = Object.entries(state.mockScores).sort((a,b) => new Date(b[1].date) - new Date(a[1].date));
             sorted.forEach(([id, m]) => {
                 const div = document.createElement('div'); div.className = 'topic-wrapper'; div.style.padding = '18px';
-                div.innerHTML = `<div style="display:flex; justify-content:space-between;"><div><strong>${m.name}</strong><div style="font-size:0.75rem;">${new Date(m.date).toLocaleDateString()}</div></div><div style="text-align:right;"><div style="color:var(--primary); font-weight:700;">${m.total}</div><div style="display:flex; gap:10px;"><span onclick="editMock('${id}')" style="color:var(--primary); cursor:pointer; font-size:0.7rem;">Edit</span><span onclick="deleteMock('${id}')" style="color:var(--danger); cursor:pointer; font-size:0.7rem;">Delete</span></div></div></div><div style="display:flex; gap:10px; font-size:0.8rem; margin-top:10px; border-top:1px solid var(--border-color); padding-top:10px;"><span>E: ${m.english}</span><span>Q: ${m.quant}</span><span>R: ${m.reasoning}</span></div>`;
+                div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:start;"><div><strong>${m.name}</strong><div style="font-size:0.75rem; color:var(--text-muted);">${new Date(m.date).toLocaleDateString()}</div></div><div style="text-align:right;"><div style="font-size:1.2rem; font-weight:700; color:var(--primary);">${m.total}</div><div style="display:flex; gap:10px; margin-top:5px;"><span onclick="editMock('${id}')" style="color:var(--primary); cursor:pointer; font-size:0.7rem; font-weight:700;">Edit</span><span onclick="deleteMock('${id}')" style="color:var(--danger); cursor:pointer; font-size:0.7rem; font-weight:700;">Delete</span></div></div></div><div style="display:flex; gap:15px; margin-top:12px; font-size:0.8rem; border-top:1px solid var(--border-color); padding-top:12px;"><span>📖 E: <b>${m.english}</b></span><span>📊 Q: <b>${m.quant}</b></span><span>🧠 R: <b>${m.reasoning}</b></span></div>`;
                 container.appendChild(div);
             });
         }
 
-        // HELPERS
+        // MODAL ACTIONS
+        function openTaskModal() {
+            const modal = document.getElementById('taskModal'); const title = document.getElementById('taskModalTitle');
+            const dayG = document.getElementById('daysSelectorGroup'); const revG = document.getElementById('revisionSelectorGroup');
+            const btn = document.getElementById('modalSubmitBtn');
+            if (currentTab === 'daily') { title.textContent = "Create Task"; dayG.style.display = 'block'; revG.style.display = 'none'; btn.onclick = saveNewTask; }
+            else { title.textContent = "Schedule Revision"; dayG.style.display = 'none'; revG.style.display = 'block'; btn.onclick = saveRevision; }
+            modal.classList.add('show');
+        }
+        function closeTaskModal() { document.getElementById('taskModal').classList.remove('show'); }
+        function closeEditModal() { document.getElementById('editMockModal').classList.remove('show'); }
+
+        window.saveNewTask = function() {
+            const name = document.getElementById('newTaskName').value.trim();
+            const days = Array.from(document.querySelectorAll('.day-btn.selected')).map(b => parseInt(b.dataset.day));
+            if(!name || days.length === 0) return;
+            state.customTasks['task-'+Date.now()] = { name, days, completions: {} };
+            saveState(); closeTaskModal(); showToast("Task Created");
+        }
+
+        window.saveRevision = function() {
+            const name = document.getElementById('newTaskName').value.trim(); const start = document.getElementById('revStartDate').value;
+            if(!name || !start) return;
+            const d = new Date(start);
+            const dates = [1, 4, 7].map(gap => { const next = new Date(d); next.setDate(d.getDate() + gap); return next.toISOString().split('T')[0]; });
+            state.revisions['rev-'+Date.now()] = { name, start, dates, completions: {} };
+            saveState(); closeTaskModal(); showToast("Revision Scheduled");
+        }
+
+        // UTILITIES
         function saveScore() {
             const type = document.getElementById('mockType').value; const e = parseFloat(document.getElementById('scE').value)||0; const q = parseFloat(document.getElementById('scQ').value)||0; const r = parseFloat(document.getElementById('scR').value)||0;
             const name = (type==='Other')?document.getElementById('mockCustomName').value:`${type} - Mock ${document.getElementById('mockNumber').value}`;
             state.mockScores['mock-'+Date.now()] = { name, english: e.toFixed(2), quant: q.toFixed(2), reasoning: r.toFixed(2), total: (e+q+r).toFixed(2), date: new Date().toISOString() };
-            saveState(); showToast("Scorecard Saved"); renderContent('analysis');
+            saveState(); showToast("Saved"); renderContent('analysis');
         }
-        function deleteMock(id) { if(confirm("Delete permanently?")) { delete state.mockScores[id]; saveState(); showToast("Deleted"); renderContent('analysis'); } }
+        function deleteMock(id) { if(confirm("Delete?")) { delete state.mockScores[id]; saveState(); showToast("Deleted"); renderContent('analysis'); } }
         function editMock(id) { currentEditId = id; const m = state.mockScores[id]; document.getElementById('editE').value = m.english; document.getElementById('editQ').value = m.quant; document.getElementById('editR').value = m.reasoning; document.getElementById('editMockModal').classList.add('show'); }
         function updateExistingMock() { const m = state.mockScores[currentEditId]; m.english = parseFloat(document.getElementById('editE').value).toFixed(2); m.quant = parseFloat(document.getElementById('editQ').value).toFixed(2); m.reasoning = parseFloat(document.getElementById('editR').value).toFixed(2); m.total = (parseFloat(m.english)+parseFloat(m.quant)+parseFloat(m.reasoning)).toFixed(2); saveState(); closeEditModal(); showToast("Updated"); }
-        function closeEditModal() { document.getElementById('editMockModal').classList.remove('show'); }
-        function closeTaskModal() { document.getElementById('taskModal').classList.remove('show'); }
-        function toggleDaily(id) { const date = new Date().toISOString().split('T')[0]; const isChecked = event.target.checked; if(!state.customTasks[id].completions) state.customTasks[id].completions = {}; if(isChecked) state.customTasks[id].completions[date] = true; else delete state.customTasks[id].completions[date]; saveState(); const status = document.getElementById(`status-${id}`); if(status) { status.textContent = isChecked?'Done':'Pending'; isChecked?status.classList.add('active'):status.classList.remove('active'); } }
-        function saveNewTask() { const name = document.getElementById('newTaskName').value.trim(); const days = Array.from(document.querySelectorAll('.day-btn.selected')).map(b => parseInt(b.dataset.day)); if(!name || days.length === 0) return; state.customTasks['task-'+Date.now()] = { name, days, completions: {} }; saveState(); closeTaskModal(); }
         function toggleTopic(id) { if(!state[id]) state[id]={}; state[id].done = event.target.checked; saveState(); renderContent(currentTab); }
-        function handleLogin() { auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).catch(e => alert(e.message)); }
-        function handleLogout() { auth.signOut(); }
         function toggleTheme() { const d = document.documentElement; const t = d.getAttribute('data-theme')==='dark'?'light':'dark'; d.setAttribute('data-theme', t); localStorage.setItem('theme', t); initTheme(); }
-        function initTheme() { const t = localStorage.getItem('theme') || 'light'; document.documentElement.setAttribute('data-theme', t); }
+        function initTheme() { const t = localStorage.getItem('theme') || 'light'; document.documentElement.setAttribute('data-theme', t); document.getElementById('themeBtn').innerHTML = (t==='dark')?SUN_ICON:MOON_ICON; }
+        function showToast(m) { const t = document.getElementById('toast'); document.getElementById('toastMsg').textContent = m; t.className = 'toast show'; setTimeout(() => t.className = 'toast', 3000); }
         function toggleMockInputs() { const t = document.getElementById('mockType').value; document.getElementById('testNumContainer').style.display = t==='Other'?'none':'block'; document.getElementById('customNameContainer').style.display = t==='Other'?'block':'none'; }
         function toggleEditMockInputs() { const t = document.getElementById('editMockType').value; document.getElementById('editTestNumContainer').style.display = t==='Other'?'none':'block'; document.getElementById('editCustomNameContainer').style.display = t==='Other'?'block':'none'; }
-        function showToast(m) { const t = document.getElementById('toast'); document.getElementById('toastMsg').textContent = m; t.className = 'toast show'; setTimeout(() => t.className = 'toast', 3000); }
         function adjustPadding() { document.body.style.paddingTop = document.getElementById('fixedHeader').offsetHeight + 'px'; }
-        function updateGlobalStats() { let total = 0, done = 0; Object.keys(syllabusData).filter(k => k!=='daily'&&k!=='analysis'&&k!=='revision').forEach(k => { syllabusData[k].sections.forEach(s => s.topics.forEach(t => { total++; if(state[`${k}-${t.replace(/[^a-zA-Z0-9]/g,'')}`]?.done) done++; })); }); const p = Math.round((done/total)*100) || 0; document.getElementById('globalBar').style.width = p+'%'; document.getElementById('globalText').textContent = p+'% Covered'; }
+        function updateGlobalStats() { let total = 0, done = 0; Object.keys(syllabusData).filter(k => !['daily','analysis','revision'].includes(k)).forEach(k => { syllabusData[k].sections.forEach(s => s.topics.forEach(t => { total++; if(state[`${k}-${t.replace(/[^a-zA-Z0-9]/g,'')}`]?.done) done++; })); }); const p = Math.round((done/total)*100) || 0; document.getElementById('globalBar').style.width = p+'%'; document.getElementById('globalText').textContent = p+'% Covered'; }
+        
+        document.querySelectorAll('.day-btn').forEach(b => b.onclick = () => b.classList.toggle('selected'));
         window.addEventListener('resize', adjustPadding);
     </script>
 </body>
