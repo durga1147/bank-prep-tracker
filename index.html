@@ -190,6 +190,34 @@
             color: var(--success) !important;
             font-weight: 600;
         }
+        /* Styling for Analysis Sub-Navigation */
+        .sub-nav-container {
+            display: flex; 
+            gap: 10px; 
+            margin-bottom: 20px; 
+            background: var(--task-tag-bg); 
+            padding: 5px; 
+            border-radius: 12px;
+        }
+        
+        .sub-nav-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .sub-nav-btn.active {
+            background: var(--bg-card);
+            color: var(--primary);
+            box-shadow: var(--shadow-card);
+        }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -388,12 +416,12 @@
 
         function renderAnalysis(container) {
             container.innerHTML = `
-                <div class="section-header">Mock Analytics</div>
+                <div class="section-header">Performance Dashboard</div>
                 
-                <div style="display:flex; gap:10px; margin-bottom:20px; padding:0 5px;">
-                    <button onclick="switchAnalysisSubTab('log')" class="nav-item ${currentAnalysisSubTab === 'log' ? 'active' : ''}" style="flex:1; min-width:auto; padding:8px;">Log New</button>
-                    <button onclick="switchAnalysisSubTab('insights')" class="nav-item ${currentAnalysisSubTab === 'insights' ? 'active' : ''}" style="flex:1; min-width:auto; padding:8px;">Insights</button>
-                    <button onclick="switchAnalysisSubTab('history')" class="nav-item ${currentAnalysisSubTab === 'history' ? 'active' : ''}" style="flex:1; min-width:auto; padding:8px;">My Mocks</button>
+                <div class="sub-nav-container">
+                    <button onclick="switchAnalysisSubTab('log')" class="sub-nav-btn ${currentAnalysisSubTab === 'log' ? 'active' : ''}" id="btn-log">Log New</button>
+                    <button onclick="switchAnalysisSubTab('insights')" class="sub-nav-btn ${currentAnalysisSubTab === 'insights' ? 'active' : ''}" id="btn-insights">Insights</button>
+                    <button onclick="switchAnalysisSubTab('history')" class="sub-nav-btn ${currentAnalysisSubTab === 'history' ? 'active' : ''}" id="btn-history">My Mocks</button>
                 </div>
         
                 <div id="analysisSubContent"></div>
@@ -403,16 +431,27 @@
         
         function switchAnalysisSubTab(tab) {
             currentAnalysisSubTab = tab;
+            // Manually toggle active classes for instant feedback
+            document.querySelectorAll('.sub-nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${tab}`).classList.add('active');
             renderAnalysisSubContent();
         }
 
         function renderInsightsChart() {
-            const ctx = document.getElementById('performanceChart');
-            if (!ctx || !state.mockScores) return;
+            const canvas = document.getElementById('performanceChart');
+            if (!canvas || !state.mockScores || Object.keys(state.mockScores).length === 0) {
+                canvas.parentElement.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>Log at least one mock to see insights.</p>";
+                return;
+            }
         
             const sortedMocks = Object.values(state.mockScores).sort((a, b) => new Date(a.date) - new Date(b.date));
-            const labels = sortedMocks.map(m => m.name);
-            const data = sortedMocks.map(m => parseFloat(m.total));
+            const labels = sortedMocks.map(m => m.name.split(' - ')[0] + " #" + (m.name.split('#')[1] || ""));
+            const totals = sortedMocks.map(m => parseFloat(m.total));
+        
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(79, 70, 229, 0.4)');
+            gradient.addColorStop(1, 'rgba(79, 70, 229, 0)');
         
             new Chart(ctx, {
                 type: 'line',
@@ -420,19 +459,28 @@
                     labels: labels,
                     datasets: [{
                         label: 'Total Score',
-                        data: data,
+                        data: totals,
                         borderColor: '#4f46e5',
-                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#4f46e5',
+                        pointHoverRadius: 6,
                         fill: true,
-                        tension: 0.4,
-                        pointRadius: 5
+                        backgroundColor: gradient,
+                        tension: 0.4
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
                     scales: {
-                        y: { beginAtZero: true, max: 100 }
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            ticks: { font: { family: 'Poppins' } }
+                        },
+                        x: { grid: { display: false } }
                     }
                 }
             });
@@ -463,13 +511,16 @@
             } 
             else if (currentAnalysisSubTab === 'insights') {
                 subContainer.innerHTML = `
-                    <div class="topic-wrapper" style="padding:20px;">
-                        <canvas id="performanceChart" style="width:100%; height:250px;"></canvas>
+                    <div class="topic-wrapper" style="padding:20px; min-height:300px;">
+                        <h4 style="margin:0 0 15px 0; font-size:0.9rem;">Score Progression</h4>
+                        <canvas id="performanceChart"></canvas>
                     </div>`;
-                renderInsightsChart();
+                // Delay slightly to ensure canvas is in DOM
+                setTimeout(renderInsightsChart, 50);
             } 
             else if (currentAnalysisSubTab === 'history') {
-                renderMockList(subContainer);
+                // We pass the subContainer directly to the history renderer
+                renderMockHistory(subContainer);
             }
         }
 
@@ -484,6 +535,42 @@
             saveState(); renderContent('analysis');
         }
 
+        function renderMockHistory(container) {
+            if(!state.mockScores || Object.keys(state.mockScores).length === 0) {
+                container.innerHTML = `<div style="padding:40px; text-align:center; color:var(--text-muted);">No mock tests logged yet.</div>`;
+                return;
+            }
+            
+            const listHtml = document.createElement('div');
+            const sorted = Object.entries(state.mockScores).sort((a,b) => new Date(b[1].date) - new Date(a[1].date));
+            
+            sorted.forEach(([id, m]) => {
+                const div = document.createElement('div');
+                div.className = 'topic-wrapper';
+                div.style.padding = '18px';
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:start;">
+                        <div>
+                            <strong style="font-size:1rem;">${m.name}</strong>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">${new Date(m.date).toLocaleDateString()}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:1.2rem; font-weight:700; color:var(--primary);">${m.total}</div>
+                            <div style="display:flex; gap:10px; margin-top:5px;">
+                                <span onclick="editMock('${id}')" style="color:var(--primary); cursor:pointer; font-size:0.7rem; font-weight:700;">Edit</span>
+                                <span onclick="deleteMock('${id}')" style="color:var(--danger); cursor:pointer; font-size:0.7rem; font-weight:700;">Delete</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:15px; margin-top:12px; font-size:0.8rem; border-top:1px solid var(--border-color); padding-top:12px;">
+                        <span>📖 E: <b>${m.english}</b></span>
+                        <span>📊 Q: <b>${m.quant}</b></span>
+                        <span>🧠 R: <b>${m.reasoning}</b></span>
+                    </div>`;
+                listHtml.appendChild(div);
+            });
+            container.appendChild(listHtml);
+        }
         function renderMockList() {
             const list = document.getElementById('mockList'); if(!list) return;
             const sorted = Object.entries(state.mockScores).sort((a,b) => new Date(b[1].date) - new Date(a[1].date));
