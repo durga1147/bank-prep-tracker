@@ -552,10 +552,25 @@
 
         window.deleteMock = function(id) {
             if(confirm("Are you sure you want to delete this scorecard?")) {
-                delete state.mockScores[id];
-                saveState();
-                showToast("Scorecard Deleted", "error");
-                renderMockHistory();
+                // 1. Remove it from the local state object
+                if (state.mockScores && state.mockScores[id]) {
+                    delete state.mockScores[id];
+                    
+                    // 2. Sync the updated state to Firebase immediately
+                    if(currentUser) {
+                        db.collection('users').doc(currentUser.uid).set({ 
+                            progress: state 
+                        }, { merge: true })
+                        .then(() => {
+                            showToast("Scorecard permanently deleted", "success");
+                            renderMockHistory();
+                        })
+                        .catch((error) => {
+                            console.error("Error deleting from Firebase:", error);
+                            showToast("Failed to delete from cloud", "error");
+                        });
+                    }
+                }
             }
         };
 
