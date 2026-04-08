@@ -437,67 +437,62 @@
             renderAnalysisSubContent();
         }
 
-        let myPerformanceChart = null; // Global variable to track the chart instance
+        let myPerformanceChart = null;
 
         function renderInsightsChart() {
             const canvas = document.getElementById('performanceChart');
+            const filter = document.getElementById('insightFilter').value;
+            const summary = document.getElementById('insightSummary');
             if (!canvas) return;
             
-            // Destroy existing chart to prevent the "expanding" bug and memory leaks
-            if (myPerformanceChart) {
-                myPerformanceChart.destroy();
+            if (myPerformanceChart) { myPerformanceChart.destroy(); } //
+        
+            // Convert mockScores object to array and filter based on selection
+            let mockData = Object.values(state.mockScores).sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            if (filter !== "ALL") {
+                mockData = mockData.filter(m => m.name.includes(filter));
             }
         
-            if (!state.mockScores || Object.keys(state.mockScores).length === 0) {
-                canvas.parentElement.innerHTML = "<p style='text-align:center; padding:40px; color:var(--text-muted);'>Log your first mock to see the trend.</p>";
+            if (mockData.length === 0) {
+                summary.innerHTML = `No data found for ${filter}. Log a mock to see trends!`;
                 return;
             }
         
-            const sortedMocks = Object.values(state.mockScores).sort((a, b) => new Date(a.date) - new Date(b.date));
-            const labels = sortedMocks.map(m => m.name.split(' - ')[0]);
-            const totals = sortedMocks.map(m => parseFloat(m.total));
+            const labels = mockData.map(m => m.name.split(' - ')[1] || m.name);
+            const totals = mockData.map(m => parseFloat(m.total));
+            
+            // Calculate Average for the Summary
+            const avg = (totals.reduce((a, b) => a + b, 0) / totals.length).toFixed(2);
+            summary.innerHTML = `<strong>${filter} Summary:</strong> Average Score: ${avg} | Mocks Taken: ${mockData.length}`;
         
             const ctx = canvas.getContext('2d');
-            
             myPerformanceChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
+                        label: filter + ' Trend',
                         data: totals,
-                        borderColor: '#4f46e5',
+                        borderColor: filter === 'SBI PO' ? '#4f46e5' : '#ec4899', // Custom colors for different exams
                         borderWidth: 3,
                         pointBackgroundColor: '#fff',
-                        pointBorderColor: '#4f46e5',
-                        pointRadius: 4,
-                        tension: 0.3, // "Clean" curve, not too wavy
-                        fill: false // Removed the gradient for a "cleaner" look as requested
+                        pointRadius: 5,
+                        tension: 0.3,
+                        fill: false
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false, // Essential to prevent growing
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                            backgroundColor: '#1e293b',
-                            titleFont: { family: 'Poppins', size: 13 },
-                            bodyFont: { family: 'Poppins', size: 12 }
-                        }
-                    },
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
                     scales: {
                         y: { 
-                            beginAtZero: true,
+                            beginAtZero: true, 
                             max: 100,
-                            grid: { borderDash: [5, 5], color: 'rgba(0,0,0,0.05)' },
-                            ticks: { stepSize: 20, font: { family: 'Poppins' } }
+                            grid: { borderDash: [5, 5], color: 'rgba(0,0,0,0.05)' }
                         },
-                        x: {
-                            grid: { display: false },
-                            ticks: { font: { family: 'Poppins' } }
-                        }
+                        x: { grid: { display: false } }
                     }
                 }
             });
@@ -527,19 +522,25 @@
                     </div>`;
             } 
             /* Update this specific block inside your renderAnalysisSubContent() */
+            /* Update this specific block inside your renderAnalysisSubContent() */
             else if (currentAnalysisSubTab === 'insights') {
                 subContainer.innerHTML = `
-                    <div class="topic-wrapper" style="padding:20px; height:350px; position:relative;">
+                    <div class="topic-wrapper" style="padding:20px; height:400px; position:relative;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                            <h4 style="margin:0; font-size:0.9rem; font-weight:700;">Score Trend (Prelims)</h4>
-                            <span style="font-size:0.7rem; color:var(--text-muted);">Goal: 70+</span>
+                            <h4 style="margin:0; font-size:0.9rem; font-weight:700;">Performance Trends</h4>
+                            <select id="insightFilter" class="auth-input" style="width:auto; margin-bottom:0; padding:5px 10px;" onchange="renderInsightsChart()">
+                                <option value="ALL">All Mocks</option>
+                                <option value="SBI PO">SBI PO</option>
+                                <option value="IBPS PO">IBPS PO</option>
+                            </select>
                         </div>
-                        <div style="height:250px; width:100%;">
+                        <div style="height:280px; width:100%;">
                             <canvas id="performanceChart"></canvas>
                         </div>
+                        <div id="insightSummary" style="margin-top:15px; font-size:0.8rem; color:var(--text-muted); text-align:center;"></div>
                     </div>
                 `;
-                setTimeout(renderInsightsChart, 100);
+                setTimeout(renderInsightsChart, 100); //
             }
             else if (currentAnalysisSubTab === 'history') {
                 // We pass the subContainer directly to the history renderer
