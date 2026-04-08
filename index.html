@@ -108,6 +108,36 @@
         .tab-icon-img {
             transition: filter 0.3s ease;
         }
+
+        /* --- COUNTDOWN STYLES --- */
+        .countdown-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        
+        .countdown-card {
+            background: var(--bg-body);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        
+        .countdown-days {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+        }
+        
+        .countdown-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -214,6 +244,7 @@
             "english": { label: "English", icon: `<img src="https://img.icons8.com/?size=100&id=mfGIDl2iZ1ku&format=png&color=000000" class="tab-icon-img" style="width: 35px; height: 35px; display: block; margin: 0 auto; object-fit: contain;">`, sections: [{ title: "Grammar Rules", topics: ["Parts of Speech", "Subject-Verb Agreement", "Tenses", "Articles", "Prepositions", "Conjunctions", "Active & Passive Voice", "Direct & Indirect Speech"] }, { title: "Vocabulary", topics: ["Synonyms & Antonyms", "Idioms & Phrases", "Phrasal Verbs", "Root Words", "One-word Substitution", "Word Usage/Swap"] }, { title: "Reading Skills", topics: ["Reading Comprehension", "RC Inference & Tone", "Cloze Test", "Para Jumbles", "Para Completion", "Sentence Rearrangement"] }, { title: "Mains Descriptive", topics: ["Essay Writing", "Letter Writing"] }] },
             "ga": { label: "G.A.", icon: `<img src="https://img.icons8.com/?size=100&id=FASZR24bSSTQ&format=png&color=000000" class="tab-icon-img" style="width: 35px; height: 35px; display: block; margin: 0 auto; object-fit: contain;">`, sections: [{ title: "Banking Awareness", topics: ["RBI Functions & Structure", "Monetary Policy", "Repo, Reverse Repo, CRR, SLR", "Types of Accounts", "Basel Norms", "Financial Inclusion", "NPCI (UPI, IMPS)"] }, { title: "Static GK", topics: ["National Parks & Sanctuaries", "Dams & Rivers", "Country Capitals & Currencies", "HQ of Int. Organizations", "Airports & Stadiums", "Power Plants"] }, { title: "Current Affairs", topics: ["Last 6 Months News", "Union Budget", "Government Schemes", "Appointments", "Awards & Honours", "Books & Authors", "Sports News"] }] },
             "computer": { label: "Computer", icon: `<img src="https://img.icons8.com/?size=100&id=pxVDpisZAMYj&format=png&color=000000" class="tab-icon-img" style="width: 35px; height: 35px; display: block; margin: 0 auto; object-fit: contain;">`, sections: [{ title: "Hardware & OS", topics: ["Generations of Computers", "Input/Output Devices", "Memory (RAM, ROM)", "Operating Systems"] }, { title: "Networking & Security", topics: ["Internet & Browsers", "OSI Model", "IP Addresses & Protocols", "Cyber Security", "Virus & Malware", "MS Office Shortcuts"] }] }
+            "countdown": { label: "Target", icon: `<img src="https://img.icons8.com/?size=100&id=04qMuIWYJkqR&format=png&color=000000" class="tab-icon-img" style="width: 35px; height: 35px; display: block; margin: 0 auto; object-fit: contain;">`, sections: [] },
         };
 
         let state = {}; let currentTab = 'quant'; let currentUser = null; let currentAnalysisSubTab = 'log'; let currentEditId = null; let myPerformanceChart = null;
@@ -262,6 +293,7 @@
             if (k === 'daily') { renderDaily(c); return; }
             if (k === 'revision') { renderRevision(c); return; }
             if (k === 'analysis') { renderAnalysis(c); return; }
+            if (k === 'countdown') { renderExamCountdown(c); return; }
 
             syllabusData[k].sections.forEach(s => {
                 const h = document.createElement('div'); h.className = 'section-header'; h.textContent = s.title; c.appendChild(h);
@@ -274,6 +306,36 @@
                 });
             });
             adjustPadding();
+        }
+
+        function renderExamCountdown(container) {
+            const exams = [
+                { name: "SBI PO Prelims", date: "2026-08-01" },
+                { name: "IBPS PO Prelims", date: "2026-08-22" },
+                { name: "SBI Clerk Prelims", date: "2026-09-26" },
+                { name: "IBPS Clerk Prelims", date: "2026-10-10" },
+                { name: "IBPS RRB Officer", date: "2026-11-21" }
+            ];
+        
+            container.innerHTML = `<div class="section-header">Exam Countdown (Days Left)</div>`;
+            const grid = document.createElement('div');
+            grid.className = 'countdown-grid';
+        
+            exams.forEach(ex => {
+                const diff = new Date(ex.date) - new Date();
+                const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                
+                const card = document.createElement('div');
+                card.className = 'countdown-card';
+                card.innerHTML = `
+                    <span class="countdown-days">${days > 0 ? days : '0'}</span>
+                    <span class="countdown-label">${ex.name}</span>
+                    <div style="font-size:0.6rem; margin-top:5px; color:var(--text-muted);">${new Date(ex.date).toLocaleDateString('en-GB')}</div>
+                `;
+                grid.appendChild(card);
+            });
+        
+            container.appendChild(grid);
         }
 
         function renderDaily(container) {
