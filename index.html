@@ -233,6 +233,38 @@
             </div>
         </div>
 
+        <div class="chat-overlay" id="editMockModal">
+            <div class="chat-container" style="height: auto; padding: 25px; border-radius: 24px; margin-bottom: 20px;">
+                <div class="chat-header" style="border:none; padding:0 0 20px 0;">
+                    <div class="chat-title">Edit Scorecard</div>
+                    <button class="chat-close" onclick="closeEditModal()">×</button>
+                </div>
+                
+                <select id="editMockType" class="auth-input" onchange="toggleEditMockInputs()">
+                    <option value="SBI PO">SBI PO</option>
+                    <option value="SBI Clerk">SBI Clerk</option>
+                    <option value="IBPS PO">IBPS PO</option>
+                    <option value="IBPS Clerk">IBPS Clerk</option>
+                    <option value="Other">Other</option>
+                </select>
+        
+                <div id="editTestNumContainer">
+                    <input type="number" id="editMockNumber" class="auth-input" placeholder="Test Number">
+                </div>
+                <div id="editCustomNameContainer" style="display:none;">
+                    <input type="text" id="editMockCustomName" class="auth-input" placeholder="Custom Name">
+                </div>
+        
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-top:10px;">
+                    <input type="number" id="editScoreEnglish" class="auth-input" step="0.01" placeholder="Eng">
+                    <input type="number" id="editScoreQuant" class="auth-input" step="0.01" placeholder="Quant">
+                    <input type="number" id="editScoreReasoning" class="auth-input" step="0.01" placeholder="Logic">
+                </div>
+                
+                <button class="auth-btn" style="margin-top: 20px;" onclick="updateExistingMock()">Update Changes</button>
+            </div>
+        </div>
+
         <div id="toast" class="toast"><span id="toastIcon">✅</span><span id="toastMsg">Success</span></div>
 
         <div class="fixed-top-container" id="fixedHeader">
@@ -526,34 +558,71 @@
                 renderMockHistory();
             }
         };
-        
+
+        let currentEditId = null;
         window.editMock = function(id) {
+            currentEditId = id;
             const m = state.mockScores[id];
             
-            // 1. Scroll to top so user sees the input area
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        
-            // 2. Determine if it's a standard mock or "Other"
+            // Fill the Modal Fields
             const nameParts = m.name.split(' - Mock ');
             if (nameParts.length === 2) {
-                document.getElementById('mockType').value = nameParts[0];
-                document.getElementById('mockNumber').value = nameParts[1];
-                toggleMockInputs(); // Show number input
+                document.getElementById('editMockType').value = nameParts[0];
+                document.getElementById('editMockNumber').value = nameParts[1];
+                document.getElementById('editTestNumContainer').style.display = 'block';
+                document.getElementById('editCustomNameContainer').style.display = 'none';
             } else {
-                document.getElementById('mockType').value = 'Other';
-                toggleMockInputs(); // Show custom text input
-                document.getElementById('mockCustomName').value = m.name;
+                document.getElementById('editMockType').value = 'Other';
+                document.getElementById('editMockCustomName').value = m.name;
+                document.getElementById('editTestNumContainer').style.display = 'none';
+                document.getElementById('editCustomNameContainer').style.display = 'block';
             }
         
-            // 3. Fill the marks
-            document.getElementById('scoreEnglish').value = m.english;
-            document.getElementById('scoreQuant').value = m.quant;
-            document.getElementById('scoreReasoning').value = m.reasoning;
+            document.getElementById('editScoreEnglish').value = m.english;
+            document.getElementById('editScoreQuant').value = m.quant;
+            document.getElementById('editScoreReasoning').value = m.reasoning;
         
-            // 4. Temporarily remove the old one so "Save" updates it
-            // (Or you can modify saveMockScore to overwrite the same ID)
-            delete state.mockScores[id]; 
-            showToast("Editing mode: Original entry removed.", "warning");
+            // Show the Modal
+            document.getElementById('editMockModal').classList.add('show');
+        };
+        window.closeEditModal = function() {
+            document.getElementById('editMockModal').classList.remove('show');
+            currentEditId = null;
+        };
+        
+        window.toggleEditMockInputs = function() {
+            const type = document.getElementById('editMockType').value;
+            document.getElementById('editTestNumContainer').style.display = (type === 'Other') ? 'none' : 'block';
+            document.getElementById('editCustomNameContainer').style.display = (type === 'Other') ? 'block' : 'none';
+        };
+        
+        window.updateExistingMock = function() {
+            if (!currentEditId) return;
+        
+            const type = document.getElementById('editMockType').value;
+            const num = document.getElementById('editMockNumber').value;
+            const custom = document.getElementById('editMockCustomName').value;
+            
+            const e = parseFloat(document.getElementById('editScoreEnglish').value) || 0;
+            const q = parseFloat(document.getElementById('editScoreQuant').value) || 0;
+            const r = parseFloat(document.getElementById('editScoreReasoning').value) || 0;
+        
+            const finalName = (type === 'Other') ? custom.trim() : `${type} - Mock ${num}`;
+        
+            // Update the existing ID in the state
+            state.mockScores[currentEditId] = {
+                ...state.mockScores[currentEditId], // Keep original date
+                name: finalName,
+                english: e.toFixed(2),
+                quant: q.toFixed(2),
+                reasoning: r.toFixed(2),
+                total: (e + q + r).toFixed(2)
+            };
+        
+            saveState();
+            showToast("Scorecard Updated!");
+            closeEditModal();
+            renderMockHistory(); // Refresh only the list
         };
 
         function renderMockHistory() {
