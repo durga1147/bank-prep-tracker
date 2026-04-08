@@ -153,11 +153,16 @@
     <div id="authScreen">
         <div class="auth-card">
             <span class="auth-logo">🏦</span>
-            <div class="auth-title">BankPrep Cloud</div>
-            <div class="auth-sub">Sign in to sync your progress</div>
+            <div class="auth-title" id="authTitle">BankPrep Cloud</div>
+            <div class="auth-sub" id="authSub">Sign in to sync your progress</div>
+            
             <input type="email" id="email" class="auth-input" placeholder="Email Address">
             <input type="password" id="password" class="auth-input" placeholder="Password">
-            <button class="auth-btn" onclick="handleLogin()">Sign In</button>
+            <input type="password" id="confirmPassword" class="auth-input" placeholder="Confirm Password" style="display:none;">
+            
+            <button class="auth-btn" id="authBtn" onclick="handleAuth()">Sign In</button>
+            
+            <div class="auth-link" id="toggleAuth" onclick="toggleAuthMode()">New here? Create an account</div>
             <div id="authError" style="color:var(--danger); font-size:0.8rem; margin-top:10px;"></div>
         </div>
     </div>
@@ -235,6 +240,55 @@
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(); const db = firebase.firestore();
+
+        let isSignUpMode = false;
+
+        function toggleAuthMode() {
+            isSignUpMode = !isSignUpMode;
+            const title = document.getElementById('authTitle');
+            const sub = document.getElementById('authSub');
+            const btn = document.getElementById('authBtn');
+            const toggle = document.getElementById('toggleAuth');
+            const confirmPass = document.getElementById('confirmPassword');
+        
+            if (isSignUpMode) {
+                title.textContent = "Join BankPrep";
+                sub.textContent = "Start your 2026 journey";
+                btn.textContent = "Create Account";
+                toggle.textContent = "Already have an account? Sign In";
+                confirmPass.style.display = "block";
+            } else {
+                title.textContent = "BankPrep Cloud";
+                sub.textContent = "Sign in to sync your progress";
+                btn.textContent = "Sign In";
+                toggle.textContent = "New here? Create an account";
+                confirmPass.style.display = "none";
+            }
+        }
+        
+        async function handleAuth() {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+            const errorDiv = document.getElementById('authError');
+            errorDiv.textContent = "";
+        
+            try {
+                if (isSignUpMode) {
+                    if (pass !== confirmPass) {
+                        errorDiv.textContent = "Passwords do not match!";
+                        return;
+                    }
+                    await auth.createUserWithEmailAndPassword(email, pass);
+                    showToast("Account Created!");
+                } else {
+                    await auth.signInWithEmailAndPassword(email, pass);
+                    showToast("Welcome back!");
+                }
+            } catch (e) {
+                errorDiv.textContent = e.message;
+            }
+        }
 
         const syllabusData = {
             "daily": { 
