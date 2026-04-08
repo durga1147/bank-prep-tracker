@@ -118,6 +118,78 @@
         .day-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .day-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
 
+        /* --- CUSTOM CHECKBOX STYLE --- */
+        .checkbox-container {
+            display: block;
+            position: relative;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        /* Hide the default checkbox */
+        .checkbox-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+        
+        /* The custom square box */
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 28px;
+            width: 28px;
+            background-color: var(--task-tag-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px; /* Slightly curved edges */
+            transition: all 0.2s ease;
+        }
+        
+        /* On hover */
+        .checkbox-container:hover input ~ .checkmark {
+            border-color: var(--primary);
+        }
+        
+        /* When checked, add background and border color */
+        .checkbox-container input:checked ~ .checkmark {
+            background-color: var(--success);
+            border-color: var(--success);
+        }
+        
+        /* The tick mark (hidden when not checked) */
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+        
+        /* Show the tick mark when checked */
+        .checkbox-container input:checked ~ .checkmark:after {
+            display: block;
+        }
+        
+        /* Style the tick mark (the 'L' shape) */
+        .checkbox-container .checkmark:after {
+            left: 9px;
+            top: 5px;
+            width: 7px;
+            height: 12px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+        }
+        
+        /* Ensure status text color remains green when active */
+        .topic-status.active {
+            color: var(--success) !important;
+            font-weight: 600;
+        }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -379,7 +451,7 @@
                 return;
             }
         
-            // SORTING: Convert to array and sort by ID to keep the order identical every time
+            // STABLE SORT: Sort by ID (timestamp) so the order never changes
             const sortedTasks = Object.entries(state.customTasks).sort((a, b) => a[0].localeCompare(b[0]));
         
             sortedTasks.forEach(([id, t]) => {
@@ -387,7 +459,6 @@
                     const isDone = t.completions && t.completions[date];
                     const taskDiv = document.createElement('div');
                     taskDiv.className = 'topic-wrapper';
-                    taskDiv.id = `task-container-${id}`; // Assign ID for stable UI updates
                     
                     taskDiv.innerHTML = `
                         <div class="topic-main">
@@ -399,9 +470,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <label class="switch">
+                            <label class="checkbox-container">
                                 <input type="checkbox" onchange="toggleDaily('${id}')" ${isDone ? 'checked' : ''}>
-                                <span class="slider"></span>
+                                <span class="checkmark"></span>
                             </label>
                         </div>`;
                     container.appendChild(taskDiv);
@@ -418,17 +489,17 @@
                 state.customTasks[id].completions = {};
             }
         
-            // Update State
+            // Update Logic
             if (isChecked) {
                 state.customTasks[id].completions[date] = true;
             } else {
                 delete state.customTasks[id].completions[date];
             }
         
-            // Save to Firebase
+            // Sync to Firebase
             saveState();
         
-            // UI UPDATE ONLY: Update text and color without re-rendering the whole list
+            // Instant UI Update for text color and label
             const statusLabel = document.getElementById(`status-${id}`);
             if (statusLabel) {
                 statusLabel.textContent = isChecked ? 'Done' : 'Pending';
