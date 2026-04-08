@@ -9,6 +9,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         /* --- ALL ORIGINAL STYLES RESTORED --- */
@@ -383,23 +384,93 @@
         }
 
         // ANALYSIS TAB
+        let currentAnalysisSubTab = 'log'; // Default sub-tab
+
         function renderAnalysis(container) {
             container.innerHTML = `
-                <div class="section-header">Log New Mock Test</div>
-                <div class="topic-wrapper" style="padding:20px;">
-                    <select id="mockType" class="auth-input" onchange="toggleMockInputs()"><option value="SBI PO">SBI PO</option><option value="IBPS PO">IBPS PO</option><option value="Other">Other</option></select>
-                    <div id="testNumContainer"><input type="number" id="mockNumber" class="auth-input" placeholder="Test Number"></div>
-                    <div id="customNameContainer" style="display:none;"><input type="text" id="mockCustomName" class="auth-input" placeholder="Custom Name"></div>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-top:10px;">
-                        <input type="number" id="scE" class="auth-input" step="0.01" placeholder="Eng">
-                        <input type="number" id="scQ" class="auth-input" step="0.01" placeholder="Quant">
-                        <input type="number" id="scR" class="auth-input" step="0.01" placeholder="Logic">
-                    </div>
-                    <button class="auth-btn" onclick="saveScore()">Save Scorecard</button>
+                <div class="section-header">Mock Analytics</div>
+                
+                <div style="display:flex; gap:10px; margin-bottom:20px; padding:0 5px;">
+                    <button onclick="switchAnalysisSubTab('log')" class="nav-item ${currentAnalysisSubTab === 'log' ? 'active' : ''}" style="flex:1; min-width:auto; padding:8px;">Log New</button>
+                    <button onclick="switchAnalysisSubTab('insights')" class="nav-item ${currentAnalysisSubTab === 'insights' ? 'active' : ''}" style="flex:1; min-width:auto; padding:8px;">Insights</button>
+                    <button onclick="switchAnalysisSubTab('history')" class="nav-item ${currentAnalysisSubTab === 'history' ? 'active' : ''}" style="flex:1; min-width:auto; padding:8px;">My Mocks</button>
                 </div>
-                <div class="section-header">Recent Performance</div>
-                <div id="mockList"></div>`;
-            renderMockList();
+        
+                <div id="analysisSubContent"></div>
+            `;
+            renderAnalysisSubContent();
+        }
+        
+        function switchAnalysisSubTab(tab) {
+            currentAnalysisSubTab = tab;
+            renderAnalysisSubContent();
+        }
+
+        function renderInsightsChart() {
+            const ctx = document.getElementById('performanceChart');
+            if (!ctx || !state.mockScores) return;
+        
+            const sortedMocks = Object.values(state.mockScores).sort((a, b) => new Date(a.date) - new Date(b.date));
+            const labels = sortedMocks.map(m => m.name);
+            const data = sortedMocks.map(m => parseFloat(m.total));
+        
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Score',
+                        data: data,
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, max: 100 }
+                    }
+                }
+            });
+        }
+        
+        function renderAnalysisSubContent() {
+            const subContainer = document.getElementById('analysisSubContent');
+            if (!subContainer) return;
+            subContainer.innerHTML = '';
+        
+            if (currentAnalysisSubTab === 'log') {
+                subContainer.innerHTML = `
+                    <div class="topic-wrapper" style="padding:20px;">
+                        <select id="mockType" class="auth-input" onchange="toggleMockInputs()">
+                            <option value="SBI PO">SBI PO</option>
+                            <option value="IBPS PO">IBPS PO</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <div id="testNumContainer"><input type="number" id="mockNumber" class="auth-input" placeholder="Test Number"></div>
+                        <div id="customNameContainer" style="display:none;"><input type="text" id="mockCustomName" class="auth-input" placeholder="Name"></div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-top:10px;">
+                            <input type="number" id="scE" class="auth-input" step="0.01" placeholder="Eng">
+                            <input type="number" id="scQ" class="auth-input" step="0.01" placeholder="Quant">
+                            <input type="number" id="scR" class="auth-input" step="0.01" placeholder="Logic">
+                        </div>
+                        <button class="auth-btn" onclick="saveScore()">Save Scorecard</button>
+                    </div>`;
+            } 
+            else if (currentAnalysisSubTab === 'insights') {
+                subContainer.innerHTML = `
+                    <div class="topic-wrapper" style="padding:20px;">
+                        <canvas id="performanceChart" style="width:100%; height:250px;"></canvas>
+                    </div>`;
+                renderInsightsChart();
+            } 
+            else if (currentAnalysisSubTab === 'history') {
+                renderMockList(subContainer);
+            }
         }
 
         window.saveScore = function() {
