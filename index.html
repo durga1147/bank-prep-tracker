@@ -76,6 +76,9 @@
         .topic-info h3 { margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
         .topic-status { font-size: 0.7rem; margin-top: 4px; color: var(--text-muted); }
         .topic-status.active { color: var(--success); font-weight: 600; }
+        .switch input:checked + .slider { 
+            background-color: var(--success) !important; 
+        }
 
         .switch { position: relative; display: inline-block; width: 48px; height: 28px; flex-shrink: 0; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -367,23 +370,75 @@
 
         // DAILY TASKS
         function renderDaily(container) {
-            const day = new Date().getDay(); const date = new Date().toISOString().split('T')[0];
-            container.innerHTML = `<div class="section-header">Checklist</div>`;
-            Object.entries(state.customTasks).forEach(([id, t]) => {
+            const day = new Date().getDay(); 
+            const date = new Date().toISOString().split('T')[0];
+            container.innerHTML = `<div class="section-header">Today's Checklist</div>`;
+            
+            if (!state.customTasks || Object.keys(state.customTasks).length === 0) {
+                container.innerHTML += `<div style="padding:20px; text-align:center; color:var(--text-muted);">No tasks added. Click + to start.</div>`;
+                return;
+            }
+        
+            // SORTING: Convert to array and sort by ID to keep the order identical every time
+            const sortedTasks = Object.entries(state.customTasks).sort((a, b) => a[0].localeCompare(b[0]));
+        
+            sortedTasks.forEach(([id, t]) => {
                 if (t.days.includes(day)) {
-                    const done = t.completions && t.completions[date];
-                    container.innerHTML += `<div class="topic-wrapper"><div class="topic-main"><div class="topic-left"><div class="topic-info"><h3>${t.name}</h3><div class="topic-status ${done?'active':''}">${done?'Done':'Pending'}</div></div></div><label class="switch"><input type="checkbox" onchange="toggleDaily('${id}')" ${done?'checked':''}><span class="slider"></span></label></div></div>`;
+                    const isDone = t.completions && t.completions[date];
+                    const taskDiv = document.createElement('div');
+                    taskDiv.className = 'topic-wrapper';
+                    taskDiv.id = `task-container-${id}`; // Assign ID for stable UI updates
+                    
+                    taskDiv.innerHTML = `
+                        <div class="topic-main">
+                            <div class="topic-left">
+                                <div class="topic-info">
+                                    <h3>${t.name}</h3>
+                                    <div class="topic-status ${isDone ? 'active' : ''}" id="status-${id}">
+                                        ${isDone ? 'Done' : 'Pending'}
+                                    </div>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" onchange="toggleDaily('${id}')" ${isDone ? 'checked' : ''}>
+                                <span class="slider"></span>
+                            </label>
+                        </div>`;
+                    container.appendChild(taskDiv);
                 }
             });
         }
 
         window.toggleDaily = function(id) {
             const date = new Date().toISOString().split('T')[0];
-            if(!state.customTasks[id].completions) state.customTasks[id].completions = {};
-            if(event.target.checked) state.customTasks[id].completions[date] = true;
-            else delete state.customTasks[id].completions[date];
+            const checkbox = event.target;
+            const isChecked = checkbox.checked;
+        
+            if (!state.customTasks[id].completions) {
+                state.customTasks[id].completions = {};
+            }
+        
+            // Update State
+            if (isChecked) {
+                state.customTasks[id].completions[date] = true;
+            } else {
+                delete state.customTasks[id].completions[date];
+            }
+        
+            // Save to Firebase
             saveState();
-        }
+        
+            // UI UPDATE ONLY: Update text and color without re-rendering the whole list
+            const statusLabel = document.getElementById(`status-${id}`);
+            if (statusLabel) {
+                statusLabel.textContent = isChecked ? 'Done' : 'Pending';
+                if (isChecked) {
+                    statusLabel.classList.add('active');
+                } else {
+                    statusLabel.classList.remove('active');
+                }
+            }
+        };
 
         // HELPERS RESTORED
         function toggleTopic(id) { if(!state[id]) state[id]={}; state[id].done = event.target.checked; saveState(); }
