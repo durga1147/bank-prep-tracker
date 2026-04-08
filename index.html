@@ -455,9 +455,9 @@
                     </div>
         
                     <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-top:10px;">
-                        <input type="number" id="scoreEnglish" class="auth-input" placeholder="English">
-                        <input type="number" id="scoreQuant" class="auth-input" placeholder="Quant">
-                        <input type="number" id="scoreReasoning" class="auth-input" placeholder="Logic">
+                        <input type="number" id="scoreEnglish" class="auth-input" step="0.01" placeholder="English">
+                        <input type="number" id="scoreQuant" class="auth-input" step="0.01" placeholder="Quant">
+                        <input type="number" id="scoreReasoning" class="auth-input" step="0.01" placeholder="Logic">
                     </div>
                     
                     <button class="auth-btn" onclick="saveMockScore()">Save Scorecard</button>
@@ -486,38 +486,36 @@
             const num = document.getElementById('mockNumber').value;
             const customName = document.getElementById('mockCustomName').value;
             
-            const q = document.getElementById('scoreQuant').value;
-            const r = document.getElementById('scoreReasoning').value;
-            const e = document.getElementById('scoreEnglish').value;
+            // Use parseFloat to capture decimals like 22.75
+            const e = parseFloat(document.getElementById('scoreEnglish').value) || 0;
+            const q = parseFloat(document.getElementById('scoreQuant').value) || 0;
+            const r = parseFloat(document.getElementById('scoreReasoning').value) || 0;
         
-            // Determine the Final Name
-            let finalName = "";
-            if (type === 'Other') {
-                finalName = customName.trim();
-            } else {
-                finalName = `${type} - Mock ${num}`;
-            }
+            let finalName = (type === 'Other') ? customName.trim() : `${type} - Mock ${num}`;
         
-            if(!finalName || (type !== 'Other' && !num) || !q || !r || !e) { 
-                showToast("Please fill all details", "error"); 
+            if(!finalName || (type !== 'Other' && !num)) { 
+                showToast("Please fill the mock name/number", "error"); 
                 return; 
             }
         
             const mockId = 'mock-' + Date.now();
             if(!state.mockScores) state.mockScores = {};
             
+            // Calculate total and round to 2 decimal places
+            const totalScore = (e + q + r).toFixed(2);
+        
             state.mockScores[mockId] = {
                 name: finalName,
-                quant: parseInt(q),
-                reasoning: parseInt(r),
-                english: parseInt(e),
-                total: parseInt(q) + parseInt(r) + parseInt(e),
+                english: e.toFixed(2),
+                quant: q.toFixed(2),
+                reasoning: r.toFixed(2),
+                total: totalScore,
                 date: new Date().toISOString()
             };
         
             saveState();
             showToast("Scorecard Saved!");
-            renderContent('analysis'); // Refresh the tab to reset inputs
+            renderContent('analysis'); 
         };
 
         function renderMockHistory() {
