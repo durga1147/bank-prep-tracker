@@ -288,13 +288,13 @@
 
         const syllabusData = {
             "daily": { label: "Daily", icon: "📅", sections: [] },
+            "analysis": { label: "Analysis", icon: "📈", sections: [] },
             "basics": { label: "Basics", icon: "⚡", sections: [{ title: "Calculation Drills", topics: ["Tables (1-20)", "Tables (21-30)", "Squares (1-50)", "Cubes (1-30)", "Fraction to % Drills"] }] },
             "quant": { label: "Quant", icon: "📊", sections: [{ title: "Number System", topics: ["Natural, Whole, Integers", "Prime & Composite", "Factors & Multiples", "LCM & HCF", "Divisibility Rules", "Unit Digit", "Cyclicity"] }, { title: "Arithmetic Core", topics: ["Simplification", "Approximation", "BODMAS", "Fractions & Decimals", "Percentages", "Ratio & Proportion", "Average"] }, { title: "Commercial Maths", topics: ["Profit & Loss", "Simple Interest", "Compound Interest", "Time & Work", "Pipes & Cisterns", "Time Speed Distance", "Boats & Streams", "Mixtures & Alligation", "Partnership", "Ages"] }, { title: "Advanced & Mains", topics: ["Permutation & Combination", "Probability (Mains)", "Mensuration 2D", "Mensuration 3D", "Number Series", "Quadratic Equations"] }, { title: "Data Interpretation", topics: ["Table DI", "Bar Graph", "Line Graph", "Pie Chart", "Caselet DI", "Missing DI", "Radar / Web DI"] }] },
             "reasoning": { label: "Logic", icon: "🧠", sections: [{ title: "Speed Reasoning", topics: ["Alphabet Series", "Number Series", "Alphanumeric Series", "Analogy", "Classification", "Inequality", "Syllogism (New Pattern)"] }, { title: "Spatial & Logic", topics: ["Direction & Distance", "Coding-Decoding", "Order & Ranking", "Blood Relations"] }, { title: "Seating Arrangement", topics: ["Linear Row", "Circular Seating", "Square/Rectangular", "Triangular Seating", "Uncertain Number"] }, { title: "Puzzles", topics: ["Floor Based", "Box Based", "Month/Day/Year", "Scheduling", "Designation Based", "Flat & Floor"] }, { title: "Mains Logic", topics: ["Input-Output", "Data Sufficiency", "Statement & Assumption", "Statement & Conclusion", "Cause & Effect", "Course of Action"] }] },
             "english": { label: "English", icon: "📖", sections: [{ title: "Grammar Rules", topics: ["Parts of Speech", "Subject-Verb Agreement", "Tenses", "Articles", "Prepositions", "Conjunctions", "Active & Passive Voice", "Direct & Indirect Speech"] }, { title: "Vocabulary", topics: ["Synonyms & Antonyms", "Idioms & Phrases", "Phrasal Verbs", "Root Words", "One-word Substitution", "Word Usage/Swap"] }, { title: "Reading Skills", topics: ["Reading Comprehension", "RC Inference & Tone", "Cloze Test", "Para Jumbles", "Para Completion", "Sentence Rearrangement"] }, { title: "Mains Descriptive", topics: ["Essay Writing", "Letter Writing"] }] },
             "ga": { label: "G.A.", icon: "🏦", sections: [{ title: "Banking Awareness", topics: ["RBI Functions & Structure", "Monetary Policy", "Repo, Reverse Repo, CRR, SLR", "Types of Accounts", "Basel Norms", "Financial Inclusion", "NPCI (UPI, IMPS)"] }, { title: "Static GK", topics: ["National Parks & Sanctuaries", "Dams & Rivers", "Country Capitals & Currencies", "HQ of Int. Organizations", "Airports & Stadiums", "Power Plants"] }, { title: "Current Affairs", topics: ["Last 6 Months News", "Union Budget", "Government Schemes", "Appointments", "Awards & Honours", "Books & Authors", "Sports News"] }] },
             "computer": { label: "Computer", icon: "💻", sections: [{ title: "Hardware & OS", topics: ["Generations of Computers", "Input/Output Devices", "Memory (RAM, ROM)", "Operating Systems"] }, { title: "Networking & Security", topics: ["Internet & Browsers", "OSI Model", "IP Addresses & Protocols", "Cyber Security", "Virus & Malware", "MS Office Shortcuts"] }] }
-            "analysis": { label: "Analysis", icon: "📈", sections: [] },
         };
 
         const API_KEY_STORAGE = 'gemini_api_key'; const THEME_KEY = 'bank_theme_pref';
@@ -333,6 +333,7 @@
             db.collection('users').doc(currentUser.uid).onSnapshot(doc => {
                 if (doc.exists) state = doc.data().progress || {}; else state = {};
                 if (!state.customTasks) state.customTasks = {};
+                if (!state.mockScores) state.mockScores = {};
                 renderTabs(); renderContent(currentTab); updateGlobalStats(); adjustPadding();
             });
         }
@@ -384,107 +385,48 @@
         }
         
         function renderContent(k) { 
-            const c = document.getElementById('contentArea'); 
-            c.innerHTML = ''; 
+            const c=document.getElementById('contentArea'); c.innerHTML=''; 
+            if (document.getElementById('topicSearch')) { document.getElementById('topicSearch').value = ''; document.getElementById('searchClear').classList.remove('show'); }
             
-            // 1. Reset search bar when switching tabs
-            if (document.getElementById('topicSearch')) { 
-                document.getElementById('topicSearch').value = ''; 
-                document.getElementById('searchClear').classList.remove('show'); 
-            }
-        
-            // 2. ROUTE: Daily Tasks Tab
-            if (k === 'daily') { 
-                renderCustomTasks(c); 
-                return; 
-            }
-        
-            // 3. ROUTE: Mock Test Analysis Tab
-            if (k === 'analysis') {
-                renderAnalysisTab(c);
-                return;
-            }
-        
-            // 4. ROUTE: Standard Syllabus Tabs (Quant, Logic, English, etc.)
-            const sub = syllabusData[k]; 
-            if (!sub) return; // Safety check
-        
-            sub.sections.forEach(s => { 
-                // Add Section Heading (e.g., "Arithmetic Core")
-                const h = document.createElement('div'); 
-                h.className = 'section-header'; 
-                h.textContent = s.title; 
-                c.appendChild(h); 
-        
-                s.topics.forEach(t => { 
-                    // Generate unique ID for each topic (removes spaces/special chars)
-                    const id = `${k}-${t.replace(/[^a-zA-Z0-9]/g,'')}`; 
-                    const td = state[id] || {done: false, date: null}; 
-                    
-                    const cd = document.createElement('div'); 
-                    cd.className = `topic-wrapper`; 
-                    cd.id = `card-${id}`; 
-                    
-                    cd.innerHTML = `
-                        <div class="topic-main">
-                            <div class="topic-left">
-                                <div class="topic-info">
-                                    <h3>${t}</h3>
-                                    <div class="topic-status ${td.done ? 'active' : ''}">
-                                        ${td.done ? 'Completed' : 'Not Started'}
+            if(k==='daily'){renderCustomTasks(c); return;}
+            if(k==='analysis'){renderAnalysisTab(c); return;}
+
+            const sub=syllabusData[k]; 
+            sub.sections.forEach(s=>{ 
+                const h=document.createElement('div'); h.className='section-header'; h.textContent=s.title; c.appendChild(h); 
+                s.topics.forEach(t=>{ 
+                    const id=`${k}-${t.replace(/[^a-zA-Z0-9]/g,'')}`; 
+                    const td=state[id]||{done:false,date:null}; 
+                    const cd=document.createElement('div'); cd.className=`topic-wrapper`; cd.id=`card-${id}`; 
+                    cd.innerHTML=`<div class="topic-main">
+                                    <div class="topic-left">
+                                        <div class="topic-info">
+                                            <h3>${t}</h3>
+                                            <div class="topic-status ${td.done?'active':''}">${td.done?'Completed':'Not Started'}</div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <label class="switch master-switch">
-                                <input type="checkbox" onchange="handleMasterToggle('${id}')" ${td.done ? 'checked' : ''}>
-                                <span class="slider"></span>
-                            </label>
-                        </div>`; 
+                                    <label class="switch master-switch">
+                                        <input type="checkbox" onchange="handleMasterToggle('${id}')" ${td.done?'checked':''}>
+                                        <span class="slider"></span>
+                                    </label>
+                                  </div>`; 
                     c.appendChild(cd); 
                 }); 
             }); 
-        
-            // Adjust layout padding after content loads
             adjustPadding();
         }
 
         function renderCustomTasks(container) {
-            const today = new Date(); 
-            const dayOfWeek = today.getDay(); 
-            const dateKey = today.toISOString().split('T')[0];
-            
-            const h = document.createElement('div'); 
-            h.className = 'section-header'; 
-            h.textContent = "Today's Checklist"; 
-            container.appendChild(h);
+            const today = new Date(); const dayOfWeek = today.getDay(); const dateKey = today.toISOString().split('T')[0];
+            const h = document.createElement('div'); h.className = 'section-header'; h.textContent = "Today's Checklist"; container.appendChild(h);
             
             let hasTasks = false;
             if(state.customTasks) {
-                // SORTING: Convert to array and sort by ID (timestamp) to keep order stable
-                const sortedTasks = Object.entries(state.customTasks).sort((a, b) => a[0].localeCompare(b[0]));
-        
-                sortedTasks.forEach(([id, task]) => {
+                Object.entries(state.customTasks).forEach(([id, task]) => {
                     if (task.days.includes(dayOfWeek)) {
-                        hasTasks = true; 
-                        const isDone = task.completions && task.completions[dateKey];
-                        const div = document.createElement('div'); 
-                        div.className = `topic-wrapper`;
-                        // Keep the ID on the wrapper to allow for targeted updates later
-                        div.id = `task-card-${id}`; 
-                        
-                        div.innerHTML = `
-                            <div class="topic-main">
-                                <div class="topic-left">
-                                    <div class="topic-info">
-                                        <h3>${task.name}</h3>
-                                        <div class="topic-status ${isDone?'active':''}">${isDone?'Finished for today':'Pending'}</div>
-                                    </div>
-                                </div>
-                                <label class="switch master-switch">
-                                    <input type="checkbox" onchange="toggleCustomTask('${id}')" ${isDone?'checked':''}>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>`;
+                        hasTasks = true; const isDone = task.completions && task.completions[dateKey];
+                        const div = document.createElement('div'); div.className = `topic-wrapper`;
+                        div.innerHTML = `<div class="topic-main"><div class="topic-left"><div class="topic-info"><h3>${task.name}</h3><div class="topic-status ${isDone?'active':''}">${isDone?'Finished for today':'Pending'}</div></div></div><label class="switch master-switch"><input type="checkbox" onchange="toggleCustomTask('${id}')" ${isDone?'checked':''}><span class="slider"></span></label></div>`;
                         container.appendChild(div);
                     }
                 });
@@ -492,11 +434,12 @@
             if(!hasTasks) container.innerHTML += `<div class="empty-state"><h3>No tasks for today!</h3><p>Click the + button to add a recurring task.</p></div>`;
             adjustPadding();
         }
+
         function renderAnalysisTab(container) {
             container.innerHTML = `
                 <div class="section-header">Log New Mock Test</div>
                 <div class="topic-wrapper" style="padding:20px;">
-                    <input type="text" id="mockName" class="auth-input" placeholder="Mock Name (e.g., SBI PO Prelims 1)">
+                    <input type="text" id="mockName" class="auth-input" placeholder="Mock Name (e.g. SBI Prelims 1)">
                     <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-top:10px;">
                         <input type="number" id="scoreQuant" class="auth-input" placeholder="Quant">
                         <input type="number" id="scoreReasoning" class="auth-input" placeholder="Logic">
@@ -509,84 +452,57 @@
             `;
             renderMockHistory();
         }
-        
+
         window.saveMockScore = function() {
             const name = document.getElementById('mockName').value;
             const q = document.getElementById('scoreQuant').value;
             const r = document.getElementById('scoreReasoning').value;
             const e = document.getElementById('scoreEnglish').value;
-        
             if(!name || !q || !r || !e) { showToast("Fill all fields", "error"); return; }
-        
             const mockId = 'mock-' + Date.now();
             if(!state.mockScores) state.mockScores = {};
-            
             state.mockScores[mockId] = {
-                name: name,
-                quant: parseInt(q),
-                reasoning: parseInt(r),
-                english: parseInt(e),
-                total: parseInt(q) + parseInt(r) + parseInt(e),
-                date: new Date().toISOString()
+                name: name, quant: parseInt(q), reasoning: parseInt(r), english: parseInt(e),
+                total: parseInt(q) + parseInt(r) + parseInt(e), date: new Date().toISOString()
             };
-        
-            saveState();
-            showToast("Scorecard Added!");
-            renderMockHistory();
+            saveState(); showToast("Scorecard Added!"); renderMockHistory();
+            document.getElementById('mockName').value = '';
+            document.getElementById('scoreQuant').value = '';
+            document.getElementById('scoreReasoning').value = '';
+            document.getElementById('scoreEnglish').value = '';
         };
-        
+
         function renderMockHistory() {
             const list = document.getElementById('mockHistoryList');
             if(!list || !state.mockScores) return;
-            
             list.innerHTML = '';
             const sortedMocks = Object.values(state.mockScores).sort((a, b) => new Date(b.date) - new Date(a.date));
-        
             sortedMocks.forEach(m => {
-                const div = document.createElement('div');
-                div.className = 'topic-wrapper';
-                div.style.padding = '15px';
+                const div = document.createElement('div'); div.className = 'topic-wrapper'; div.style.padding = '18px';
                 div.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div>
-                            <strong style="font-size:1rem;">${m.name}</strong>
+                            <strong style="font-size:1rem; color:var(--text-main);">${m.name}</strong>
                             <div style="font-size:0.75rem; color:var(--text-muted);">${new Date(m.date).toLocaleDateString()}</div>
                         </div>
                         <div style="text-align:right;">
                             <div style="font-size:1.2rem; font-weight:700; color:var(--primary);">${m.total} <span style="font-size:0.7rem; color:var(--text-muted);">/100</span></div>
                         </div>
                     </div>
-                    <div style="display:flex; gap:15px; margin-top:10px; font-size:0.8rem; border-top:1px solid var(--border-color); padding-top:10px;">
+                    <div style="display:flex; gap:15px; margin-top:12px; font-size:0.8rem; border-top:1px solid var(--border-color); padding-top:12px;">
                         <span>📊 Q: <b>${m.quant}</b></span>
                         <span>🧠 R: <b>${m.reasoning}</b></span>
                         <span>📖 E: <b>${m.english}</b></span>
-                    </div>
-                `;
+                    </div>`;
                 list.appendChild(div);
             });
         }
-       window.toggleCustomTask = function(taskId) {
-            const dateKey = new Date().toISOString().split('T')[0]; 
-            const isChecked = event.target.checked;
-            
+
+        window.toggleCustomTask = function(taskId) {
+            const dateKey = new Date().toISOString().split('T')[0]; const isChecked = event.target.checked;
             if (!state.customTasks[taskId].completions) state.customTasks[taskId].completions = {};
-            
-            if (isChecked) {
-                state.customTasks[taskId].completions[dateKey] = true; 
-            } else {
-                delete state.customTasks[taskId].completions[dateKey];
-            }
-            
-            // Save to Firebase
-            saveState(); 
-        
-            // UI Update: Only update the specific labels instead of re-rendering everything
-            const card = document.querySelector(`#task-card-${taskId}`);
-            if (card) {
-                const statusDiv = card.querySelector('.topic-status');
-                statusDiv.textContent = isChecked ? 'Finished for today' : 'Pending';
-                isChecked ? statusDiv.classList.add('active') : statusDiv.classList.remove('active');
-            }
+            if (isChecked) state.customTasks[taskId].completions[dateKey] = true; else delete state.customTasks[taskId].completions[dateKey];
+            saveState(); renderContent('daily');
         };
 
         window.handleMasterToggle=function(id){ 
@@ -598,7 +514,7 @@
         }
 
         function updateGlobalStats(){ 
-            let t=0,c=0; Object.keys(syllabusData).filter(k=>k!=='daily').forEach(sk=>{ syllabusData[sk].sections.forEach(s=>{ s.topics.forEach(tp=>{ t++; const id=`${sk}-${tp.replace(/[^a-zA-Z0-9]/g,'')}`; if(state[id]&&state[id].done)c++; }); }); }); 
+            let t=0,c=0; Object.keys(syllabusData).filter(k=>k!=='daily' && k!=='analysis').forEach(sk=>{ syllabusData[sk].sections.forEach(s=>{ s.topics.forEach(tp=>{ t++; const id=`${sk}-${tp.replace(/[^a-zA-Z0-9]/g,'')}`; if(state[id]&&state[id].done)c++; }); }); }); 
             const p=t===0?0:Math.round((c/t)*100); document.getElementById('globalBar').style.width=`${p}%`; document.getElementById('globalText').textContent=`${p}% Syllabus Covered`; 
         }
 
