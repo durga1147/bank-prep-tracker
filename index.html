@@ -478,7 +478,9 @@
             list.innerHTML = '';
             const sortedMocks = Object.values(state.mockScores).sort((a, b) => new Date(b.date) - new Date(a.date));
             sortedMocks.forEach(m => {
-                const div = document.createElement('div'); div.className = 'topic-wrapper'; div.style.padding = '18px';
+                const div = document.createElement('div'); 
+                div.className = 'topic-wrapper'; 
+                div.style.padding = '18px';
                 div.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div>
