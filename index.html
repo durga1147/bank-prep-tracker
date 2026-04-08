@@ -460,6 +460,10 @@
         
         document.querySelectorAll('.day-btn').forEach(b => b.onclick = () => b.classList.toggle('selected'));
         window.addEventListener('resize', adjustPadding);
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
     </script>
 </body>
 </html>
