@@ -414,16 +414,42 @@
         }
 
         function renderCustomTasks(container) {
-            const today = new Date(); const dayOfWeek = today.getDay(); const dateKey = today.toISOString().split('T')[0];
-            const h = document.createElement('div'); h.className = 'section-header'; h.textContent = "Today's Checklist"; container.appendChild(h);
+            const today = new Date(); 
+            const dayOfWeek = today.getDay(); 
+            const dateKey = today.toISOString().split('T')[0];
+            
+            const h = document.createElement('div'); 
+            h.className = 'section-header'; 
+            h.textContent = "Today's Checklist"; 
+            container.appendChild(h);
             
             let hasTasks = false;
             if(state.customTasks) {
-                Object.entries(state.customTasks).forEach(([id, task]) => {
+                // SORTING: Convert to array and sort by ID (timestamp) to keep order stable
+                const sortedTasks = Object.entries(state.customTasks).sort((a, b) => a[0].localeCompare(b[0]));
+        
+                sortedTasks.forEach(([id, task]) => {
                     if (task.days.includes(dayOfWeek)) {
-                        hasTasks = true; const isDone = task.completions && task.completions[dateKey];
-                        const div = document.createElement('div'); div.className = `topic-wrapper`;
-                        div.innerHTML = `<div class="topic-main"><div class="topic-left"><div class="topic-info"><h3>${task.name}</h3><div class="topic-status ${isDone?'active':''}">${isDone?'Finished for today':'Pending'}</div></div></div><label class="switch master-switch"><input type="checkbox" onchange="toggleCustomTask('${id}')" ${isDone?'checked':''}><span class="slider"></span></label></div>`;
+                        hasTasks = true; 
+                        const isDone = task.completions && task.completions[dateKey];
+                        const div = document.createElement('div'); 
+                        div.className = `topic-wrapper`;
+                        // Keep the ID on the wrapper to allow for targeted updates later
+                        div.id = `task-card-${id}`; 
+                        
+                        div.innerHTML = `
+                            <div class="topic-main">
+                                <div class="topic-left">
+                                    <div class="topic-info">
+                                        <h3>${task.name}</h3>
+                                        <div class="topic-status ${isDone?'active':''}">${isDone?'Finished for today':'Pending'}</div>
+                                    </div>
+                                </div>
+                                <label class="switch master-switch">
+                                    <input type="checkbox" onchange="toggleCustomTask('${id}')" ${isDone?'checked':''}>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>`;
                         container.appendChild(div);
                     }
                 });
@@ -432,11 +458,28 @@
             adjustPadding();
         }
 
-        window.toggleCustomTask = function(taskId) {
-            const dateKey = new Date().toISOString().split('T')[0]; const isChecked = event.target.checked;
+       window.toggleCustomTask = function(taskId) {
+            const dateKey = new Date().toISOString().split('T')[0]; 
+            const isChecked = event.target.checked;
+            
             if (!state.customTasks[taskId].completions) state.customTasks[taskId].completions = {};
-            if (isChecked) state.customTasks[taskId].completions[dateKey] = true; else delete state.customTasks[taskId].completions[dateKey];
-            saveState(); renderContent('daily');
+            
+            if (isChecked) {
+                state.customTasks[taskId].completions[dateKey] = true; 
+            } else {
+                delete state.customTasks[taskId].completions[dateKey];
+            }
+            
+            // Save to Firebase
+            saveState(); 
+        
+            // UI Update: Only update the specific labels instead of re-rendering everything
+            const card = document.querySelector(`#task-card-${taskId}`);
+            if (card) {
+                const statusDiv = card.querySelector('.topic-status');
+                statusDiv.textContent = isChecked ? 'Finished for today' : 'Pending';
+                isChecked ? statusDiv.classList.add('active') : statusDiv.classList.remove('active');
+            }
         };
 
         window.handleMasterToggle=function(id){ 
