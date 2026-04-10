@@ -145,6 +145,32 @@
             font-weight: 600;
             text-transform: uppercase;
         }
+
+        /* Styling for the Day Buttons */
+        .day-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-body);
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* THE MISSING PIECE: What happens when a day is clicked */
+        .day-btn.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+            transform: scale(1.05);
+        }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -470,11 +496,15 @@
         }
 
         function openTaskModal() {
-            const modal = document.getElementById('taskModal'); const title = document.getElementById('taskModalTitle');
-            const dG = document.getElementById('daysSelectorGroup'); const rG = document.getElementById('revisionSelectorGroup');
-            const btn = document.getElementById('modalSubmitBtn');
-            if (currentTab === 'daily') { title.textContent = "Create Task"; dG.style.display='block'; rG.style.display='none'; btn.onclick=saveNewTask; }
-            else { title.textContent = "Schedule Revision"; dG.style.display='none'; rG.style.display='block'; btn.onclick=saveRevision; }
+            const modal = document.getElementById('taskModal');
+            const title = document.getElementById('taskModalTitle');
+            
+            // Reset inputs
+            document.getElementById('newTaskName').value = '';
+            // Clear all previously selected day buttons
+            document.querySelectorAll('.day-btn').forEach(btn => btn.classList.remove('selected'));
+            
+            // ... rest of your existing logic for currentTab check ...
             modal.classList.add('show');
         }
         function closeTaskModal() { document.getElementById('taskModal').classList.remove('show'); }
