@@ -102,122 +102,27 @@
         .sub-nav-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; background: transparent; color: var(--text-muted); font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.3s; }
         .sub-nav-btn.active { background: var(--bg-card); color: var(--primary); box-shadow: var(--shadow-card); }
 
-        .fab { position: fixed; bottom: 30px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); z-index: 2000; cursor: pointer; display: none; align-items: center; justify-content: center; }
+        /* FAB STYLES */
+        .fab-container { position: fixed; bottom: 30px; right: 20px; display: flex; flex-direction: column; gap: 15px; z-index: 2000; }
+        .fab { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); cursor: pointer; display: none; align-items: center; justify-content: center; }
+        .fab-secondary { width: 48px; height: 48px; border-radius: 50%; background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-color); box-shadow: var(--shadow-card); display: none; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; }
+        .fab-secondary.active { background: var(--warning); color: white; border-color: var(--warning); }
+        .btn-delete-task { background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; cursor: pointer; margin-left: 10px; animation: fadeIn 0.3s ease; }
+
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px; font-size: 0.9rem; font-weight: 500; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); z-index: 4000; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .toast.show { transform: translateX(-50%) translateY(0); }
-        /* This targets the icons only when data-theme is dark */
-        [data-theme="dark"] .tab-icon-img {
-            filter: invert(1) brightness(2);
-            /* invert(1) turns black to white, brightness(2) makes it pop */
-        }
         
-        /* Optional: Smooth transition for the icons */
-        .tab-icon-img {
-            transition: filter 0.3s ease;
-        }
+        [data-theme="dark"] .tab-icon-img { filter: invert(1) brightness(2); }
+        .tab-icon-img { transition: filter 0.3s ease; }
 
-        /* --- COUNTDOWN STYLES --- */
-        .countdown-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 10px;
-        }
-        
-        .countdown-card {
-            background: var(--bg-body);
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid var(--border-color);
-        }
-        
-        .countdown-days {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--primary);
-            display: block;
-        }
-        
-        .countdown-label {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-        }
+        .countdown-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+        .countdown-card { background: var(--bg-body); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid var(--border-color); }
+        .countdown-days { font-size: 1.4rem; font-weight: 700; color: var(--primary); display: block; }
+        .countdown-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
 
-        /* Styling for the Day Buttons */
-        .day-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background: var(--bg-body);
-            color: var(--text-main);
-            font-weight: 600;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        /* THE MISSING PIECE: What happens when a day is clicked */
-        .day-btn.selected {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
-            transform: scale(1.05);
-        }
+        .day-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-body); color: var(--text-main); font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; }
+        .day-btn.selected { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3); transform: scale(1.05); }
 
-        /* Container for the FABs */
-        .fab-container {
-            position: fixed;
-            bottom: 30px;
-            right: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            z-index: 2000;
-        }
-        
-        /* Secondary FAB for Management */
-        .fab-secondary {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--bg-card);
-            color: var(--text-muted);
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-card);
-            display: none; /* Hidden by default, shown in Daily tab */
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .fab-secondary.active {
-            background: var(--warning);
-            color: white;
-            border-color: var(--warning);
-        }
-        
-        /* Delete Button for Tasks */
-        .btn-delete-task {
-            background: var(--danger);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-left: 10px;
-            animation: fadeIn 0.3s ease;
-        }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -228,14 +133,11 @@
             <span class="auth-logo">🏦</span>
             <div class="auth-title" id="authTitle">BankPrep Cloud</div>
             <div class="auth-sub" id="authSub">Sign in to sync your progress</div>
-            
             <input type="email" id="email" class="auth-input" placeholder="Email Address">
             <input type="password" id="password" class="auth-input" placeholder="Password">
             <input type="password" id="confirmPassword" class="auth-input" placeholder="Confirm Password" style="display:none;">
-            
             <button class="auth-btn" id="authBtn" onclick="handleAuth()">Sign In</button>
-            
-            <div class="auth-link" id="toggleAuth" onclick="toggleAuthMode()">New here? Create an account</div>
+            <div class="auth-link" id="toggleAuth" style="margin-top:15px; font-size:0.8rem; cursor:pointer;" onclick="toggleAuthMode()">New here? Create an account</div>
             <div id="authError" style="color:var(--danger); font-size:0.8rem; margin-top:10px;"></div>
         </div>
     </div>
@@ -255,7 +157,7 @@
                     <div style="margin: 15px 0 10px 0; font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">START DATE:</div>
                     <input type="date" id="revStartDate" class="auth-input">
                 </div>
-                <button class="auth-btn" id="modalSubmitBtn" style="margin-top: 25px;">Save</button>
+                <button class="auth-btn" id="modalSubmitBtn" style="margin-top: 25px;" onclick="saveNewTask()">Save</button>
                 <button onclick="closeTaskModal()" style="background:none; border:none; margin-top:10px; cursor:pointer; color:var(--text-muted);">Cancel</button>
             </div>
         </div>
@@ -299,7 +201,15 @@
         </div>
 
         <main class="content-area" id="contentArea"></main>
-        <button class="fab" id="addTaskBtn" onclick="openTaskModal()"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="circle" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
+
+        <div class="fab-container">
+            <button class="fab-secondary" id="manageBtn" onclick="toggleManageMode()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+            <button class="fab" id="addTaskBtn" onclick="openTaskModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+        </div>
     </div>
 
     <script>
@@ -315,6 +225,7 @@
         const auth = firebase.auth(); const db = firebase.firestore();
 
         let isSignUpMode = false;
+        let isManageMode = false;
 
         function toggleAuthMode() {
             isSignUpMode = !isSignUpMode;
@@ -323,53 +234,31 @@
             const btn = document.getElementById('authBtn');
             const toggle = document.getElementById('toggleAuth');
             const confirmPass = document.getElementById('confirmPassword');
-        
             if (isSignUpMode) {
-                title.textContent = "Join BankPrep";
-                sub.textContent = "Start your 2026 journey";
-                btn.textContent = "Create Account";
-                toggle.textContent = "Already have an account? Sign In";
+                title.textContent = "Join BankPrep"; sub.textContent = "Start your 2026 journey";
+                btn.textContent = "Create Account"; toggle.textContent = "Already have an account? Sign In";
                 confirmPass.style.display = "block";
             } else {
-                title.textContent = "BankPrep Cloud";
-                sub.textContent = "Sign in to sync your progress";
-                btn.textContent = "Sign In";
-                toggle.textContent = "New here? Create an account";
+                title.textContent = "BankPrep Cloud"; sub.textContent = "Sign in to sync your progress";
+                btn.textContent = "Sign In"; toggle.textContent = "New here? Create an account";
                 confirmPass.style.display = "none";
             }
         }
         
         async function handleAuth() {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
-            const confirmPass = document.getElementById('confirmPassword').value;
-            const errorDiv = document.getElementById('authError');
+            const email = document.getElementById('email').value; const pass = document.getElementById('password').value;
+            const confirmPass = document.getElementById('confirmPassword').value; const errorDiv = document.getElementById('authError');
             errorDiv.textContent = "";
-        
             try {
                 if (isSignUpMode) {
-                    if (pass !== confirmPass) {
-                        errorDiv.textContent = "Passwords do not match!";
-                        return;
-                    }
-                    await auth.createUserWithEmailAndPassword(email, pass);
-                    showToast("Account Created!");
-                } else {
-                    await auth.signInWithEmailAndPassword(email, pass);
-                    showToast("Welcome back!");
-                }
-            } catch (e) {
-                errorDiv.textContent = e.message;
-            }
+                    if (pass !== confirmPass) { errorDiv.textContent = "Passwords do not match!"; return; }
+                    await auth.createUserWithEmailAndPassword(email, pass); showToast("Account Created!");
+                } else { await auth.signInWithEmailAndPassword(email, pass); showToast("Welcome back!"); }
+            } catch (e) { errorDiv.textContent = e.message; }
         }
 
         const syllabusData = {
-            "daily": { 
-                label: "Daily", 
-                // Increased size to 35px for better visibility
-                icon: `<img src="https://img.icons8.com/?size=100&id=N8QoAE3Y20Np&format=png&color=000000" class="tab-icon-img" style="width: 35px; height: 35px; display: block; margin: 0 auto; object-fit: contain;">`, 
-                sections: [] 
-            },
+            "daily": { label: "Daily", icon: `<img src="https://img.icons8.com/?size=100&id=N8QoAE3Y20Np&format=png&color=000000" class="tab-icon-img" style="width: 35px; height: 35px; display: block; margin: 0 auto; object-fit: contain;">`, sections: [] },
             "revision": { label: "Revision", icon: `<img src="https://img.icons8.com/?size=100&id=eS9OsmKwNqv1&format=png&color=000000" class="tab-icon-img" style="width: 35px; height: 35px; display: block; margin: 0 auto; object-fit: contain;">`, sections: [] },
             "analysis": { label: "Analysis", icon: `<img src="https://img.icons8.com/?size=100&id=KwpFqv7CHx4j&format=png&color=000000" class="tab-icon-img" style="width: 35px; height: 35px; display: block; margin: 0 auto; object-fit: contain;">`, sections: [] },
             "basics": { label: "Basics", icon: `<img src="https://img.icons8.com/?size=100&id=euBD9WBZRlyP&format=png&color=000000" class="tab-icon-img" style="width: 35px; height: 35px; display: block; margin: 0 auto; object-fit: contain;">`, sections: [{ title: "Calculation Drills", topics: ["Tables (1-20)", "Tables (21-30)", "Squares (1-50)", "Cubes (1-30)", "Fraction to % Drills"] }] },
@@ -390,12 +279,6 @@
             else { currentUser = null; document.getElementById('authScreen').style.display = 'flex'; document.getElementById('appContainer').style.display = 'none'; }
         });
 
-        async function handleLogin() {
-            const email = document.getElementById('email').value; const pass = document.getElementById('password').value;
-            try { await auth.signInWithEmailAndPassword(email, pass); } catch(e) { document.getElementById('authError').textContent = e.message; }
-        }
-        function handleLogout() { auth.signOut(); }
-
         function loadUserData() {
             db.collection('users').doc(currentUser.uid).onSnapshot(doc => {
                 state = (doc.exists) ? (doc.data().progress || {}) : {};
@@ -406,20 +289,19 @@
             });
         }
 
-        function saveState() {
-            if(currentUser) db.collection('users').doc(currentUser.uid).set({ progress: state });
-            updateGlobalStats();
-        }
+        function saveState() { if(currentUser) db.collection('users').doc(currentUser.uid).set({ progress: state }); updateGlobalStats(); }
 
         function renderTabs() {
             const nav = document.getElementById('categoryNav'); nav.innerHTML = '';
             Object.keys(syllabusData).forEach(k => {
                 const d = document.createElement('div'); d.className = `nav-item ${k===currentTab?'active':''}`;
                 d.innerHTML = `<span class="nav-icon">${syllabusData[k].icon}</span><span class="nav-label">${syllabusData[k].label}</span>`;
-                d.onclick = () => { currentTab = k; renderTabs(); renderContent(k); window.scrollTo({top:0}); };
+                d.onclick = () => { currentTab = k; isManageMode = false; renderTabs(); renderContent(k); window.scrollTo({top:0}); };
                 nav.appendChild(d);
             });
-            document.getElementById('addTaskBtn').style.display = (currentTab==='daily' || currentTab==='revision')?'flex':'none';
+            const addBtn = document.getElementById('addTaskBtn'); const manageBtn = document.getElementById('manageBtn');
+            addBtn.style.display = (currentTab==='daily' || currentTab==='revision')?'flex':'none';
+            manageBtn.style.display = (currentTab==='daily')?'flex':'none';
         }
 
         function renderContent(k) {
@@ -432,8 +314,7 @@
             syllabusData[k].sections.forEach(s => {
                 const h = document.createElement('div'); h.className = 'section-header'; h.textContent = s.title; c.appendChild(h);
                 s.topics.forEach(t => {
-                    const id = `${k}-${t.replace(/[^a-zA-Z0-9]/g,'')}`;
-                    const td = state[id] || {done:false};
+                    const id = `${k}-${t.replace(/[^a-zA-Z0-9]/g,'')}`; const td = state[id] || {done:false};
                     const cd = document.createElement('div'); cd.className = `topic-wrapper`;
                     cd.innerHTML = `<div class="topic-main"><div class="topic-left"><div class="topic-info"><h3>${t}</h3><div class="topic-status ${td.done?'active':''}">${td.done?'Completed':'Not Started'}</div></div></div><label class="switch master-switch"><input type="checkbox" onchange="toggleTopic('${id}')" ${td.done?'checked':''}><span class="slider"></span></label></div>`;
                     c.appendChild(cd);
@@ -442,48 +323,41 @@
             adjustPadding();
         }
 
-        function renderExamCountdown(container) {
-            const exams = [
-                { name: "SBI PO Prelims", date: "2026-08-01" },
-                { name: "IBPS PO Prelims", date: "2026-08-22" },
-                { name: "SBI Clerk Prelims", date: "2026-09-26" },
-                { name: "IBPS Clerk Prelims", date: "2026-10-10" },
-                { name: "IBPS RRB Officer", date: "2026-11-21" }
-            ];
-        
-            container.innerHTML = `<div class="section-header">Exam Countdown (Days Left)</div>`;
-            const grid = document.createElement('div');
-            grid.className = 'countdown-grid';
-        
-            exams.forEach(ex => {
-                const diff = new Date(ex.date) - new Date();
-                const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-                
-                const card = document.createElement('div');
-                card.className = 'countdown-card';
-                card.innerHTML = `
-                    <span class="countdown-days">${days > 0 ? days : '0'}</span>
-                    <span class="countdown-label">${ex.name}</span>
-                    <div style="font-size:0.6rem; margin-top:5px; color:var(--text-muted);">${new Date(ex.date).toLocaleDateString('en-GB')}</div>
-                `;
-                grid.appendChild(card);
-            });
-        
-            container.appendChild(grid);
-        }
-
         function renderDaily(container) {
             const day = new Date().getDay(); const date = new Date().toISOString().split('T')[0];
-            container.innerHTML = `<div class="section-header">Today's Checklist</div>`;
+            container.innerHTML = `<div class="section-header">Today's Checklist ${isManageMode ? '(Manage Mode)' : ''}</div>`;
             const sorted = Object.entries(state.customTasks).sort((a,b) => a[0].localeCompare(b[0]));
             sorted.forEach(([id, t]) => {
                 if (t.days.includes(day)) {
                     const done = t.completions && t.completions[date];
                     const div = document.createElement('div'); div.className = 'topic-wrapper';
-                    div.innerHTML = `<div class="topic-main"><div class="topic-left"><div class="topic-info"><h3>${t.name}</h3><div class="topic-status ${done?'active':''}" id="status-${id}">${done?'Done':'Pending'}</div></div></div><label class="checkbox-container"><input type="checkbox" onchange="toggleDaily('${id}')" ${done?'checked':''}><span class="checkmark"></span></label></div>`;
+                    div.innerHTML = `<div class="topic-main"><div class="topic-left"><div class="topic-info"><h3>${t.name}</h3><div class="topic-status ${done?'active':''}" id="status-${id}">${done?'Done':'Pending'}</div></div>${isManageMode ? `<button class="btn-delete-task" onclick="deleteCustomTask('${id}')">Delete</button>` : ''}</div><label class="checkbox-container" style="${isManageMode ? 'display:none;' : ''}"><input type="checkbox" onchange="toggleDaily('${id}')" ${done?'checked':''}><span class="checkmark"></span></label></div>`;
                     container.appendChild(div);
                 }
             });
+        }
+
+        function toggleManageMode() {
+            isManageMode = !isManageMode;
+            document.getElementById('manageBtn').classList.toggle('active');
+            renderContent('daily');
+        }
+
+        function deleteCustomTask(id) {
+            if(confirm("Delete this task?")) { delete state.customTasks[id]; saveState(); showToast("Deleted"); renderContent('daily'); }
+        }
+
+        function renderExamCountdown(container) {
+            const exams = [{ name: "SBI PO Prelims", date: "2026-08-01" }, { name: "IBPS PO Prelims", date: "2026-08-22" }, { name: "SBI Clerk Prelims", date: "2026-09-26" }, { name: "IBPS Clerk Prelims", date: "2026-10-10" }, { name: "IBPS RRB Officer", date: "2026-11-21" }];
+            container.innerHTML = `<div class="section-header">Exam Countdown (Days Left)</div>`;
+            const grid = document.createElement('div'); grid.className = 'countdown-grid';
+            exams.forEach(ex => {
+                const diff = new Date(ex.date) - new Date(); const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                const card = document.createElement('div'); card.className = 'countdown-card';
+                card.innerHTML = `<span class="countdown-days">${days > 0 ? days : '0'}</span><span class="countdown-label">${ex.name}</span><div style="font-size:0.6rem; margin-top:5px; color:var(--text-muted);">${new Date(ex.date).toLocaleDateString('en-GB')}</div>`;
+                grid.appendChild(card);
+            });
+            container.appendChild(grid);
         }
 
         function renderRevision(container) {
@@ -524,11 +398,7 @@
             let dataArr = Object.values(state.mockScores).sort((a,b) => new Date(a.date) - new Date(b.date));
             if(filter !== 'ALL') dataArr = dataArr.filter(m => m.name.includes(filter));
             if(dataArr.length === 0) return;
-            myPerformanceChart = new Chart(canvas.getContext('2d'), {
-                type: 'line',
-                data: { labels: dataArr.map(m => m.name.split(' - ')[1] || m.name), datasets: [{ data: dataArr.map(m => m.total), borderColor: '#4f46e5', tension: 0.3, fill: false, pointRadius: 5 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } }
-            });
+            myPerformanceChart = new Chart(canvas.getContext('2d'), { type: 'line', data: { labels: dataArr.map(m => m.name.split(' - ')[1] || m.name), datasets: [{ data: dataArr.map(m => m.total), borderColor: '#4f46e5', tension: 0.3, fill: false, pointRadius: 5 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } } });
             const avg = (dataArr.reduce((a,b) => a + parseFloat(b.total), 0) / dataArr.length).toFixed(2);
             document.getElementById('insightSummary').innerHTML = `Average: ${avg} | Mocks: ${dataArr.length}`;
         }
@@ -537,41 +407,36 @@
             const sorted = Object.entries(state.mockScores).sort((a,b) => new Date(b[1].date) - new Date(a[1].date));
             sorted.forEach(([id, m]) => {
                 const div = document.createElement('div'); div.className = 'topic-wrapper'; div.style.padding = '18px';
-                div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:start;"><div><strong>${m.name}</strong><div style="font-size:0.75rem; color:var(--text-muted);">${new Date(m.date).toLocaleDateString()}</div></div><div style="text-align:right;"><div style="font-size:1.2rem; font-weight:700; color:var(--primary);">${m.total}</div><div style="display:flex; gap:10px; margin-top:5px;"><span onclick="editMock('${id}')" style="color:var(--primary); cursor:pointer; font-size:0.7rem; font-weight:700;">Edit</span><span onclick="deleteMock('${id}')" style="color:var(--danger); cursor:pointer; font-size:0.7rem; font-weight:700;">Delete</span></div></div></div><div style="display:flex; gap:15px; margin-top:12px; font-size:0.8rem; border-top:1px solid var(--border-color); padding-top:12px;"><span>📖 E: <b>${m.english}</b></span><span>📊 Q: <b>${m.quant}</b></span><span>🧠 R: <b>${m.reasoning}</b></span></div>`;
+                div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:start;"><div><strong>${m.name}</strong><div style="font-size:0.75rem; color:var(--text-muted);">${new Date(m.date).toLocaleDateString()}</div></div><div style="text-align:right;"><div style="font-size:1.2rem; font-weight:700; color:var(--primary);">${m.total}</div><div style="display:flex; gap:10px; margin-top:5px;"><span onclick="editMock('${id}')" style="color:var(--primary); cursor:pointer; font-size:0.7rem; font-weight:700;">Edit</span><span onclick="deleteMock('${id}')" style="color:var(--danger); cursor:pointer; font-size:0.7rem; font-weight:700;">Delete</span></div></div></div><div style="display:flex; gap:15px; margin-top:12px; font-size:0.8rem; border-top:1px solid var(--border-color); padding-top:12px;"><span>E: <b>${m.english}</b></span><span>Q: <b>${m.quant}</b></span><span>R: <b>${m.reasoning}</b></span></div>`;
                 container.appendChild(div);
             });
         }
 
         function openTaskModal() {
-            const modal = document.getElementById('taskModal');
-            const title = document.getElementById('taskModalTitle');
-            
-            // Reset inputs
+            document.getElementById('taskModal').classList.add('show');
             document.getElementById('newTaskName').value = '';
-            // Clear all previously selected day buttons
-            document.querySelectorAll('.day-btn').forEach(btn => btn.classList.remove('selected'));
-            
-            // ... rest of your existing logic for currentTab check ...
-            modal.classList.add('show');
+            document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('selected'));
+            document.getElementById('daysSelectorGroup').style.display = (currentTab === 'daily') ? 'block' : 'none';
+            document.getElementById('revisionSelectorGroup').style.display = (currentTab === 'revision') ? 'block' : 'none';
+            document.getElementById('modalSubmitBtn').setAttribute('onclick', currentTab === 'daily' ? 'saveNewTask()' : 'saveRevision()');
         }
         function closeTaskModal() { document.getElementById('taskModal').classList.remove('show'); }
         function closeEditModal() { document.getElementById('editMockModal').classList.remove('show'); }
 
-        window.saveNewTask = function() {
+        function saveNewTask() {
             const name = document.getElementById('newTaskName').value.trim();
             const days = Array.from(document.querySelectorAll('.day-btn.selected')).map(b => parseInt(b.dataset.day));
             if(!name || days.length === 0) return;
             state.customTasks['task-'+Date.now()] = { name, days, completions: {} };
-            saveState(); closeTaskModal(); showToast("Task Created");
+            saveState(); closeTaskModal(); showToast("Task Created"); renderContent('daily');
         }
 
-        window.saveRevision = function() {
+        function saveRevision() {
             const name = document.getElementById('newTaskName').value.trim(); const start = document.getElementById('revStartDate').value;
-            if(!name || !start) return;
-            const d = new Date(start);
+            if(!name || !start) return; const d = new Date(start);
             const dates = [1, 4, 7].map(gap => { const next = new Date(d); next.setDate(d.getDate() + gap); return next.toISOString().split('T')[0]; });
             state.revisions['rev-'+Date.now()] = { name, start, dates, completions: {} };
-            saveState(); closeTaskModal(); showToast("Revision Scheduled");
+            saveState(); closeTaskModal(); showToast("Revision Scheduled"); renderContent('revision');
         }
 
         function saveScore() {
@@ -583,24 +448,24 @@
 
         function deleteMock(id) { if(confirm("Delete?")) { delete state.mockScores[id]; saveState(); showToast("Deleted"); renderContent('analysis'); } }
         function editMock(id) { currentEditId = id; const m = state.mockScores[id]; document.getElementById('editE').value = m.english; document.getElementById('editQ').value = m.quant; document.getElementById('editR').value = m.reasoning; document.getElementById('editMockModal').classList.add('show'); }
-        function updateExistingMock() { const m = state.mockScores[currentEditId]; m.english = parseFloat(document.getElementById('editE').value).toFixed(2); m.quant = parseFloat(document.getElementById('editQ').value).toFixed(2); m.reasoning = parseFloat(document.getElementById('editR').value).toFixed(2); m.total = (parseFloat(m.english)+parseFloat(m.quant)+parseFloat(m.reasoning)).toFixed(2); saveState(); closeEditModal(); showToast("Updated"); }
+        function updateExistingMock() { const m = state.mockScores[currentEditId]; m.english = parseFloat(document.getElementById('editE').value).toFixed(2); m.quant = parseFloat(document.getElementById('editQ').value).toFixed(2); m.reasoning = parseFloat(document.getElementById('editR').value).toFixed(2); m.total = (parseFloat(m.english)+parseFloat(m.quant)+parseFloat(m.reasoning)).toFixed(2); saveState(); closeEditModal(); showToast("Updated"); renderContent('analysis'); }
+        
         function toggleTopic(id) { if(!state[id]) state[id]={}; state[id].done = event.target.checked; saveState(); renderContent(currentTab); }
         function toggleDaily(id) { const date = new Date().toISOString().split('T')[0]; const isChecked = event.target.checked; if(!state.customTasks[id].completions) state.customTasks[id].completions = {}; if(isChecked) state.customTasks[id].completions[date] = true; else delete state.customTasks[id].completions[date]; saveState(); const s = document.getElementById(`status-${id}`); if(s) { s.textContent = isChecked?'Done':'Pending'; isChecked?s.classList.add('active'):s.classList.remove('active'); } }
         function toggleRevision(id) { const today = new Date().toISOString().split('T')[0]; const isChecked = event.target.checked; if(!state.revisions[id].completions) state.revisions[id].completions = {}; if(isChecked) state.revisions[id].completions[today] = true; else delete state.revisions[id].completions[today]; saveState(); const s = document.getElementById(`rev-status-${id}`); if(s) { s.textContent = isChecked?'Revised':'Due Today'; isChecked?s.classList.add('active'):s.classList.remove('active'); } }
+        
         function toggleTheme() { const d = document.documentElement; const t = d.getAttribute('data-theme')==='dark'?'light':'dark'; d.setAttribute('data-theme', t); localStorage.setItem('theme', t); initTheme(); }
         function initTheme() { const t = localStorage.getItem('theme') || 'light'; document.documentElement.setAttribute('data-theme', t); document.getElementById('themeBtn').innerHTML = (t==='dark')?SUN_ICON:MOON_ICON; }
         function showToast(m) { const t = document.getElementById('toast'); document.getElementById('toastMsg').textContent = m; t.className = 'toast show'; setTimeout(() => t.className = 'toast', 3000); }
         function toggleMockInputs() { const t = document.getElementById('mockType').value; document.getElementById('testNumContainer').style.display = t==='Other'?'none':'block'; document.getElementById('customNameContainer').style.display = t==='Other'?'block':'none'; }
         function toggleEditMockInputs() { const t = document.getElementById('editMockType').value; document.getElementById('editTestNumContainer').style.display = t==='Other'?'none':'block'; document.getElementById('editCustomNameContainer').style.display = t==='Other'?'block':'none'; }
         function adjustPadding() { document.body.style.paddingTop = document.getElementById('fixedHeader').offsetHeight + 'px'; }
-        function updateGlobalStats() { let total = 0, done = 0; Object.keys(syllabusData).filter(k => !['daily','analysis','revision'].includes(k)).forEach(k => { syllabusData[k].sections.forEach(s => s.topics.forEach(t => { total++; if(state[`${k}-${t.replace(/[^a-zA-Z0-9]/g,'')}`]?.done) done++; })); }); const p = Math.round((done/total)*100) || 0; document.getElementById('globalBar').style.width = p+'%'; document.getElementById('globalText').textContent = p+'% Covered'; }
+        function updateGlobalStats() { let total = 0, done = 0; Object.keys(syllabusData).filter(k => !['daily','analysis','revision','countdown'].includes(k)).forEach(k => { syllabusData[k].sections.forEach(s => s.topics.forEach(t => { total++; if(state[`${k}-${t.replace(/[^a-zA-Z0-9]/g,'')}`]?.done) done++; })); }); const p = Math.round((done/total)*100) || 0; document.getElementById('globalBar').style.width = p+'%'; document.getElementById('globalText').textContent = p+'% Covered'; }
         
         document.querySelectorAll('.day-btn').forEach(b => b.onclick = () => b.classList.toggle('selected'));
         window.addEventListener('resize', adjustPadding);
 
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
-        }
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
     </script>
 </body>
 </html>
